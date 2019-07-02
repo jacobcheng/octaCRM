@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'Id'                    => 'ID',
+    'Logo'                  => 'Logo',
+    'Name'                  => '客户全名',
+    'Short_name'            => '简称',
+    'Source'                => '来源',
+    'Type'                  => '类型',
+    'Star'                  => '星级',
+    'Star 1'                => '★',
+    'Star 2'                => '★★',
+    'Star 3'                => '★★★',
+    'Star 4'                => '★★★★',
+    'Star 5'                => '★★★★★',
+    'Country_code'          => '国家代码',
+    'City_code'             => '城市代码',
+    'Website'               => '网址',
+    'Tel'                   => '电话',
+    'Fax'                   => '传真',
+    'Contactor_id'          => '主联系人ID',
+    'Remark'                => '备注',
+    'Status'                => '状态',
+    'Status new'            => '新添加',
+    'Status followed'       => '已跟进',
+    'Status inquired'       => '已询盘',
+    'Status ordered'        => '已下单',
+    'Status invalid'        => '无效',
+    'Country.name'          => '英文名称',
+    'City.name'             => '英文名称',
+    'Contactor.appellation' => '称谓'
+];
