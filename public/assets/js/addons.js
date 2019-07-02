@@ -1,5 +1,15 @@
 define([], function () {
-    // 手机端左右滑动切换菜单栏
+    require.config({
+    paths: {
+        'fullcalendar': '../addons/calendar/fullcalendar/dist/fullcalendar',
+        'fullcalendar-lang': '../addons/calendar/fullcalendar/dist/locale/zh-cn',
+    },
+    // shim依赖配置
+    shim: {
+        'fullcalendar-lang': ['fullcalendar']
+    }
+});
+// 手机端左右滑动切换菜单栏
 if ('ontouchstart' in document.documentElement) {
     var startX, startY, moveEndX, moveEndY, relativeX, relativeY, element;
     element = $('body', top.document);
