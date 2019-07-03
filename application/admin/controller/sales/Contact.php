@@ -5,27 +5,24 @@ namespace app\admin\controller\sales;
 use app\common\controller\Backend;
 
 /**
- * 客户管理
+ * 
  *
  * @icon fa fa-circle-o
  */
-class Client extends Backend
+class Contact extends Backend
 {
     
     /**
-     * Client模型对象
-     * @var \app\admin\model\sales\Client
+     * Contactor模型对象
+     * @var \app\admin\model\sales\Contact
      */
     protected $model = null;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\sales\Client;
-        $this->view->assign("sourceList", $this->model->getSourceList());
-        $this->view->assign("typeList", $this->model->getTypeList());
-        $this->view->assign("starList", $this->model->getStarList());
-        $this->view->assign("statusList", $this->model->getStatusList());
+        $this->model = new \app\admin\model\sales\Contact;
+
     }
     
     /**
@@ -53,26 +50,22 @@ class Client extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['country','contact','admin'])
+                    ->with(['client'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['country','contact','admin'])
+                    ->with(['client'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','short_name','source','type','star','remark','status']);
-                $row->visible(['country']);
-				$row->getRelation('country')->visible(['country_name','timezone']);
-                $row->visible(['admin']);
-                $row->getRelation('admin')->visible(['nickname']);
-				$row->visible(['contact']);
-				$row->getRelation('contact')->visible(['appellation','email','cc_email']);
+                $row->visible(['client_id','appellation','name','image','title','email','cc_email','linkedin','mobile','tel','birthdate','remark']);
+                $row->visible(['client']);
+				$row->getRelation('client')->visible(['short_name']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
@@ -81,6 +74,4 @@ class Client extends Backend
         }
         return $this->view->fetch();
     }
-
-    
 }

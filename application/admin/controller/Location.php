@@ -5,7 +5,7 @@ namespace app\admin\controller;
 use app\common\controller\Backend;
 
 
-class location extends Backend
+class Location extends Backend
 {
     protected  $model = null;
     public function _initialize()
@@ -33,7 +33,7 @@ class location extends Backend
         //搜索条件
         $andor = $this->request->request("andOr", "and", "strtoupper");
         //排序方式
-        //$orderby = (array)$this->request->request("orderBy/a");
+        $orderby = (array)$this->request->request("orderBy/a");
         //显示的字段
         $field = $this->request->request("showField");
         //主键
@@ -42,26 +42,27 @@ class location extends Backend
         $primaryvalue = $this->request->request("keyValue");
         //搜索字段
         $searchfield = (array)$this->request->request("searchField/a");
+        //$searchfield = ['name','name_cn'];
         //自定义搜索条件
-        //$custom = (array)$this->request->request("custom/a");
+        $custom = (array)$this->request->request("custom/a");
 
-        /*$order = [];
+        $order = [];
         foreach ($orderby as $k => $v) {
             $order[$v[0]] = $v[1];
-        }*/
+        }
         $field = $field ? $field : 'name';
 
         //如果有primaryvalue,说明当前是初始化传值
         if ($primaryvalue !== null) {
             $where = [$primarykey => ['in', $primaryvalue]];
         } else {
-            $where = function ($query) use ($word, $andor, $field, $searchfield) {
+            $where = function ($query) use ($word, $andor, $field, $searchfield,$custom) {
                 $logic = $andor == 'AND' ? '&' : '|';
                 $searchfield = is_array($searchfield) ? implode($logic, $searchfield) : $searchfield;
                 foreach ($word as $k => $v) {
                     $query->where(str_replace(',', $logic, $searchfield), "like", "%{$v}%");
                 }
-                /*if ($custom && is_array($custom)) {
+                if ($custom && is_array($custom)) {
                     foreach ($custom as $k => $v) {
                         if (is_array($v) && 2 == count($v)) {
                             $query->where($k, trim($v[0]), $v[1]);
@@ -69,7 +70,7 @@ class location extends Backend
                             $query->where($k, '=', $v);
                         }
                     }
-                }*/
+                }
             };
         }
         $list = [];
@@ -81,7 +82,7 @@ class location extends Backend
         $total = $this->model->where($where)->count();
         if ($total > 0) {
             $datalist = $this->model->where($where)
-                //->order($order)
+                ->order($order)
                 ->page($page, $pagesize)
                 ->field($this->selectpageFields)
                 ->select();

@@ -14,6 +14,6 @@ class City extends Model
 
     public function getCityNameAttr ($value, $data)
     {
-        return $data['name'].'('.$data['name_nc'].')';
+        return $data['name'].'('.$data['name_cn'].')';
     }
 }

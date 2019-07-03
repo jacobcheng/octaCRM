@@ -99,9 +99,18 @@ class Client extends Model
         return $this->belongsTo('app\admin\model\City', 'city_code', 'code', [], 'LEFT')->setEagerlyType(0);
     }
 
-
-    public function contactor()
+    public function admin()
     {
-        return $this->belongsTo('app\admin\model\Contactor', 'contactor_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\User', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo('app\admin\model\sales\Contact', 'contact_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+    public function allcontact()
+    {
+        return $this->hasMany('app\admin\model\sales\Contact', 'client_id', 'id', [], 'LEFT');
     }
 }
