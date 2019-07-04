@@ -126,7 +126,7 @@ class Client extends Backend
                     if ($this->modelValidate) {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
-                        if (isset($params['addcontact'])) $this->model->addcontact = $params['addcontact'];
+                        //if (isset($params['addcontact'])) $this->model->addcontact = $params['addcontact'];
                         $this->model->validateFailException(true)->validate($validate);
                     }
                     $result = $this->model->allowField(true)->save($params);
@@ -142,8 +142,7 @@ class Client extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    //$this->model->allcontact()->saveAll($params['addcontact']);
-                    $this->addContact($params['addcontact']);
+                    $this->addContact($params['addcontact'], $this->model->id);
                     $this->updateContact($this->model);
                     $this->success();
                 } else {
@@ -195,13 +194,22 @@ class Client extends Backend
                 }
                 if ($result !== false) {
                     //已有联系人的添加方式
+                    if (isset($params['contact'])) {
+                       $ids = array_diff(array_column($row['allcontact'],'id'),array_column($params['contact'], 'id'));
+                       if ($ids) {
+                           $this->delContact($ids);
+                       }
+                        foreach ($params['contact'] as $param){
+                            $contact = new Contact;
+                            $contact->editContact($param);
+                        }
+                    } else {
+                        $this->delContact(array_column($row['allcontact'], 'id'));
+                    }
                     if (isset($params['addcontact'])) {
-                        $row->contact()->saveAll($params['addcontact']);
+                        $this->addContact($params['addcontact'],$row->id);
                     }
-                    $contact = model('app\admin\sales\contact')->where('id', $row->contactor_id)->find();
-                    if (!$contact) {
-                        $this->updateContact($result);
-                    }
+                    $this->updateContact($row);
                     $this->success();
                 } else {
                     $this->error(__('No rows were updated'));
@@ -216,17 +224,37 @@ class Client extends Backend
 
     private function updateContact ($client)
     {
-        if (!$client->contact_id) {
-            $id = model('app\admin\model\sales\Contact')->where(['client_id' => $client->id])->limit(1)->value('id');
+        $contact = model('app\admin\model\sales\Contact');
+        if (!$contact->get($client->contact_id)) {
+            $id = $contact->where(['client_id' => $client->id])->limit(1)->value('id');
             $client->save(['contact_id' => $id]);
         }
     }
 
-    private function addContact($contacts)
+    private function addContact($contacts,$id)
     {
         foreach ($contacts as $row) {
             $contact = new Contact;
-            $contact->addContact($row,$this->model->id);
+            $contact->addContact($row, $id);
+        }
+    }
+
+    private function delContact($ids)
+    {
+        $contact = new Contact;
+        $contact->delContact($ids);
+    }
+
+    public function checkdata()
+    {
+        if ($this->request->isPost()) {
+            $validate = validate('app\admin\validate\sales\Client');
+            $params = $this->request->post('row/a');
+            if (!$validate->scene(key($params))->check($params)){
+                return $this->error($validate->getError());
+            } else {
+                return $this->success();
+            }
         }
     }
 }

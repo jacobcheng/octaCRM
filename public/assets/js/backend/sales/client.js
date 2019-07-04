@@ -20,7 +20,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
-                sortName: 'id',
+                sortName: 'updatetime',
                 rowStyle: rowStyle,
                 columns: [
                     [
@@ -133,6 +133,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         edit: function () {
             Controller.api.bindevent();
+            Controller.api.delForm($('.delForm'));
             $('#c-contact_id').data('params', function () {
                 return {custom: {client_id:Config.client_id}};
             })
@@ -150,11 +151,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     var num = $(this).parent().children().length - 1;
                     var html = $('#addContactForm').html();
                     $(this).before(html.replace(/0/g,num));
-                    Form.api.bindevent($("form[role=form]"));
+                    //Form.api.bindevent($("form[role=form]"));
+                    Controller.api.delForm($('.delForm'));
+                    Form.events.datetimepicker($("form[role=form]"));
                 });
-                $('.delForm').click(function () {
+            },
+            delForm: function (delForm) {
+                delForm.click(function () {
                     $(this).closest('.contactForm').remove();
-                })
+                });
             }
         }
     };

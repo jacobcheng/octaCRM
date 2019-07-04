@@ -10,6 +10,8 @@ class Client extends Validate
      * 验证规则
      */
     protected $rule = [
+        'name|客户全名' => 'require|unique:client',
+        'short_name|简称' => 'require|unique:client'
     ];
     /**
      * 提示消息
@@ -22,6 +24,8 @@ class Client extends Validate
     protected $scene = [
         'add'  => [],
         'edit' => [],
+        'name' => ['name'],
+        'short_name' => ['short_name'],
     ];
     
 }

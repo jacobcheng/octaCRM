@@ -18,13 +18,13 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input id="c-name" data-rule="required" class="form-control" name="row[name]" type="text" value="">
+                <input id="c-name" data-rule="required;remote(sales/client/checkdata)" class="form-control" name="row[name]" type="text" value="">
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Short_name')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input id="c-short_name" data-rule="required" class="form-control" name="row[short_name]" type="text" value="">
+                <input id="c-short_name" data-rule="required;remote(sales/client/checkdata)" class="form-control" name="row[short_name]" type="text" value="">
             </div>
         </div>
         <div class="form-group">
@@ -148,7 +148,7 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Appellation')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][appellation]" type="text">
+                <input data-rule="required" class="form-control" name="row[addcontact][0][appellation]" type="text">
             </div>
         </div>
         <div class="form-group">
@@ -160,7 +160,7 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Email')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input data-rule="{required; email}" class="form-control" name="row[addcontact][0][email]" type="text">
+                <input data-rule="required;email;remote(sales/contact/checkdata)" class="form-control" name="row[addcontact][0][email]" type="text">
             </div>
         </div>
         <div class="form-group">

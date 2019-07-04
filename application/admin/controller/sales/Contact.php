@@ -133,4 +133,76 @@ class Contact extends Backend
             }
         }
     }
+
+    public function editContact($params)
+    {
+        $row = $this->model->get($params['id']);
+        if ($params) {
+            $params = $this->preExcludeFields($params);
+            Db::startTrans();
+            try {
+                //是否采用模型验证
+                if ($this->modelValidate) {
+                    $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                    $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                    $row->validateFailException(true)->validate($validate);
+                }
+                $row->allowField(true)->save($params);
+                Db::commit();
+            } catch (ValidateException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+        }
+    }
+
+    public function checkdata()
+    {
+        if ($this->request->isPost()) {
+            $validate = validate('app\admin\validate\sales\Contact');
+            $params = $this->request->post('row/a');
+            foreach ($params as $val){
+                foreach ($val as $v){
+                    $params = $v;
+                }
+            }
+            if (!$validate->scene(key($params))->check($params)){
+                return $this->error($validate->getError());
+            } else {
+                return $this->success();
+            }
+        }
+    }
+
+    public function delContact($ids = "")
+    {
+        if ($ids) {
+            $pk = $this->model->getPk();
+            $adminIds = $this->getDataLimitAdminIds();
+            if (is_array($adminIds)) {
+                $this->model->where($this->dataLimitField, 'in', $adminIds);
+            }
+            $list = $this->model->where($pk, 'in', $ids)->select();
+
+            Db::startTrans();
+            try {
+                foreach ($list as $k => $v) {
+                    $v->delete();
+                }
+                Db::commit();
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+        }
+    }
 }
