@@ -3,6 +3,10 @@
 namespace app\admin\controller\sales;
 
 use app\common\controller\Backend;
+use think\Db;
+use think\Exception;
+use think\exception\PDOException;
+use think\exception\ValidateException;
 
 /**
  * 
@@ -17,6 +21,29 @@ class Contact extends Backend
      * @var \app\admin\model\sales\Contact
      */
     protected $model = null;
+
+    /**
+    * 是否开启数据限制
+    * 支持auth/personal
+    * 表示按权限判断/仅限个人
+    * 默认为禁用,若启用请务必保证表中存在admin_id字段
+    */
+    protected $dataLimit = 'personal';
+
+    /**
+     * 数据限制字段
+     */
+    protected $dataLimitField = 'admin_id';
+
+    /**
+     * 数据限制开启时自动填充限制字段值
+     */
+    protected $dataLimitFieldAutoFill = true;
+
+    /**
+     * 是否开启Validate验证
+     */
+    protected $modelValidate = false;
 
     public function _initialize()
     {
@@ -73,5 +100,37 @@ class Contact extends Backend
             return json($result);
         }
         return $this->view->fetch();
+    }
+
+    public function addContact ($params, $id)
+    {
+        if ($params) {
+            $params = $this->preExcludeFields($params);
+
+            if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                $params[$this->dataLimitField] = $this->auth->id;
+            }
+            Db::startTrans();
+            try {
+                //是否采用模型验证
+                if ($this->modelValidate) {
+                    $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                    $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                    $this->model->validateFailException(true)->validate($validate);
+                }
+                $params['client_id'] = $id;
+                $this->model->allowField(true)->save($params);
+                Db::commit();
+            } catch (ValidateException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+        }
     }
 }

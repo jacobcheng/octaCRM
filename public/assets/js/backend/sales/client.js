@@ -133,6 +133,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         edit: function () {
             Controller.api.bindevent();
+            $('#c-contact_id').data('params', function () {
+                return {custom: {client_id:Config.client_id}};
+            })
         },
         api: {
             bindevent: function () {

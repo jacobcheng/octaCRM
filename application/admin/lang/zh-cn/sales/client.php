@@ -26,7 +26,7 @@ return [
     'Status inquired'       => '已询盘',
     'Status ordered'        => '已下单',
     'Status invalid'        => '无效',
-    'add contact'           => '添加联系人',
+    'Contacts'              => '联系人',
     'Admin'                 => '所属业务',
     'Contact Name'          => '全名',
     'Appellation'           => '称谓',
