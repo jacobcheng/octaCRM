@@ -60,8 +60,21 @@ class Calendar extends Backend
                     ->where('starttime', 'between', [strtotime($start), strtotime($end)])
                     ->order('id desc')
                     ->select();
+
+            $repeatevent = $this->model
+                    ->where(['admin_id' => ['in',$adminIds], 'distance' => ['>=',1]])
+                    ->select();
+
+            if (!empty($repeatevent)) {
+                $repeatevents = $this->getRepeatEvents($repeatevent, $start, $end);
+
+                if (!empty($repeatevents)) {
+                    $list = array_merge($list, $repeatevents);
+                }
+            }
+
             $result = [];
-            $time = time();
+            //$time = time();
             foreach ($list as $k => $v)
             {
                 $result[] = $v['render'];
@@ -76,7 +89,7 @@ class Calendar extends Backend
     /**
      * 添加事件
      */
-    public function addevent()
+    /*public function addevent()
     {
         $params = $this->request->post("row/a");
         if ($params)
@@ -95,12 +108,12 @@ class Calendar extends Backend
         }
 
         $this->error(__('Parameter %s can not be empty', ''));
-    }
+    }*/
 
     /**
      * 删除事件
      */
-    public function delevent($ids = NULL)
+    /*public function delevent($ids = NULL)
     {
         if ($ids)
         {
@@ -111,16 +124,16 @@ class Calendar extends Backend
             }
         }
         $this->error(__('Parameter %s can not be empty', 'ids'));
-    }
+    }*/
 
     /**
      * 添加日历
      */
-    public function add($ids = NULL)
+    public function add()
     {
         if ($this->request->isPost())
         {
-            if ($ids)
+            /*if ($ids)
             {
                 $params = CalendarEvent::get($ids);
                 if ($params)
@@ -133,13 +146,21 @@ class Calendar extends Backend
             else
             {
                 $params = $this->request->post("row/a");
-            }
+            }*/
+
+            $params = $this->request->post("row/a");
             if ($params)
             {
                 foreach ($params as $k => &$v)
                 {
                     $v = is_array($v) ? implode(',', $v) : $v;
                 }
+                /*if ($params['type'] == 'event') {
+                    //var_dump($params['starttime']);
+                    $params['endtime'] = $params['starttime'] = substr($params['starttime'], 0, 10);
+                }*/
+                $params['url'] = $params['client_id'] ? url('admin/sales/client/detail', ['id' => $params['client_id']]) : '';
+                $params['classname'] = $params['url'] ? 'btn-addtabs' : '';
                 $params['status'] = 'normal';
                 try
                 {
@@ -253,4 +274,35 @@ class Calendar extends Backend
         $this->error(__('Parameter %s can not be empty', 'ids'));
     }
 
+    protected function getRepeatEvents ($repeatevent, $start, $end)
+    {
+        $result = [];
+
+        foreach ($repeatevent as $value) {
+            $i = $value['distance'];
+            do {
+                $allDay = ($value['starttime'] === $value['endtime'] && date("H:i:s", $value['starttime']) == '00:00:00');
+                $newstart = date('c', $value['starttime']);
+                $newend = date('c', $value['endtime']);
+                $eventstart = strtotime($newstart."+".$i.$value['period']);
+                $eventend = strtotime($newend."+".$i.$value['period']);
+
+                if ($eventend > strtotime($start) && $eventstart < strtotime($end)) {
+                    $result[]['render'] = [
+                        'id'              => $value['id'],
+                        'title'           => $value['title'],
+                        'start'           => date("c", $eventstart),
+                        'end'             => date("c", $eventend),
+                        'backgroundColor' => "{$value['background']}",
+                        'borderColor'     => "{$value['background']}",
+                        'allDay'          => $allDay,
+                        'url'             => $value['url'] ? : '',
+                        'className'       => "{$value['classname']} fc-{$value['status']}" . (($allDay ? $eventend + 86400 : $eventend) < time() ? ' fc-expired' : '')
+                    ];
+                }
+                $i += $value['distance'];
+            } while ($eventstart < strtotime($end));
+        }
+        return $result;
+    }
 }

@@ -30,32 +30,10 @@
         <div class="col-md-3">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h4 class="box-title">{:__('Exist event')}</h4>
-                </div>
-
-                <div class="box-body">
-                    <!-- the events -->
-                    <div id="external-events">
-                        {foreach $eventList as $k=>$v}
-                        <div class="external-event" data-id="{$v.id}" data-title="{$v.title}" data-background="{$v.background}" style="background-color:{$v.background};color:#fff;">{$v.title}</div>
-                        {/foreach}
-                        <div class="checkbox">
-                            <label for="drop-remove">
-                                <input type="checkbox" id="drop-remove">
-                                {:__('Remove after drop')}
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <!-- /. box -->
-            <div class="box box-solid">
-                <div class="box-header with-border">
                     <h3 class="box-title">{:__('Add event')}</h3>
                 </div>
                 <div class="box-body">
-                    <form id="add-form" action="calendar/addevent" role="form" method="post">
+                    <form id="add-form" action="calendar/add" role="form" method="post">
                         <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
                             <input type="hidden" name="row[background]" value="#18bc9c" />
                             <ul class="fc-color-picker" id="color-chooser">
@@ -77,26 +55,45 @@
                             <span class="input-group-addon"><i class="fa fa-list-ol fa-fw"></i></span>
                             <input id="event-title" name="row[title]" data-rule="required" type="text" class="form-control" placeholder="{:__('Title tips')}">
                         </div>
-                        <div class="input-group" style="margin-bottom:10px;">
+                        <!--<div class="input-group" style="margin-bottom:10px;">
                             <span class="input-group-addon"><i class="fa fa-link fa-fw"></i></span>
                             <input id="event-url" name="row[url]" class="form-control" type="text" placeholder="{:__('Link tips')}">
-                        </div>
-                        <div class="input-group" style="margin-bottom:10px;">
+                        </div>-->
+                        <!--<div class="input-group" style="margin-bottom:10px;">
                             <span class="input-group-addon"><i class="fa fa-tags fa-fw"></i></span>
                             <select name="row[classname]" class="form-control" id="">
                                 <option value="">{:__('None')}</option>
                                 <option value="btn-dialog">{:__('New Dialog')}</option>
                                 <option value="btn-addtabs">{:__('New Addtabs')}</option>
                             </select>
+                        </div>-->
+                        <div class="input-group" style="margin-bottom:10px;">
+                            <label for="c-switch"> <input id="c-switch" value="" type="checkbox"> {:__('Related to client')}</label> &nbsp;
+                        </div>
+                        <div class="input-group" style="margin-bottom:10px;display:none">
+                            <span class="input-group-addon"><i class="fa fa-link fa-fw"></i></span>
+                            <input id="c-client_id" class="form-control selectpage" data-source="sales/client/index" data-show-field="short_name" data-order-by="updatetime des" name="row[client_id]" placeholder="{:__('Choose a relative client')}">
+                        </div>
+                        <div class="input-group" id="daterange" style="margin-bottom:10px">
+                            <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
+                            <input id="c-starttime" style="margin-bottom:-1px;" data-rule="required" class="form-control datetimepicker" data-date-side-by-side="true" data-date-format="YYYY-MM-DD HH:mm" name="row[starttime]" type="text" value="{:date('Y-m-d')}">
+                            <input id="c-endtime" class="form-control datetimepicker" data-date-side-by-side="true" data-date-format="YYYY-MM-DD HH:mm" name="row[endtime]" type="text" value="" style="display:none">
+                        </div>
+                        <div class="input-group" id="reminder" style="margin-bottom:10px;display:none;">
+                            <span class="input-group-addon">每</span>
+                            <input id="distance" name="row[distance]" type="text" class="form-control" disabled>
+                            <select id='period' class="form-control selectpicker" name='row[period]'>
+                                <option value="">无重复</option>
+                                <option value="day">天</option>
+                                <option value="week">周</option>
+                                <option value="month">月</option>
+                                <option value="year">年</option>
+                            </select>
+                            <span class="input-group-addon">重复</span>
                         </div>
                         <div class="input-group" style="margin-bottom:10px;">
                             <label for="c-type-event"> <input id="c-type-event" name="type" value="event" type="radio" checked=""> {:__('Add to event')}</label> &nbsp;
                             <label for="c-type-calendar"> <input id="c-type-calendar" name="type" value="calendar" type="radio"> {:__('Add to calendar')}</label>
-                        </div>
-                        <div class="input-group" id="daterange" style="margin-bottom:10px;display:none;">
-                            <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
-                            <input id="c-starttime" style="margin-bottom:-1px;" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[starttime]" type="text" value="{:date('Y-m-d 00:00:00')}">
-                            <input id="c-endtime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD 00:00:00" data-use-current="true" name="row[endtime]" type="text" value="{:date('Y-m-d 00:00:00')}">
                         </div>
                         <div class="">
                             <button type="submit" class="btn btn-primary">{:__('Add')}</button>

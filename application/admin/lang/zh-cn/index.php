@@ -54,4 +54,6 @@ return [
     'Forum'                                                      => '交流社区',
     'QQ qun'                                                     => 'QQ交流群',
     'Captcha'                                                    => '验证码',
+    'Schedule'                                                   => '日程',
+    'Clients'                                                    => '客户管理'
 ];

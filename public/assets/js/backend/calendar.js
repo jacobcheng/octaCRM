@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-ui.min', 'fullcalendar', 'fullcalendar-lang'], function ($, undefined, Backend, Table, Form, Template, Fullcalendar) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-ui.min', 'fullcalendar', 'fullcalendar-lang', 'bootstrap-datetimepicker'], function ($, undefined, Backend, Table, Form, Template, Fullcalendar, Datetimepicker) {
 
     var Controller = {
         index: function () {
@@ -178,17 +178,51 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
                 currColor = $(this).css("color");
                 $("input[name='row[background]']").val(rgb2hex(currColor));
             });
+            //$('#c-starttime').val(new Date('YYYY-mm-dd 00:00:00'));
             $(document).on("click", "input[name=type]", function (e) {
                 var value = $(this).val();
-                $("#daterange").toggle(value === 'calendar');
-                $("#add-form").attr("action", value === 'calendar' ? "calendar/add" : "calendar/addevent");
+                $("#c-endtime,#reminder").toggle(value === 'calendar');
+                $('#c-starttime').data("DateTimePicker").date(getStartTime());
+                $('#c-endtime').data("DateTimePicker").date(getEndTime($('#c-starttime').val()));
+                $('#c-starttime').data("DateTimePicker").minDate(new Date());
+                $('#c-endtime').data("DateTimePicker").minDate($('#c-starttime').val());
+                //$("#add-form").attr("action", value === 'calendar' ? "calendar/add" : "calendar/addevent");
             });
-            $(document).on("change", "input[name='admin_id']", function () {
-                $('#calendar').fullCalendar('refetchEvents');
+            $('#c-switch').change(function () {
+                $('#c-client_id').closest('.input-group').toggle();
+                $('.sp_container').css('width', '100%');
             });
+            /*$('.form-control').focusout(function () {
+                $('#c-starttime').trigger('click');
+            })*/
+            $('#c-starttime').on("dp.hide", function(e){
+                $('#c-endtime').data("DateTimePicker").minDate(e.date);
+                $('#c-endtime').data("DateTimePicker").date(getEndTime(e.date));
+            });
+            $('#period').change(function () {
+                var val = $(this).val();
+                if (val){
+                    $('#distance').attr('disabled', false);
+                } else {
+                    $('#distance').attr('disabled', true);
+                }
+            })
+            function getEndTime(time) {
+                return new Date(Date.parse(time)+60*60*1000);
+            }
+            function getStartTime(){
+                var nowDate = new Date();
+                var year = nowDate.getFullYear();
+                var month = nowDate.getMonth() + 1 < 10 ? "0" + (nowDate.getMonth() + 1) : nowDate.getMonth() + 1;
+                var date = nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate();
+                var hour = nowDate.getHours()< 10 ? "0" + nowDate.getHours() : nowDate.getHours();
+                var setTime = Date.parse(year + "-" + month + "-" + date+" "+hour+":00");
+                setTime = setTime + 1000*60*60;
+                return new Date(setTime);
+            }
             $("#color-chooser li a:first").trigger("click");
             Form.api.bindevent($("form[role=form]"), function (data, ret) {
-                if ($("input[name=type]:checked").val() == 'event') {
+                /*if ($("input[name=type]:checked").val() == 'event') {
                     var event = $("<div />");
                     event.css({"background-color": data.background, "border-color": data.background, "color": "#fff"}).addClass("external-event");
                     event.data("id", data.id);
@@ -199,9 +233,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
                     ini_events(event);
                 } else {
                     append_calendar(data);
-                }
+                }*/
+                append_calendar(data);
                 $(this).trigger("reset");
+                $('#c-client_id').css('display', 'none');
                 $("input[name=type]:checked").trigger("click");
+            },'',function () {
+                if ($("input[name=type]:checked").val() == 'event') {
+                    $('#c-endtime').val($('#c-starttime').val());
+                }
             });
         },
         add: function () {
