@@ -55,5 +55,8 @@ return [
     'QQ qun'                                                     => 'QQ交流群',
     'Captcha'                                                    => '验证码',
     'Schedule'                                                   => '日程',
-    'Clients'                                                    => '客户管理'
+    'Sales'                                                      => '销售管理',
+    'Clients'                                                    => '客户管理',
+    'Products'                                                   => '产品管理',
+    'Product Model'                                              => '型号管理',
 ];
