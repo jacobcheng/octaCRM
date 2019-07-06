@@ -18,7 +18,7 @@ return array (
     'default' => 'Default',
     'page' => 'Page',
     'article' => 'Article',
-    'test' => 'Test',
+    'catalog' => 'Catalog',
   ),
   'configgroup' => 
   array (
