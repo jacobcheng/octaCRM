@@ -1,0 +1,124 @@
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Model_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-model_id" data-rule="required" data-source="model/index" class="form-control selectpage" name="row[model_id]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Code')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-code" data-rule="required" class="form-control" name="row[code]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Description')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-description" data-rule="required" class="form-control" name="row[description]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Description_cn')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-description_cn" data-rule="required" class="form-control" name="row[description_cn]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Specification')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-specification" data-rule="required" class="form-control " rows="5" name="row[specification]" cols="50"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Unit')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-unit" data-rule="required" class="form-control selectpicker" name="row[unit]">
+                {foreach name="unitList" item="vo"}
+                    <option value="{$key}" {in name="key" value="PC"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Moq')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-moq" data-rule="required" class="form-control" name="row[moq]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Weight')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-weight" data-rule="required" class="form-control" step="0.001" name="row[weight]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Length')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-length" data-rule="required" class="form-control" step="0.1" name="row[length]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Width')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-width" data-rule="required" class="form-control" step="0.1" name="row[width]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Height')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-height" data-rule="required" class="form-control" step="0.1" name="row[height]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Package')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-package" data-rule="required" class="form-control" name="row[package]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pweight')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-pweight" data-rule="required" class="form-control" step="0.001" name="row[pweight]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Plength')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-plength" data-rule="required" class="form-control" step="0.1" name="row[plength]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pwidth')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-pwidth" data-rule="required" class="form-control" step="0.1" name="row[pwidth]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pheight')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-pheight" data-rule="required" class="form-control" step="0.1" name="row[pheight]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cost')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-cost" data-rule="required" class="form-control" step="0.01" name="row[cost]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Remark')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-remark" class="form-control " rows="5" name="row[remark]" cols="50"></textarea>
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
