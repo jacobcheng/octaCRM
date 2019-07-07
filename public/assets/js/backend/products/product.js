@@ -3,7 +3,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
     var Controller = {
         index: function () {
             // 初始化表格参数配置
-            Table.api.init({
+            /*Table.api.init({
                 extend: {
                     index_url: 'products/product/index' + location.search,
                     add_url: 'products/product/add',
@@ -48,7 +48,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             });
 
             // 为表格绑定事件
-            Table.api.bindevent(table);
+            Table.api.bindevent(table);*/
         },
         recyclebin: function () {
             // 初始化表格参数配置

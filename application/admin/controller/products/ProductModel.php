@@ -85,6 +85,7 @@ class ProductModel extends Backend
         }
         //$row['images'] = explode(",",$row['images']);
         //$this->assignconfig('model_id',$row['id']);
+        $this->assignconfig('model_id', $row->id);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }

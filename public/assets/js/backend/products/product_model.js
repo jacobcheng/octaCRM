@@ -183,7 +183,66 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
             Controller.api.bindevent();
         },
         detail: function () {
+            Table.api.init({
+                extend: {
+                    index_url: 'products/product/index' + location.search,
+                    add_url: 'products/product/add/client_id/' + Config.model_id,
+                    edit_url: 'products/product/edit',
+                    del_url: 'products/product/del',
+                    multi_url: 'products/product/multi',
+                    table: 'product',
+                }
+            });
 
+            var table = $("#table");
+
+            // 初始化表格
+            table.bootstrapTable({
+                url: $.fn.bootstrapTable.defaults.extend.index_url,
+                pk: 'id',
+                sortName: 'id',
+                queryParams: function (params) {
+                    params.filter = "{'model_id':" + Config.model_id + "}";
+                    params.op = "{'model_id':'='}";
+                    return params;
+                },
+                columns: [
+                    [
+                        {checkbox: true},
+                        {field: 'code', title: __('Code')},
+                        {field: 'description', title: __('Description'), formatter: function (value, row) {
+                                return Config.language === 'zh-cn' ? row['description_cn'] : value;
+                            }
+                        },
+                        //{field: 'description_cn', title: __('Description_cn')},
+                        {field: 'unit', title: __('Unit'), searchList: {"PC":__('PC'),"SET":__('SET'),"BOX":__('BOX'),"CARTON":__('CARTON'),"G":__('G'),"KG":__('KG'),"TON":__('TON'),"CBM":__('CBM')}, formatter: Table.api.formatter.normal},
+                        {field: 'moq', title: __('Moq')},
+                        {field: 'weight', title: __('Weight'), operate:'BETWEEN'},
+                        /*{field: 'length', title: __('Length'), operate:'BETWEEN'},
+                        {field: 'width', title: __('Width'), operate:'BETWEEN'},
+                        {field: 'height', title: __('Height'), operate:'BETWEEN'},*/
+                        {field: 'size', title: __('Size'), formatter: function (value, row) {
+                                return row['length'] + ' × ' + row['width'] + ' × ' + row['height']
+                            }},
+                        {field: 'package', title: __('Package')},
+                        {field: 'pweight', title: __('Package Weight'), operate:'BETWEEN'},
+                        /*{field: 'plength', title: __('Plength'), operate:'BETWEEN'},
+                        {field: 'pwidth', title: __('Pwidth'), operate:'BETWEEN'},
+                        {field: 'pheight', title: __('Pheight'), operate:'BETWEEN'},*/
+                        {field: 'psize', title: __('Package Size'),formatter: function (value, row) {
+                                return row['plength'] + ' × ' + row['pwidth'] + ' × ' + row['pheight']
+                            }},
+                        {field: 'cost', title: __('Cost'), operate:'BETWEEN', formatter: function (value) {
+                                return value.toFixed(2);
+                            }},
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                    ]
+                ]
+            });
+
+            // 为表格绑定事件
+            Table.api.bindevent(table);
+            //console.log(Config);
         },
         api: {
             bindevent: function () {

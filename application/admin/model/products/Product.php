@@ -32,7 +32,7 @@ class Product extends Model
     
     public function getUnitList()
     {
-        return ['PC' => __('Pc'), 'SET' => __('Set'), 'BOX' => __('Box'), 'CARTON' => __('Carton'), 'G' => __('G'), 'KG' => __('Kg'), 'TON' => __('Ton'), 'CBM' => __('Cbm'), 'UNIT' => __('Unit')];
+        return ['PC' => __('PC'), 'SET' => __('SET'), 'BOX' => __('BOX'), 'CARTON' => __('CARTON'), 'G' => __('G'), 'KG' => __('KG'), 'TON' => __('TON'), 'CBM' => __('CBM')];
     }
 
 

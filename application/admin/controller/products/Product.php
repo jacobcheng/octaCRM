@@ -38,7 +38,7 @@ class Product extends Backend
     public function index()
     {
         //当前是否为关联查询
-        $this->relationSearch = true;
+        $this->relationSearch = false;
         //设置过滤方法
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
@@ -50,22 +50,22 @@ class Product extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['productmodel'])
+                    //->with(['productmodel'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['productmodel'])
+                    //->with(['productmodel'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','model_id','code','description','description_cn','specification','unit','moq','weight','length','width','height','package','pweight','plength','pwidth','pheight','cost','remark']);
-                $row->visible(['productmodel']);
-				$row->getRelation('productmodel')->visible(['model']);
+                $row->visible(['id','code','description','description_cn','specification','unit','moq','weight','length','width','height','package','pweight','plength','pwidth','pheight','cost']);
+                //$row->visible(['productmodel']);
+				//$row->getRelation('productmod el')->visible(['model']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
