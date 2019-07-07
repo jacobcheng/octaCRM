@@ -21,7 +21,7 @@ class ProductModel extends Backend
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\ProductModel;
+        $this->model = new \app\admin\model\products\ProductModel;
 
     }
     
@@ -75,5 +75,43 @@ class ProductModel extends Backend
             return json($result);
         }
         return $this->view->fetch();
+    }
+
+    public function detail ($id = null)
+    {
+        $row = $this->model->with(['category','client'])->find($id);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        //$row['images'] = explode(",",$row['images']);
+        //$this->assignconfig('model_id',$row['id']);
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
+    public function getCatalog ()
+    {
+        if  ($this->request->isAjax()) {
+            //$id = $this->request->request('id');
+            $lang = $this->request->request('lang');
+            //if (!$id) return $this->error(__('Parameter %s can not be empty', ''));
+            //$where['type'] = 'catalog';
+            $datalist = model('app\admin\model\Category')
+                      ->where(['type' => 'catalog'])
+                      ->order('weigh asc')
+                      ->field('id,pid,name,nickname')
+                      ->select();
+
+            $list [] = ['id' => '0', 'parent' => '#', 'text' => __('All'), 'state' => ['opened' => true, 'selected' => true]];
+            foreach ($datalist as $value) {
+                $list[] = [
+                    'id' => $value['id'],
+                    'parent' => $value['pid'] ? : '0',
+                    'text'   => $lang === 'zh-cn' ? $value['name'] : $value['nickname'],
+                    'state'  => ['opened' => true]
+                ];
+            }
+            return json($list);
+        }
     }
 }

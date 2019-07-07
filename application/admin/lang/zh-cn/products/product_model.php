@@ -10,5 +10,7 @@ return [
     'Hscode'            => '海关编码',
     'Rebate_rate'       => '退税率',
     'Images'            => '图片',
-    'Client.short_name' => '简称'
+    'Client.short_name' => '简称',
+    'Catalog'           => '产品目录',
+    'Chinese Description' => '中文描述'
 ];

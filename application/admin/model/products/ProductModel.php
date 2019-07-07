@@ -1,6 +1,6 @@
 <?php
 
-namespace app\admin\model;
+namespace app\admin\model\products;
 
 use think\Model;
 use traits\model\SoftDelete;
@@ -25,7 +25,7 @@ class ProductModel extends Model
 
     // 追加属性
     protected $append = [
-
+            'image'
     ];
     
 
@@ -35,16 +35,20 @@ class ProductModel extends Model
 
 
 
-
+    public function getImageAttr ($value, $data)
+    {
+        $images = explode(',',$data['images']);
+        return $images[0];
+    }
 
     public function category()
     {
-        return $this->belongsTo('Category', 'category_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\Category', 'category_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 
 
     public function client()
     {
-        return $this->belongsTo('Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\sales\Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 }

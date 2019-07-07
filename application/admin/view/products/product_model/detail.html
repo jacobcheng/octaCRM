@@ -1,0 +1,99 @@
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">{$row['model']}</h3>
+        <div class="box-tools pull-right">
+            <a href="/admin/products/product_model/edit/ids/{$row.id}" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('products/product_model/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></a>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-md-3">
+            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <!-- <ol class="carousel-indicators">
+                  <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                  <li data-target="#carousel-example-generic" data-slide-to="1" class=""></li>
+                  <li data-target="#carousel-example-generic" data-slide-to="2" class=""></li>
+                </ol> -->
+                <div class="carousel-inner">
+                    {volist name="row['images']|explode=',',###" id="vo"}
+                    <div class="item{eq name='i' value='1'} active{/eq}">
+                        <img src="{$vo}">
+                    </div>
+                    {/volist}
+                </div>
+                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                    <span class="fa fa-angle-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                    <span class="fa fa-angle-right"></span>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 col-md-offset-3">
+            <dl class="dl-horizontal h4">
+                <dt>{:__("Catalog")}</dt>
+                <dd>{$row['category']['name']}</dd>
+                <dt>{:__("Client_id")}</dt>
+                <dd>{$row['client']['short_name']}</dd>
+                <dt>{:__("Description")}</dt>
+                <dd>{$row['description']}</dd>
+                <dt>{:__("Chinese Description")}</dt>
+                <dd>{$row['description_cn']}</dd>
+                <dt>{:__('hscode')}</dt>
+                <dd>{$row['hscode']}</dd>
+                <dt>{:__('rebate_rate')}</dt>
+                <dd>{$row['rebate_rate']}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-intro">
+    {:build_heading()}
+
+    <div class="panel-heading">
+        <!-- <div class="panel-lead"><em>多表格（Multitable）</em>用于展示在一个页面展示多个表格数据,并且每次切换时刷新</div> -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#products" data-toggle="tab">产品规格</a></li>
+            <li><a href="#images" data-toggle="tab">图片</a></li>
+        </ul>
+    </div>
+
+    <div class="panel-body">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="products">
+                <div class="widget-body no-padding">
+                    <div id="toolbar" class="toolbar">
+                        <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" ><i class="fa fa-refresh"></i> </a>
+                        <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('products/product/add')?'':'hide'}" title="{:__('Add')}" ><i class="fa fa-plus"></i> {:__('Add')}</a>
+                        <a href="javascript:;" class="btn btn-success btn-edit btn-disabled disabled {:$auth->check('products/product/edit')?'':'hide'}" title="{:__('Edit')}" ><i class="fa fa-pencil"></i> {:__('Edit')}</a>
+                        <a href="javascript:;" class="btn btn-danger btn-del btn-disabled disabled {:$auth->check('products/product/del')?'':'hide'}" title="{:__('Delete')}" ><i class="fa fa-trash"></i> {:__('Delete')}</a>
+                        <a href="javascript:;" class="btn btn-danger btn-import {:$auth->check('products/product/import')?'':'hide'}" title="{:__('Import')}" id="btn-import-file" data-url="ajax/upload" data-mimetype="csv,xls,xlsx" data-multiple="false"><i class="fa fa-upload"></i> {:__('Import')}</a>
+
+                        <div class="dropdown btn-group {:$auth->check('products/product/multi')?'':'hide'}">
+                            <a class="btn btn-primary btn-more dropdown-toggle btn-disabled disabled" data-toggle="dropdown"><i class="fa fa-cog"></i> {:__('More')}</a>
+                            <ul class="dropdown-menu text-left" role="menu">
+                                <li><a class="btn btn-link btn-multi btn-disabled disabled" href="javascript:;" data-params="status=normal"><i class="fa fa-eye"></i> {:__('Set to normal')}</a></li>
+                                <li><a class="btn btn-link btn-multi btn-disabled disabled" href="javascript:;" data-params="status=hidden"><i class="fa fa-eye-slash"></i> {:__('Set to hidden')}</a></li>
+                            </ul>
+                        </div>
+
+                        <a class="btn btn-success btn-recyclebin btn-dialog {:$auth->check('products/product/recyclebin')?'':'hide'}" href="products/product/recyclebin" title="{:__('Recycle bin')}"><i class="fa fa-recycle"></i> {:__('Recycle bin')}</a>
+                    </div>
+                    <table id="table" class="table table-striped table-bordered table-hover table-nowrap"
+                           data-operate-edit="{:$auth->check('products/product/edit')}"
+                           data-operate-del="{:$auth->check('products/product/del')}"
+                           width="100%">
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="images">
+                {volist name="row['images']|explode=',',###" id="vo"}
+                <div class="thumbnail col-md-2">
+                    <img src="{$vo}">
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+</div>
