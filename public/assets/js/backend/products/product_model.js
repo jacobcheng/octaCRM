@@ -235,7 +235,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
                         {field: 'cost', title: __('Cost'), operate:'BETWEEN', formatter: function (value) {
                                 return value.toFixed(2);
                             }},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
+                                {
+                                    name: 'Copy',
+                                    title: __('Copy'),
+                                    classname: 'btn btn-xs btn-success btn-dialog',
+                                    icon: 'fa fa-copy',
+                                    url: 'products/product/copy'
+                                }
+                            ]}
                     ]
                 ]
             });
