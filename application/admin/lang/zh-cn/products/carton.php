@@ -11,5 +11,5 @@ return [
     'Width'       => '宽度',
     'Height'      => '高度',
     'Cost'        => '采购成本',
-    'Size'        => '外箱尺寸(CM)'
+    'Size'        => '尺寸(CM)'
 ];

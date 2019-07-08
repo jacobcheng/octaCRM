@@ -29,9 +29,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'description', title: __('Description')},
                         {field: 'rate', title: __('Rate')},
                         {field: 'weight', title: __('Weight'), operate:'BETWEEN'},
-                        {field: 'length', title: __('Length'), operate:'BETWEEN'},
+                        /*{field: 'length', title: __('Length'), operate:'BETWEEN'},
                         {field: 'width', title: __('Width'), operate:'BETWEEN'},
-                        {field: 'height', title: __('Height'), operate:'BETWEEN'},
+                        {field: 'height', title: __('Height'), operate:'BETWEEN'},*/
+                        {field: 'size', title: __('Size'), formatter: function (value, row) {
+                                return row['length'] + ' × ' + row['width'] + ' × ' + row['height'];
+                            }},
                         {field: 'cost', title: __('Cost'), operate:'BETWEEN', formatter: function (value, row) {
                                 return value.toFixed(2);
                             }},
