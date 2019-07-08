@@ -59,4 +59,5 @@ return [
     'Clients'                                                    => '客户管理',
     'Products'                                                   => '产品管理',
     'Product Model'                                              => '型号管理',
+    'Package'                                                    => '销售包装'
 ];
