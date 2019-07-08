@@ -35,7 +35,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'cost', title: __('Cost'), operate:'BETWEEN', formatter: function (value, row) {
                                 return value.toFixed(2);
                             }},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
+                                {
+                                    name: 'copy',
+                                    title: __('Copy'),
+                                    classname: 'btn btn-xs btn-success btn-dialog',
+                                    icon: 'fa fa-copy',
+                                    url: 'products/package/copy'
+                                }
+                            ]}
                     ]
                 ]
             });
@@ -107,6 +115,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        copy: function () {
             Controller.api.bindevent();
         },
         api: {

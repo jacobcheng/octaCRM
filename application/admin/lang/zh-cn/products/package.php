@@ -10,5 +10,6 @@ return [
     'Length'      => '长度(CM)',
     'Width'       => '宽度(CM)',
     'Height'      => '高度(CM)',
-    'Cost'        => '采购成本'
+    'Cost'        => '采购成本',
+    'Copy'        => '复制'
 ];
