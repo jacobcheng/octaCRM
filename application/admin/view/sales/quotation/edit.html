@@ -1,0 +1,106 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ref_no')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-ref_no" data-rule="required" class="form-control" name="row[ref_no]" type="text" value="{$row.ref_no|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Po_no')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-po_no" class="form-control" name="row[po_no]" type="text" value="{$row.po_no|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Client_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-client_id" data-rule="required" data-source="client/index" class="form-control selectpage" name="row[client_id]" type="text" value="{$row.client_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Destination')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-destination" data-rule="required" class="form-control " rows="5" name="row[destination]" cols="50">{$row.destination|htmlentities}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Currency')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-currency" data-rule="required" class="form-control selectpicker" name="row[currency]">
+                {foreach name="currencyList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.currency"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Rate')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-rate" data-rule="required" class="form-control" step="0.0001" name="row[rate]" type="number" value="{$row.rate|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Incoterms')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-incoterms" data-rule="required" class="form-control selectpicker" name="row[incoterms]">
+                {foreach name="incotermsList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.incoterms"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Validay')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-validay" data-rule="required" class="form-control" name="row[validay]" type="number" value="{$row.validay|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Leadtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-leadtime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[leadtime]" type="text" value="{:$row.leadtime?datetime($row.leadtime):''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Transport')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-transport" data-rule="required" class="form-control selectpicker" name="row[transport]">
+                {foreach name="transportList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.transport"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Transport_fee')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-transport_fee" class="form-control" step="0.01" name="row[transport_fee]" type="number" value="{$row.transport_fee|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Insurance')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-insurance" class="form-control" name="row[insurance]" type="number" value="{$row.insurance|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Prepay')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-prepay" data-rule="required" class="form-control" name="row[prepay]" type="number" value="{$row.prepay|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

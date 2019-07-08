@@ -61,5 +61,6 @@ return [
     'Product Model'                                              => '型号管理',
     'Package'                                                    => '销售包装',
     'Carton'                                                     => '外箱',
-    'Accessory'                                                  => '配件管理'
+    'Accessory'                                                  => '配件管理',
+    'Quotation'                                                  => '报价管理'
 ];
