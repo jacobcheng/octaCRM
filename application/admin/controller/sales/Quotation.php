@@ -18,6 +18,29 @@ class Quotation extends Backend
      */
     protected $model = null;
 
+    /**
+     * 是否开启数据限制
+     * 支持auth/personal
+     * 表示按权限判断/仅限个人
+     * 默认为禁用,若启用请务必保证表中存在admin_id字段
+     */
+    protected $dataLimit = 'personal';
+
+    /**
+     * 数据限制字段
+     */
+    protected $dataLimitField = 'admin_id';
+
+    /**
+     * 数据限制开启时自动填充限制字段值
+     */
+    protected $dataLimitFieldAutoFill = true;
+
+    /**
+     * 是否开启Validate验证
+     */
+    protected $modelValidate = false;
+
     public function _initialize()
     {
         parent::_initialize();
@@ -52,22 +75,26 @@ class Quotation extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['user'])
+                    ->with(['client','user','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['user'])
+                    ->with(['client','user','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','ref_no','po_no','client_id','destination','currency','rate','incoterms','validay','leadtime','transport','transport_fee','insurance','prepay','admin_id','createtime']);
-                $row->visible(['user']);
+                $row->visible(['id','ref_no','po_no','destination','currency','incoterms','validay','leadtime','transport','createtime']);
+                $row->visible(['client']);
+				$row->getRelation('client')->visible(['short_name']);
+				$row->visible(['user']);
 				$row->getRelation('user')->visible(['nickname']);
+                $row->visible(['country']);
+                $row->getRelation('country')->visible(['country_name']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);

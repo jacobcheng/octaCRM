@@ -4,6 +4,7 @@ namespace app\admin\model\sales;
 
 use think\Model;
 use traits\model\SoftDelete;
+use think\Db;
 
 class Quotation extends Model
 {
@@ -30,22 +31,38 @@ class Quotation extends Model
         'leadtime_text',
         'transport_text'
     ];
-    
 
+    protected $insert = ['ref_no'];
+
+    protected function setRefNoAttr ()
+    {
+        $num = self::whereTime('createtime', 'd')->count();
+        return 'LW'.date('Ymd').sprintf("%03d",$num+1);
+    }
+
+    protected function setCountryCodeAttr ($value, $data)
+    {
+        return $value ? : Db::name('client')->where('id', $data['client_id'])->value('country_code');
+    }
+
+    public function getCreatetimeAttr ($value)
+    {
+        return date('Y-m-d', $value);
+    }
     
     public function getCurrencyList()
     {
-        return ['USD' => __('Usd'), 'CNY' => __('Cny')];
+        return ['USD' => __('USD'), 'CNY' => __('CNY')];
     }
 
     public function getIncotermsList()
     {
-        return ['EXW' => __('Exw'), 'FCA' => __('Fca'), 'FAS' => __('Fas'), 'FOB' => __('Fob'), 'CFR' => __('Cfr'), 'CIF' => __('Cif'), 'CPT' => __('Cpt'), 'CIP' => __('Cip'), 'DAT' => __('Dat'), 'DAP' => __('Dap'), 'DDP' => __('Ddp')];
+        return ['EXW' => __('EXW'), 'FCA' => __('FCA'), 'FAS' => __('FAS'), 'FOB' => __('FOB'), 'CFR' => __('CFR'), 'CIF' => __('CIF'), 'CPT' => __('CPT'), 'CIP' => __('CIP'), 'DAT' => __('DAT'), 'DAP' => __('DAP'), 'DDP' => __('DDP')];
     }
 
     public function getTransportList()
     {
-        return ['Express Service' => __('Express service'), 'By Sea' => __('By sea'), 'By Air' => __('By air'), 'By Train' => __('By train'), 'By Road' => __('By road')];
+        return ['Express Service' => __('Express Service'), 'By Sea' => __('By Sea'), 'By Air' => __('By Air'), 'By Train' => __('By Train'), 'By Road' => __('By Road')];
     }
 
 
@@ -85,8 +102,20 @@ class Quotation extends Model
     }
 
 
+    public function client()
+    {
+        return $this->belongsTo('app\admin\model\sales\Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+
     public function user()
     {
-        return $this->belongsTo('app\admin\model\User', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\User', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+
+    public function country()
+    {
+        return $this->belongsTo('app\admin\model\Country', 'country_code', 'code', [], 'LEFT')->setEagerlyType(0);
     }
 }

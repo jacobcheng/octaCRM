@@ -1,12 +1,6 @@
 <form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
 
     <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Ref_no')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-ref_no" data-rule="required" class="form-control" name="row[ref_no]" type="text">
-        </div>
-    </div>
-    <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Po_no')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-po_no" class="form-control" name="row[po_no]" type="text">
@@ -15,13 +9,24 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Client_id')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-client_id" data-rule="required" data-source="client/index" class="form-control selectpage" name="row[client_id]" type="text" value="">
+            <input id="c-client_id" data-rule="required" data-source="sales/client/index" class="form-control selectpage" name="row[client_id]" type="text" value="">
         </div>
     </div>
     <div class="form-group">
+        <div class="col-xs-12 col-sm-offset-2">
+            <label for="c-switch"> <input id="c-switch" value="" type="checkbox"> {:__('Other Destination')}</label>
+        </div>
+    </div>
+    <div class="form-group" style="display: none">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Country')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-country_code" class="form-control selectpage" data-source="location/index" data-show-field="country_name" data-key-field="code" data-search-field="name,name_cn" data-and-or="or" data-order-by="name" name="row[country_code]" value="">
+        </div>
+    </div>
+    <div class="form-group" style="display: none">
         <label class="control-label col-xs-12 col-sm-2">{:__('Destination')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <textarea id="c-destination" data-rule="required" class="form-control " rows="5" name="row[destination]" cols="50"></textarea>
+            <textarea id="c-destination" class="form-control " rows="5" name="row[destination]" cols="50"></textarea>
         </div>
     </div>
     <div class="form-group">
@@ -57,43 +62,69 @@
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Validay')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-validay" data-rule="required" class="form-control" name="row[validay]" type="number">
+            <div class="input-group">
+                <input id="c-validay" data-rule="required" class="form-control" name="row[validay]" min="1" step="1" type="number" value="60">
+                <div class="input-group-addon">
+                    <span>{:__('Days')}</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Leadtime')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-leadtime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[leadtime]" type="text" value="{:date('Y-m-d H:i:s')}">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Transport')}:</label>
-        <div class="col-xs-12 col-sm-8">
-                        
-            <select  id="c-transport" data-rule="required" class="form-control selectpicker" name="row[transport]">
-                {foreach name="transportList" item="vo"}
-                    <option value="{$key}" {in name="key" value=""}selected{/in}>{$vo}</option>
-                {/foreach}
-            </select>
-
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Transport_fee')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-transport_fee" class="form-control" step="0.01" name="row[transport_fee]" type="number">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-xs-12 col-sm-2">{:__('Insurance')}:</label>
-        <div class="col-xs-12 col-sm-8">
-            <input id="c-insurance" class="form-control" name="row[insurance]" type="number">
+            <div class="input-group">
+                <input id="c-leadtime" data-rule="required" class="form-control" name="row[leadtime]" min="1" step="1" type="number" value="30">
+                <div class="input-group-addon">
+                    <span>{:__('Days')}</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Prepay')}:</label>
         <div class="col-xs-12 col-sm-8">
-            <input id="c-prepay" data-rule="required" class="form-control" name="row[prepay]" type="number">
+            <div class="input-group">
+                <input id="c-prepay" data-rule="required" class="form-control" min="10" step="10" name="row[prepay]" type="number" value="30">
+                <div class="input-group-addon">
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group" style="display: none;">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Transport')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-transport" class="form-control selectpicker" name="row[transport]">
+                <option value=""></option>
+                {foreach name="transportList" item="vo"}
+                    <option value="{$key}">{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group" style="display: none;">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Transport_fee')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <span>￥</span>
+                </div>
+                <input id="c-transport_fee" class="form-control" min="0" step="0.01" name="row[transport_fee]" type="number">
+            </div>
+        </div>
+    </div>
+    <div class="form-group" style="display: none;">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Insurance')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-insurance" class="form-control" name="row[insurance]" min="0" step="1" type="number">
+                <div class="input-group-addon">
+                    <span>‱</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-group layer-footer">

@@ -20,26 +20,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
-                sortName: 'id',
+                sortName: 'createtime',
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
                         {field: 'ref_no', title: __('Ref_no')},
-                        {field: 'po_no', title: __('Po_no')},
-                        {field: 'client_id', title: __('Client_id')},
-                        {field: 'currency', title: __('Currency'), searchList: {"USD":__('Usd'),"CNY":__('Cny')}, formatter: Table.api.formatter.normal},
-                        {field: 'rate', title: __('Rate'), operate:'BETWEEN'},
-                        {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('Exw'),"FCA":__('Fca'),"FAS":__('Fas'),"FOB":__('Fob'),"CFR":__('Cfr'),"CIF":__('Cif'),"CPT":__('Cpt'),"CIP":__('Cip'),"DAT":__('Dat'),"DAP":__('Dap'),"DDP":__('Ddp')}, formatter: Table.api.formatter.normal},
-                        {field: 'validay', title: __('Validay')},
-                        {field: 'leadtime', title: __('Leadtime'), operate:'RANGE', addclass:'datetimerange', formatter: Table.api.formatter.datetime},
-                        {field: 'transport', title: __('Transport'), searchList: {"Express Service":__('Express service'),"By Sea":__('By sea'),"By Air":__('By air'),"By Train":__('By train'),"By Road":__('By road')}, formatter: Table.api.formatter.normal},
-                        {field: 'transport_fee', title: __('Transport_fee'), operate:'BETWEEN'},
-                        {field: 'insurance', title: __('Insurance')},
-                        {field: 'prepay', title: __('Prepay')},
-                        {field: 'admin_id', title: __('Admin_id')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', formatter: Table.api.formatter.datetime},
-                        {field: 'user.nickname', title: __('User.nickname')},
+                        {field: 'client.short_name', title: __('Client_id')},
+                        {field: 'country.country_name', title: __('Country')},
+                        {field: 'po_no', title: __('Po_no'), formatter: function (value) {
+                                return value ? value  : '-';
+                            }},
+                        //{field: 'currency', title: __('Currency'), searchList: {"USD":__('USD'),"CNY":__('CNY')}, formatter: Table.api.formatter.normal},
+                        {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
+                        //{field: 'validay', title: __('Validay')},
+                        /*{field: 'leadtime', title: __('Leadtime'), operate:'RANGE', addclass:'datetimerange', formatter: function (value, row) {
+                                var time = new Date(new Date(row['createtime']).getTime() + value * 24 * 60 * 60 * 1000);
+                                var month = time.getMonth() + 1;
+                                var day = time.getDate();
+                                return time.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? "0" + day : day);
+                            }},*/
+                        //{field: 'transport', title: __('Transport'), searchList: {"Express Service":__('Express Service'),"By Sea":__('By Sea'),"By Air":__('By Air'),"By Train":__('By Train'),"By Road":__('By Road')}, formatter: Table.api.formatter.normal},
+                        {field: 'user.nickname', title: __('Admin_id')},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
@@ -116,6 +118,46 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+                $('#c-switch').change(function () {
+                    var destination = $('#c-destination,#c-country_code');
+                    if ($(this).is(':checked')){
+                        destination.closest('.form-group').show();
+                        $('.sp_container').css('width', '100%');
+                    } else {
+                        destination.closest('.form-group').hide();
+                        destination.val('');
+                    }
+                });
+                $('#c-incoterms').change(function () {
+                    var terms = $(this).val();
+                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
+                        var insurance = $('#c-destination');
+                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
+                        insurance .closest('.form-group').hide();
+                        insurance .val('');
+                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
+                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
+                        console.log(terms);
+                    } else  {
+                        var selectors = $("#c-transport,#c-transport_fee,#c-insurance");
+                        selectors.closest('.form-group').hide();
+                        selectors.val('');
+                    }
+                });
+                $(function () {
+                    if ($('#c-destination').val()) {
+                        $('#c-switch').trigger('click');
+                    };
+                    var terms = $('#c-incoterms').val();
+                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
+                        console.log(terms);
+                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
+                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
+                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
+                    } else {
+                        return;
+                    }
+                })
             }
         }
     };
