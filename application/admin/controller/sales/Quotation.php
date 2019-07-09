@@ -103,4 +103,21 @@ class Quotation extends Backend
         }
         return $this->view->fetch();
     }
+
+    public function detail ($ids = NULL)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        //$this->assignconfig('quotation_id', $ids);
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
 }

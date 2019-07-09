@@ -18,6 +18,7 @@ return [
     'Website'               => '网址',
     'Tel'                   => '电话',
     'Fax'                   => '传真',
+    'Address'               => '地址',
     'Contact'               => '主联系人',
     'Remark'                => '备注',
     'Status'                => '状态',
