@@ -111,12 +111,12 @@ class Quotation extends Model
             switch ($this->incoterms) {
                 case 'Express Service':
                     list($cbm, $weight) = [$total_cbm * 200, $total_weight];
-                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
+                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $total_cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
                     break;
 
                 case 'By Air':
                     list($cbm, $weight) = [$total_cbm * 1.67, $total_weight];
-                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
+                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $total_cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
                     break;
 
                 default:

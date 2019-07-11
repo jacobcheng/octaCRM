@@ -186,7 +186,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
             Table.api.init({
                 extend: {
                     index_url: 'products/product/index' + location.search,
-                    add_url: 'products/product/add/client_id/' + Config.model_id,
+                    add_url: 'products/product/add/model_id/' + Config.model_id,
                     edit_url: 'products/product/edit',
                     del_url: 'products/product/del',
                     multi_url: 'products/product/multi',

@@ -87,7 +87,7 @@ class QuotationItem extends Backend
         return $this->view->fetch();
     }
 
-    public function add($quotation_id = null)
+    public function add()
     {
         if ($this->request->isPost()) {
             $params = $this->request->post("row/a");
@@ -127,8 +127,6 @@ class QuotationItem extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
-        if ($quotation_id === null) $this->error("缺少报价单参数");
-        $this->assign('quotation_id', $quotation_id);
         return $this->view->fetch();
     }
 
@@ -224,13 +222,12 @@ class QuotationItem extends Backend
         }
 
         if (!$data['unit_price']){
-            //$quotation = empty($row) ? model('app\admin\model\sales\Quotation')->get($data['quotation_id']) : $row->quotation;
-            $id = isset($row['quotation']['id']) ? $row['quotation']['id'] : $data['quotation_id'];
-            $quotation =  model('app\admin\model\sales\Quotation')->get($id);
-            $unit_fee = $quotation->getUnitFee($data['cbm'], $data['weight'], isset($row['id']) ? $row['id'] : '0');
+            $quotation =  model('app\admin\model\sales\Quotation')->get($data['quotation_id']);
+            $id = isset($row['id']) ? $row['id'] : '0';
+            $unit_fee = $quotation->getUnitFee($data['cbm'], $data['weight'], $id);
             if (count($quotation->items) > 0) {
                 foreach ($quotation->items as $value) {
-                    if ($value['id'] != (isset($row['id']) ? $row['id'] : '0')) {
+                    if ($value['id'] != $id) {
                         $value['unit_price'] = round(($value[key($unit_fee)] * current($unit_fee) / $value['quantity'] + $value['unit_cost'] * (1 + $value['profit'] / 100)) * (1 + $quotation->insurance / 10000), 2);
                         $value['amount'] = $value['unit_price'] * $value['quantity'];
                         $value->save();

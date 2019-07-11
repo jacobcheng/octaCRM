@@ -171,7 +171,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             }},
                         {field: 'package.name', title: __('Package')},
                         {field: 'process', title: __('Process'), formatter: function (value, row) {
-                                if (value) {
+                                if (value.length > 0) {
                                     return $.map(value, function(val,key){
                                         return val["process"]+"<br>";
                                     })
