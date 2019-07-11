@@ -81,7 +81,7 @@ class Quotation extends Backend
                     ->count();
 
             $list = $this->model
-                    ->with(['client','user','country'])
+                    ->with(['client','contact','user','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
@@ -90,7 +90,9 @@ class Quotation extends Backend
             foreach ($list as $row) {
                 $row->visible(['id','ref_no','po_no','destination','currency','incoterms','validay','leadtime','transport','createtime']);
                 $row->visible(['client']);
-				$row->getRelation('client')->visible(['short_name']);
+                $row->getRelation('client')->visible(['short_name']);
+                $row->visible(['contact']);
+                $row->getRelation('contact')->visible(['appellation','email','cc_email']);
 				$row->visible(['user']);
 				$row->getRelation('user')->visible(['nickname']);
                 $row->visible(['country']);
@@ -116,7 +118,7 @@ class Quotation extends Backend
                 $this->error(__('You have no permission'));
             }
         }
-        //$this->assignconfig('quotation_id', $ids);
+        $this->assignconfig('quotation_id', $ids);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }

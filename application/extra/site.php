@@ -19,6 +19,7 @@ return array (
     'page' => 'Page',
     'article' => 'Article',
     'catalog' => 'Catalog',
+    'process' => 'Process',
   ),
   'configgroup' => 
   array (
@@ -35,4 +36,8 @@ return array (
   'mail_smtp_pass' => 'password',
   'mail_verify_type' => '2',
   'mail_from' => '10000@qq.com',
+  'process' => 
+  array (
+    'Silk Print Logo' => '丝印Logo',
+  ),
 );

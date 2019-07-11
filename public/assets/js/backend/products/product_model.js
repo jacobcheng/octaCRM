@@ -202,8 +202,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
                 pk: 'id',
                 sortName: 'id',
                 queryParams: function (params) {
-                    params.filter = "{'model_id':" + Config.model_id + "}";
-                    params.op = "{'model_id':'='}";
+                    var filter = JSON.parse(params.filter);
+                    var op = JSON.parse(params.op);
+                    filter.model_id = Config.model_id;
+                    op.model_id = '=';
+                    params.filter = JSON.stringify(filter);
+                    params.op = JSON.stringify(op);
                     return params;
                 },
                 columns: [

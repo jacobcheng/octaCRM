@@ -1,9 +1,10 @@
 <?php
 
-namespace app\admin\model\products;
+namespace app\admin\model\sales;
 
 use think\Model;
 use traits\model\SoftDelete;
+use think\Db;
 
 class QuotationItem extends Model
 {
@@ -27,9 +28,41 @@ class QuotationItem extends Model
     protected $append = [
 
     ];
-    
 
-    
+    public function getProductAttr ($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getPackageAttr ($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getCartonAttr ($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getAccessoryAttr ($value)
+    {
+        return $value ? json_decode($value, true):[];
+    }
+
+    public function getProcessAttr ($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getCatalogIdAttr ($value, $data)
+    {
+        return Db::name('product_model')->where('id', $this->product['model_id'])->value('category_id');
+    }
+
+    public function setProcessAttr ($value)
+    {
+        return $value ? $value:"{}";
+    }
 
 
 

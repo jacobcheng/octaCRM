@@ -27,6 +27,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'ref_no', title: __('Ref_no')},
                         {field: 'client.short_name', title: __('Client_id')},
                         {field: 'country.country_name', title: __('Country')},
+                        {field: 'contact.appellation', title: __('Contact'), formatter: function (value, row) {
+                                var cc_email = row['contact']['cc_email'] ? "?cc="+row['contact']['cc_email'] : '';
+                                return "<a href='mailto:"+row['contact']['email']+cc_email+"'>"+value+"</a>";
+                            }},
                         {field: 'po_no', title: __('Po_no'), formatter: function (value) {
                                 return value ? value  : '-';
                             }},
@@ -123,9 +127,81 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         edit: function () {
             Controller.api.bindevent();
         },
+        detail: function () {
+            // 初始化表格参数配置
+            Table.api.init({
+                extend: {
+                    index_url: 'sales/quotation_item/index' + location.search,
+                    add_url: 'sales/quotation_item/add/quotation_id/' + Config.quotation_id,
+                    edit_url: 'sales/quotation_item/edit',
+                    del_url: 'sales/quotation_item/del',
+                    multi_url: 'sales/quotation_item/multi',
+                    table: 'quotation_item',
+                }
+            });
+
+            var table = $("#table");
+
+            // 初始化表格
+            table.bootstrapTable({
+                url: $.fn.bootstrapTable.defaults.extend.index_url,
+                pk: 'id',
+                sortName: 'id',
+                queryParams: function(params){
+                    var filter = JSON.parse(params.filter);
+                    var op = JSON.parse(params.op);
+                    filter.quotation_id = Config.quotation_id;
+                    op.quotation_id = '=';
+                    params.filter = JSON.stringify(filter);
+                    params.op = JSON.stringify(op);
+                    return params;
+                },
+                columns: [
+                    [
+                        {checkbox: true},
+                        {field: 'product.code', title: __('Product')},
+                        {field: 'accessory', title: __('Accessory'), formatter: function (value) {
+                                if (value){
+                                    return $.map(value, function(val){
+                                        return val['name']
+                                    })
+                                } else {
+                                    return '-';
+                                }
+                            }},
+                        {field: 'package.name', title: __('Package')},
+                        {field: 'process', title: __('Process'), formatter: function (value, row) {
+                                if (value) {
+                                    return $.map(value, function(val,key){
+                                        return val["process"]+"<br>";
+                                    })
+                                } else {
+                                    return '-';
+                                }
+                            }},
+                        {field: 'weight', title: __('Weight'), operate:'BETWEEN'},
+                        {field: 'cbm', title: __('Cbm'), operate:'BETWEEN'},
+                        {field: 'quantity', title: __('Quantity')},
+                        {field: 'carton', title: __('Carton'), formatter: function (value, row) {
+                                return value ? Math.ceil(row['quantity']/value['rate']):row['quantity'];
+                            }},
+                        {field: 'profit', title: __('Profit')},
+                        {field: 'unit_price', title: __('Unit_price'), operate:'BETWEEN'},
+                        {field: 'amount', title: __('Amount'), operate:'BETWEEN'},
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                    ]
+                ]
+            });
+
+            // 为表格绑定事件
+            Table.api.bindevent(table);
+        },
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+                $('#c-contact_id').data('params', function () {
+                    return {custom:{client_id:$('#c-client_id').val()}};
+                })
                 $('#c-switch').change(function () {
                     var destination = $('#c-destination,#c-country_code');
                     if ($(this).is(':checked')){
@@ -139,7 +215,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 $('#c-incoterms').change(function () {
                     var terms = $(this).val();
                     if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
-                        var insurance = $('#c-destination');
+                        var insurance = $('#c-insurance');
                         $("#c-transport,#c-transport_fee").closest('.form-group').show();
                         insurance .closest('.form-group').hide();
                         insurance .val('');

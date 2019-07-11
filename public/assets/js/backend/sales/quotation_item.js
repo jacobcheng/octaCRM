@@ -1,7 +1,7 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], function ($, undefined, Backend, Table, Form, Fast, Layer) {
 
     var Controller = {
-        index: function () {
+        /*index: function () {
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -48,7 +48,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             // 为表格绑定事件
             Table.api.bindevent(table);
-        },
+        },*/
         recyclebin: function () {
             // 初始化表格参数配置
             Table.api.init({
@@ -113,10 +113,61 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         edit: function () {
             Controller.api.bindevent();
+            $("[type='submit']").click(function () {
+                var product = window.location.pathname.split("/");
+                var that = this;
+                Fast.api.ajax({
+                    url : "sales/quotation_item/checkupdate/ids/" + product[product.length - 1],
+                    data: {product:$("#c-product_id").val(),package:$("#c-package_id").val(),carton:$("#c-carton_id").val(),accessory:$("#c-accessory_ids").val()}
+                },
+                function (data, ret) {
+                    $(that).closest("form").trigger("submit");
+                },
+                function (data, ret) {
+                    Layer.confirm(ret.msg + "有更新，是否需要更新报价内容？",{btn:["更新","维持"]},
+                        function () {
+                            $("#c-unit_price").val("");
+                            $(that).closest("form").trigger("submit");
+                        },
+                        function () {
+                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/false/ids/" + product[product.length - 1]);
+                            $(that).closest("form").trigger("submit");
+                        }
+                    );
+                    return false;
+                });
+                return false;
+            });
+
+
+            $(function () {
+                Layer.confirm("此次编辑是否需要自动更新单价？", {}, function (index) {
+                    $("#c-unit_price").val("");
+                    Layer.close(index);
+                });
+            });
         },
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+                $("#c-product_model").data("params", function () {
+                    return {custom:{category_id:$("#c-catalog").val()}};
+                });
+                $("#c-product_id").data("params", function () {
+                    return {custom:{model_id:$("#c-product_model").val()}};
+                });
+                $(".btn-append").on('fa.event.appendfieldlist', function () {
+                    Form.events.selectpicker($("form[role=form]"));
+                });
+
+                $("#c-catalog").change(function(){
+                    if($("#c-product-model").val()){
+                        $("#c-product-model").selectPageClear();
+                    };
+                    if($("#c-product").val()){
+                        $("#c-product").selectPageClear();
+                    }
+                });
             }
         }
     };

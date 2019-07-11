@@ -16,18 +16,16 @@
             <dl class="dl-horizontal">
                 <dt>{:__('Client_id')}: </dt>
                 <dd>{$row.client.short_name}</dd>
-                <dt>{:__('Country')}: </dt>
-                <dd>{$row.country.country_name}</dd>
                 <dt>{:__('Po_no')}: </dt>
                 <dd>{$row.po_no}</dd>
+                <dt>{:__('Contact')}: </dt>
+                <dd><a href="mailto:{$row.contact.email}{$row.contact.cc_email ? '?cc='.$row.contact.cc_email:''}">{$row.contact.appellation}</a></dd>
+                <dt>{:__('Country')}: </dt>
+                <dd>{$row.country.country_name}</dd>
                 <dt>{:__('Destination')}: </dt>
                 <dd>{$row.destination ? : $row.client.address}</dd>
-                <dt>{:__('Currency')}: </dt>
-                <dd>{$row.currency}</dd>
-                <dt>{:__('Rate')}: </dt>
-                <dd>{$row.rate}</dd>
-                <dt>{:__('Incoterms')}: </dt>
-                <dd>{$row.incoterms}</dd>
+                <dt>{:__('Remark')}: </dt>
+                <dd>{$row.remark}</dd>
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">
@@ -37,14 +35,22 @@
                 <dd>{$row.validay} Days</dd>
                 <dt>{:__('leadtime')}: </dt>
                 <dd>{$row.leadtime} Days</dd>
+                <dt>{:__('Currency')}/{:__('Rate')}: </dt>
+                <dd>{$row.currency}/{$row.rate}</dd>
+                <dt>{:__('Incoterms')}: </dt>
+                <dd>{$row.incoterms}</dd>
+                {neq name="row.incoterms" value="EXW"}
                 <dt>{:__('Transport')}: </dt>
                 <dd>{$row.transport}</dd>
                 <dt>{:__('Transport_fee')}: </dt>
                 <dd>￥ <span>{$row.transport_fee}<span></dd>
+                {/neq}
+                {in name="row.incoterms" value="CIF,CIP,DAT,DPT,DAP,DDP"}
                 <dt>{:__('Insurance')}: </dt>
-                <dd>{$row.insurance}</dd>
+                <dd>{$row.insurance} ‱</dd>
+                {/in}
                 <dt>{:__('Prepay')}: </dt>
-                <dd>{$row.prepay}</dd>
+                <dd>{$row.prepay} %</dd>
                 {eq name="row.admin_id" value="admin.id"}
                 <dt>{:__('Admin_id')}: </dt>
                 <dd>{$row.creator.nickname}</dd>

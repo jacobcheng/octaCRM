@@ -1,6 +1,6 @@
 <?php
 
-namespace app\admin\validate\products;
+namespace app\admin\validate\sales;
 
 use think\Validate;
 

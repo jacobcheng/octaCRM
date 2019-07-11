@@ -29,7 +29,8 @@ class Quotation extends Model
         'currency_text',
         'incoterms_text',
         'leadtime_text',
-        'transport_text'
+        'transport_text',
+        //'unit_fee',
     ];
 
     protected $insert = ['ref_no'];
@@ -101,10 +102,43 @@ class Quotation extends Model
         return $value === '' ? null : ($value && !is_numeric($value) ? strtotime($value) : $value);
     }
 
+    //获取单位运费
+    public function getUnitFee ($newcbm = 0, $newweight = 0, $id = 0)
+    {
+        $total_cbm = Db::name('quotation_item')->where(['quotation_id' => $this->id, 'id' => ['<>', $id]])->sum('cbm') + $newcbm;
+        $total_weight = Db::name('quotation_item')->where(['quotation_id' => $this->id, 'id' => ['<>', $id]])->sum('weight') + $newweight;
+        if ($this->incoterms !== "EXW" && $total_cbm != 0){
+            switch ($this->incoterms) {
+                case 'Express Service':
+                    list($cbm, $weight) = [$total_cbm * 200, $total_weight];
+                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
+                    break;
+
+                case 'By Air':
+                    list($cbm, $weight) = [$total_cbm * 1.67, $total_weight];
+                    return $cbm > $weight ? ['cbm' => round($this->transport_fee / $cbm, 2)]:['weight' => round($this->transport_fee / $weight, 2)];
+                    break;
+
+                default:
+                    return ['cbm' => $this->transport_fee / $total_cbm];
+                    break;
+            }
+        } else {
+            return ['weight' => 0];
+        }
+    }
+
+
 
     public function client()
     {
         return $this->belongsTo('app\admin\model\sales\Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+
+    public function contact()
+    {
+        return $this->belongsTo('app\admin\model\sales\Contact', 'contact_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 
 
@@ -117,5 +151,10 @@ class Quotation extends Model
     public function country()
     {
         return $this->belongsTo('app\admin\model\Country', 'country_code', 'code', [], 'LEFT')->setEagerlyType(0);
+    }
+
+    public  function items()
+    {
+        return $this->hasMany('app\admin\model\sales\QuotationItem', 'quotation_id', 'id', [], 'LEFT');
     }
 }
