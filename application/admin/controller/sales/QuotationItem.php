@@ -182,11 +182,11 @@ class QuotationItem extends Backend
 
     protected function prepareSave ($data, $update = true, $row = [])
     {
-        $product = $update ? model('app\admin\model\products\Product')->find($data['product']) : $row['product'];
+        $product = (!empty($row) && !$update && $data['product'] == (isset($row['product']['id']) ? : $data['product'])) ?  $row['product']: model('app\admin\model\products\Product')->find($data['product']);
         $productCBM = $product['length']*$product['width']*$product['height'];
         $packageCBM = $product['plength']*$product['pwidth']*$product['pheight'];
         $cbm = $packageCBM > $productCBM ? $packageCBM : $productCBM;
-        list($data['cbm'], $data['weight'], $data['unit_cost']) = [round($cbm/1000000,3)*$data['quantity'], ($product['pweight'] ? : $product['weight'])*$data['quantity'], $product['cost']];
+        list($data['cbm'], $data['weight'], $data['unit_cost']) = [round($cbm/1000000,3) * $data['quantity'], ($product['pweight'] ? : $product['weight'])*$data['quantity'], $product['cost']];
         $data['product'] = json_encode($product);
 
         if ($data['process']){
@@ -196,7 +196,7 @@ class QuotationItem extends Backend
         }
 
         if ($data['package']){
-            $package = $update ? model('app\admin\model\products\Package')->find($data['package']) : $row['package'];
+            $package = (!empty($row) && !$update && $data['package'] = (isset($row['package']['id']) ? : $data['package'])) ? $row['package'] : model('app\admin\model\products\Package')->find($data['package']);
             $data['cbm'] = round($package['length'] * $package['width'] * $package['height'] / 1000000,3)*$data['quantity'];
             $data['weight'] += $package['weight'] * $data['quantity'];
             $data['unit_cost'] += $package['cost'];
@@ -204,7 +204,7 @@ class QuotationItem extends Backend
         }
 
         if ($data['carton']){
-            $carton = $update ? model('app\admin\model\products\Carton')->find($data['carton']) : $row['carton'];
+            $carton = (!empty($row) && !$update && $data['carton'] = (isset($row['carton']['id']) ? : $data['carton'])) ? $row['carton'] : model('app\admin\model\products\Carton')->find($data['carton']);
             $qty = ceil($data['quantity']/$carton['rate']);
             $data['cbm'] = round($carton['length'] * $carton['width'] * $carton['height'] / 1000000,3) * $qty;
             $data['weight'] += $carton['weight'] * $qty;
@@ -213,12 +213,30 @@ class QuotationItem extends Backend
         }
 
         if ($data['accessory']){
-            $accessory = $update ? model('app\admin\model\products\Accessory')->all($data['accessory']) : $row['accessory'];
-            foreach ($accessory as $value) {
-                $data['unit_cost'] += $value['cost'];
-                $data['weight'] += $value['weight'];
+            $accessory = model('app\admin\model\products\Accessory')->all($data['accessory']);
+            if (!empty($row) || $update) {
+                foreach ($accessory as $value) {
+                    $data['unit_cost'] += $value['cost'];
+                    $data['weight'] += $value['weight'];
+                }
+                $data['accessory'] = json_encode($accessory);
+            } else {
+                $data['accessory'] = [];
+                foreach ($accessory as $value) {
+                    foreach ($row['accessory'] as $val){
+                        if ($value['id'] == $val['id']){
+                            $data['unit_cost'] += $val['cost'];
+                            $data['weight'] += $val['weight'];
+                            $data['accessory'][] = $val;
+                        } else {
+                            $data['unit_cost'] += $value['cost'];
+                            $data['weight'] += $value['weight'];
+                            $data['accessory'][] = $value;
+                        }
+                    }
+                }
+                $data['accessory'] = json_encode($data[$accessory]);
             }
-            $data['accessory'] = json_encode($accessory);
         }
 
         if (!$data['unit_price']){
@@ -254,17 +272,15 @@ class QuotationItem extends Backend
                             if (in_array($val['id'],$ids)) {
                                 $cost =  model('app\admin\model\products\Accessory')->where('id', $val['id'])->find();
                                 if ($val['cost'] != $cost['cost']) {
-                                    $data = $data . __('Accessory').' '.$cost['name'];
+                                    $data = $data . (empty($data) ? __('Accessory') : ', '.__('Accessory')).': '.$cost['name'];
                                 }
                             }
                         }
                     } else {
-                        if (!empty($row[$key]['cost'])) {
-                            $uckey = ucwords($key);
-                            $cost = model('app\admin\model\products\\' . $uckey)->where('id', $params[$key])->value('cost');
-                            if ($row[$key]['cost'] != $cost) {
-                                $data = $data . __($uckey) . ' ';
-                            }
+                        $uckey = ucwords($key);
+                        $cost = model('app\admin\model\products\\' . $uckey)->where('id', $params[$key])->value('cost');
+                        if ($row[$key]['cost'] != $cost) {
+                            $data = $data . (empty($data) ? __($uckey) : ', '.__($uckey));
                         }
                     }
                 }

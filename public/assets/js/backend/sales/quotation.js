@@ -133,7 +133,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 extend: {
                     index_url: 'sales/quotation_item/index' + location.search,
                     add_url: 'sales/quotation_item/add/quotation_id/' + Config.quotation_id,
-                    edit_url: 'sales/quotation_item/edit',
+                    edit_url: 'sales/quotation_item/edit/update/false',
                     del_url: 'sales/quotation_item/del',
                     multi_url: 'sales/quotation_item/multi',
                     table: 'quotation_item',

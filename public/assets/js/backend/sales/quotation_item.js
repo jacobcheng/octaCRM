@@ -127,10 +127,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                     Layer.confirm(ret.msg + "有更新，是否需要更新报价内容？",{btn:["更新","维持"]},
                         function () {
                             $("#c-unit_price").val("");
+                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/true/ids/" + product[product.length - 1]);
                             $(that).closest("form").trigger("submit");
                         },
                         function () {
-                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/false/ids/" + product[product.length - 1]);
                             $(that).closest("form").trigger("submit");
                         }
                     );
