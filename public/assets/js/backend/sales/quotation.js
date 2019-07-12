@@ -172,7 +172,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 return "Total"
                             }},
                         {field: 'accessory', title: __('Accessory'), formatter: function (value) {
-                                if (value){
+                                if (value.length > 0){
                                     return $.map(value, function(val){
                                         return val['name']
                                     })
@@ -191,22 +191,26 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 }
                             }},
                         {field: 'weight', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
-                                var num = 0;
-                                return $.map(row, function (val) {
-                                    return num += val['weight'];
+                                var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['weight'];
                                 });
+                                return sum
                             }},
                         {field: 'cbm', title: __('Cbm'), operate:'BETWEEN', footerFormatter: function (row) {
-                                var total = 0;
-                                return $.map(row, function (val) {
-                                    return total += val['cbm'];
-                                })
+                                var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['cbm'];
+                                });
+                                return sum.toFixed(2);
                             }},
                         {field: 'quantity', title: __('Quantity'), footerFormatter: function (row) {
-                                var num = 0;
-                                return $.map(row, function (val) {
-                                    return num += val['quantity'];
+                                var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['quantity'];
                                 });
+                                //return "<span class='text-center'>"+sum+"</span>";
+                                return sum;
                             }},
                         {field: 'carton', title: __('Carton'), formatter: function (value, row) {
                                 return value ? Math.ceil(row['quantity']/value['rate']):row['quantity'];
@@ -233,8 +237,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 $.map(row, function(val){
                                     sum += val['amount'];
                                 });
-                                //return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";
-                                return sum;
+                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";
                             }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
