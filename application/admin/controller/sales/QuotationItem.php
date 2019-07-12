@@ -239,12 +239,13 @@ class QuotationItem extends Backend
                 $data['unit_cost'] += $value['cost'];
             }
         }
-
+        $pnc = 0;
         if ($data['package']){
             $package = (!empty($row) && !$update && $data['package'] = (isset($row['package']['id']) ? : $data['package'])) ? $row['package'] : model('app\admin\model\products\Package')->find($data['package']);
             $data['cbm'] = round($package['length'] * $package['width'] * $package['height'] / 1000000,3)*$data['quantity'];
             $data['weight'] += $package['weight'] * $data['quantity'];
-            $data['unit_cost'] += $package['cost'];
+            //$data['unit_cost'] += $package['cost'];
+            $pnc += $package['cost'];
             $data['package'] = json_encode($package);
         }
 
@@ -254,6 +255,7 @@ class QuotationItem extends Backend
             $data['cbm'] = round($carton['length'] * $carton['width'] * $carton['height'] / 1000000,3) * $qty;
             $data['weight'] += $carton['weight'] * $qty;
             $data['unit_cost'] += round($carton['cost']/$carton['rate'], 2);
+            $pnc += round($carton['cost']/$carton['rate'], 2);
             $data['carton'] = json_encode($carton);
         }
 
@@ -291,13 +293,14 @@ class QuotationItem extends Backend
             if (count($quotation->items) > 0) {
                 foreach ($quotation->items as $value) {
                     if ($value['id'] != $id) {
-                        $value['unit_price'] = round(($value[key($unit_fee)] * current($unit_fee) / $value['quantity'] + $value['unit_cost'] * (1 + $value['profit'] / 100)) * (1 + $quotation->insurance / 10000), 2);
+                        //$value['unit_price'] = round(($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + $value['unit_cost'] * (1 + $value['profit'] / 100) + $value['carton']['cost'] * (1 + $quotation->insurance / 10000), 2);
+                        $value['unit_price'] = round((($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + ($value['unit_cost'] * (1 + $value['profit'] / 100)) + $value['carton']['cost'] + $value['package']['cost']) * (1 + $quotation->insurance / 10000), 2);
                         $value['amount'] = $value['unit_price'] * $value['quantity'];
                         $value->save();
                     }
                 }
             }
-            $data['unit_price'] = round(($data[key($unit_fee)] * current($unit_fee)/$data['quantity'] + $data['unit_cost'] * (1 + $data['profit']/100)) * (1 + $quotation->insurance/10000), 2);
+            $data['unit_price'] = round((($data[key($unit_fee)] * current($unit_fee)/$data['quantity']) + ($data['unit_cost'] * (1 + $data['profit']/100)) + $pnc) * (1 + $quotation->insurance/10000), 2);
         }
         $data['amount'] = $data['unit_price'] * $data['quantity'];
         return $data;

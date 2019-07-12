@@ -59,7 +59,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     icon: 'fa fa-list',
                                     //url: 'sales/quotation/detail'
                                     click: function (value,row) {
-                                        Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no+__('Detail'))
+                                        Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
                                     }
                                 }
                             ]}
@@ -233,7 +233,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 $.map(row, function(val){
                                     sum += val['amount'];
                                 });
-                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";;
+                                //return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";
+                                return sum;
                             }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
@@ -241,7 +242,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     title: __('Copy'),
                                     classname: 'btn btn-xs btn-success btn-dialog',
                                     icon: 'fa fa-copy',
-                                    url: 'sales/quotation_item/copy'
+                                    url: 'sales/quotation_item/copy',
+                                    confirm: '是否复制该产品？'
                                 }
                             ]}
                     ]
@@ -276,7 +278,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         insurance .val('');
                     } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
                         $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
-                        console.log(terms);
                     } else  {
                         var selectors = $("#c-transport,#c-transport_fee,#c-insurance");
                         selectors.closest('.form-group').hide();
@@ -289,7 +290,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     };
                     var terms = $('#c-incoterms').val();
                     if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
-                        console.log(terms);
                         $("#c-transport,#c-transport_fee").closest('.form-group').show();
                     } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
                         $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
