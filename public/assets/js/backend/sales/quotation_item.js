@@ -147,6 +147,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                 });
             });
         },
+        copy: function () {
+            Controller.edit();
+        },
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));

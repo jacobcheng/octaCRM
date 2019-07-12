@@ -117,6 +117,7 @@ class Product extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
+        //接收ID传到控制器的edit方法
         return $this->edit($ids);
     }
 }

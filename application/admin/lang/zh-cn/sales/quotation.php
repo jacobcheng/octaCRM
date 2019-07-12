@@ -33,5 +33,6 @@ return [
     'Profit'           => '利润率',
     'Unit_price'       => '单价',
     'Amount'           => '总价',
-    'Total Amount'     => '总金额'
+    'Total Amount'     => '总金额',
+    'Copy'             => '复制',
 ];
