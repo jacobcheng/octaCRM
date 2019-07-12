@@ -44,6 +44,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 return time.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? "0" + day : day);
                             }},*/
                         //{field: 'transport', title: __('Transport'), searchList: {"Express Service":__('Express Service'),"By Sea":__('By Sea'),"By Air":__('By Air'),"By Train":__('By Train'),"By Road":__('By Road')}, formatter: Table.api.formatter.normal},
+                        {field: 'total_amount', title: __('Total Amount'), formatter: function (value, row) {
+                                return "<span data-toggle='tooltip' title='USD "+ (value/row.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                            }},
                         {field: 'user.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [

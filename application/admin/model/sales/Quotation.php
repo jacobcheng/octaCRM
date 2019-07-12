@@ -30,7 +30,7 @@ class Quotation extends Model
         'incoterms_text',
         'leadtime_text',
         'transport_text',
-        //'unit_fee',
+        'total_amount'
     ];
 
     protected $insert = ['ref_no'];
@@ -100,6 +100,11 @@ class Quotation extends Model
     protected function setLeadtimeAttr($value)
     {
         return $value === '' ? null : ($value && !is_numeric($value) ? strtotime($value) : $value);
+    }
+
+    public function getTotalAmountAttr ($value, $data)
+    {
+        return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount');
     }
 
     //获取单位运费

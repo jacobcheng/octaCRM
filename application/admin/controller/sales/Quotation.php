@@ -88,7 +88,7 @@ class Quotation extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','ref_no','po_no','destination','currency','incoterms','validay','leadtime','transport','createtime']);
+                $row->visible(['id','ref_no','po_no','destination','currency','rate','incoterms','validay','leadtime','transport','total_amount','createtime']);
                 $row->visible(['client']);
                 $row->getRelation('client')->visible(['short_name']);
                 $row->visible(['contact']);
