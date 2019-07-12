@@ -37,6 +37,8 @@
                 <dd>{$row.leadtime} Days</dd>
                 <dt>{:__('Currency')}/{:__('Rate')}: </dt>
                 <dd>{$row.currency}/{$row.rate}</dd>
+                <dt>{:__('Tax Rate')}: </dt>
+                <dd>{$row.tax_rate} %</dd>
                 <dt>{:__('Incoterms')}: </dt>
                 <dd>{$row.incoterms}</dd>
                 {neq name="row.incoterms" value="EXW"}

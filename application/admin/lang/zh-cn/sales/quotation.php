@@ -36,5 +36,7 @@ return [
     'Total Amount'     => '总金额',
     'Copy'             => '复制',
     'Add Tax'          => '含税报价',
-    'Tax Rate'         => '税率'
+    'Tax Included'      => '含税金额',
+    'Tax Rate'         => '税率',
+    'Tax'              => '税金'
 ];

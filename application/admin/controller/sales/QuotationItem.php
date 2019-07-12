@@ -293,7 +293,6 @@ class QuotationItem extends Backend
             if (count($quotation->items) > 0) {
                 foreach ($quotation->items as $value) {
                     if ($value['id'] != $id) {
-                        //$value['unit_price'] = round(($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + $value['unit_cost'] * (1 + $value['profit'] / 100) + $value['carton']['cost'] * (1 + $quotation->insurance / 10000), 2);
                         $value['unit_price'] = round((($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + ($value['unit_cost'] * (1 + $value['profit'] / 100)) + $value['carton']['cost'] + $value['package']['cost']) * (1 + $quotation->insurance / 10000), 2);
                         $value['amount'] = $value['unit_price'] * $value['quantity'];
                         $value->save();

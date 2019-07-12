@@ -239,6 +239,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 });
                                 return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";
                             }},
+                        {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
+                                var tax_amount = (row['amount']/(1 - Config.quotation.tax_rate/100));
+                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+tax_amount.toFixed(2)+"</span>";
+                            }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
                                     name: 'copy',
