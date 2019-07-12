@@ -136,6 +136,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         detail: function () {
+            $(".btn-edit").click(function () {
+                Fast.api.open("sales/quotation/edit/ids/"+ Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no)
+            });
             // 初始化表格参数配置
             Table.api.init({
                 showFooter:true,
