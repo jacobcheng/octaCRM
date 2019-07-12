@@ -118,7 +118,7 @@ class Quotation extends Backend
                 $this->error(__('You have no permission'));
             }
         }
-        $this->assignconfig('quotation_id', $ids);
+        $this->assignconfig('quotation', $row);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }

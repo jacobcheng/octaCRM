@@ -49,10 +49,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
                                     name: 'Detail',
-                                    title: __('Detail'),
-                                    classname: 'btn btn-xs btn-success btn-addtabs',
+                                    title: function (row) {
+                                        return row.ref_no + __('Detail');
+                                    },
+                                    classname: 'btn btn-xs btn-success btn-addtabs btn-click',
                                     icon: 'fa fa-list',
-                                    url: 'sales/quotation/detail'
+                                    //url: 'sales/quotation/detail'
+                                    click: function (value,row) {
+                                        Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no+__('Detail'))
+                                    }
                                 }
                             ]}
                     ]
@@ -130,9 +135,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         detail: function () {
             // 初始化表格参数配置
             Table.api.init({
+                showFooter:true,
                 extend: {
                     index_url: 'sales/quotation_item/index' + location.search,
-                    add_url: 'sales/quotation_item/add/quotation_id/' + Config.quotation_id,
+                    add_url: 'sales/quotation_item/add/quotation_id/' + Config.quotation.id,
                     edit_url: 'sales/quotation_item/edit/update/false',
                     del_url: 'sales/quotation_item/del',
                     multi_url: 'sales/quotation_item/multi',
@@ -150,7 +156,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 queryParams: function(params){
                     var filter = JSON.parse(params.filter);
                     var op = JSON.parse(params.op);
-                    filter.quotation_id = Config.quotation_id;
+                    filter.quotation_id = Config.quotation.id;
                     op.quotation_id = '=';
                     params.filter = JSON.stringify(filter);
                     params.op = JSON.stringify(op);
@@ -159,7 +165,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'product.code', title: __('Product')},
+                        {field: 'product.code', title: __('Product'),footerFormatter: function () {
+                                return "Total"
+                            }},
                         {field: 'accessory', title: __('Accessory'), formatter: function (value) {
                                 if (value){
                                     return $.map(value, function(val){
@@ -179,15 +187,51 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     return '-';
                                 }
                             }},
-                        {field: 'weight', title: __('Weight'), operate:'BETWEEN'},
-                        {field: 'cbm', title: __('Cbm'), operate:'BETWEEN'},
-                        {field: 'quantity', title: __('Quantity')},
+                        {field: 'weight', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
+                                var num = 0;
+                                return $.map(row, function (val) {
+                                    return num += val['weight'];
+                                });
+                            }},
+                        {field: 'cbm', title: __('Cbm'), operate:'BETWEEN', footerFormatter: function (row) {
+                                var total = 0;
+                                return $.map(row, function (val) {
+                                    return total += val['cbm'];
+                                })
+                            }},
+                        {field: 'quantity', title: __('Quantity'), footerFormatter: function (row) {
+                                var num = 0;
+                                return $.map(row, function (val) {
+                                    return num += val['quantity'];
+                                });
+                            }},
                         {field: 'carton', title: __('Carton'), formatter: function (value, row) {
                                 return value ? Math.ceil(row['quantity']/value['rate']):row['quantity'];
+                            }, footerFormatter: function (row) {
+                                var sum = 0;
+                                $.map(row, function(val){
+                                    if(val['carton']){
+                                        sum += Math.ceil(val['quantity']/val['carton']['rate']);
+                                    } else {
+                                        sum += val['quantity'];
+                                    }
+                                });
+                                return sum;
                             }},
                         {field: 'profit', title: __('Profit')},
-                        {field: 'unit_price', title: __('Unit_price'), operate:'BETWEEN'},
-                        {field: 'amount', title: __('Amount'), operate:'BETWEEN'},
+                        {field: 'unit_price', title: __('Unit_price'), operate:'BETWEEN', formatter: function (value, row) {
+                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                            }},
+                        {field: 'amount', title: __('Amount'), operate:'BETWEEN', formatter: function (value, row) {
+                                //var currency = row['quotation']['currency'] === "USD"  ? "$":"￥";
+                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                            }, footerFormatter: function (row) {
+                                var sum = 0;
+                                $.map(row, function(val){
+                                    sum += val['amount'];
+                                });
+                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";;
+                            }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
