@@ -261,7 +261,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 Form.api.bindevent($("form[role=form]"));
                 $('#c-contact_id').data('params', function () {
                     return {custom:{client_id:$('#c-client_id').val()}};
-                })
+                });
                 $('#c-switch').change(function () {
                     var destination = $('#c-destination,#c-country_code');
                     if ($(this).is(':checked')){
@@ -271,6 +271,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         destination.closest('.form-group').hide();
                         destination.val('');
                     }
+                });
+                $("#c-currency").change(function () {
+                    $("#c-switch_tax").closest(".form-group").show();
+                })
+                $("#c-switch_tax").change(function () {
+                    $("#c-tax_rate").closest('.form-group').toggle();
                 });
                 $('#c-incoterms').change(function () {
                     var terms = $(this).val();
@@ -290,7 +296,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 $(function () {
                     if ($('#c-destination').val()) {
                         $('#c-switch').trigger('click');
-                    };
+                    }
                     var terms = $('#c-incoterms').val();
                     if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
                         $("#c-transport,#c-transport_fee").closest('.form-group').show();
@@ -298,6 +304,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
                     } else {
                         return;
+                    }
+                    var currency = $("#c-currency").val();
+                    if (currency === "CNY") {
+                        $("#c-switch_tax").closest(".form-group").show();
+                    }
+                    var tax = $("#c-tax_rate").val();
+                    if (tax > 0) {
+                        $("#c-switch_tax").trigger("click");
                     }
                 })
             }

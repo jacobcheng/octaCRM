@@ -35,4 +35,6 @@ return [
     'Amount'           => '总价',
     'Total Amount'     => '总金额',
     'Copy'             => '复制',
+    'Add Tax'          => '含税报价',
+    'Tax Rate'         => '税率'
 ];
