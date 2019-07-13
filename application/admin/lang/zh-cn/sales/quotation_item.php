@@ -22,4 +22,5 @@ return [
     'Catalog'          => '产品目录',
     'Product Model'    => '产品型号',
     'Cost'             => '成本',
+    'Please select a process'   => '请选择工艺'
 ];

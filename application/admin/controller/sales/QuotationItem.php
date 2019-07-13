@@ -324,10 +324,12 @@ class QuotationItem extends Backend
                             }
                         }
                     } else {
-                        $uckey = ucwords($key);
-                        $cost = model('app\admin\model\products\\' . $uckey)->where('id', $params[$key])->value('cost');
-                        if ($row[$key]['cost'] != $cost) {
-                            $data = $data . (empty($data) ? __($uckey) : ', '.__($uckey));
+                        if (isset($row[$key])) {
+                            $uckey = ucwords($key);
+                            $cost = model('app\admin\model\products\\' . $uckey)->where('id', $params[$key])->value('cost');
+                            if ($row[$key]['cost'] != $cost) {
+                                $data = $data . (empty($data) ? __($uckey) : ', '.__($uckey));
+                            }
                         }
                     }
                 }

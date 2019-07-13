@@ -21,6 +21,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'createtime',
+                rowStyle: rowStyle,
                 columns: [
                     [
                         {checkbox: true},
@@ -69,6 +70,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 
             // 为表格绑定事件
             Table.api.bindevent(table);
+
+            function rowStyle(row) {
+                var validay = new Date(new Date(row['createtime']).getTime() + row['validay']*24*60*60*1000);
+                if (validay < new Date()) {
+                    return {classes:'active'};
+                } else {
+                    return {dlasses:''}
+                }
+            }
         },
         recyclebin: function () {
             // 初始化表格参数配置
@@ -137,8 +147,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         detail: function () {
             $(".btn-edit").click(function () {
-                Fast.api.open("sales/quotation/edit/ids/"+ Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no)
+                Fast.api.open("sales/quotation/edit/ids/" + Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no, {callback: function (data) {
+                        if (data.code === 1) {
+                            window.location.reload();
+                        }
+                    }})
             });
+            
+            $(".btn-print").click(function () {
+                Fast.api.open("sales/quotation/print/ids/" + Config.quotation.id,'',{area:["90%","90%"]})
+            })
             // 初始化表格参数配置
             Table.api.init({
                 showFooter:true,
@@ -187,7 +205,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'process', title: __('Process'), formatter: function (value, row) {
                                 if (value.length > 0) {
                                     return $.map(value, function(val,key){
-                                        return val["process"]+"<br>";
+                                        return val["process"];
                                     })
                                 } else {
                                     return '-';
@@ -245,6 +263,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
                                 var tax_amount = (row['amount']/(1 - Config.quotation.tax_rate/100));
                                 return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+tax_amount.toFixed(2)+"</span>";
+                            }, footerFormatter: function (row) {
+                                var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['amount']/(1 - Config.quotation.tax_rate/100);
+                                });
+                                return sum.toFixed(2);
                             }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
@@ -265,7 +289,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         api: {
             bindevent: function () {
-                Form.api.bindevent($("form[role=form]"));
+                Form.api.bindevent($("form[role=form]"), function (data,ret) {
+                    Fast.api.close(ret);
+                });
                 $('#c-contact_id').data('params', function () {
                     return {custom:{client_id:$('#c-client_id').val()}};
                 });
@@ -280,7 +306,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     }
                 });
                 $("#c-currency").change(function () {
-                    $("#c-switch_tax").closest(".form-group").show();
+                    if ($(this).val() == "CNY") {
+                        $("#c-switch_tax,#c-tax_rate").closest(".form-group").show();
+                    } else {
+                        $("#c-switch_tax,#c-tax_rate").closest(".form-group").hide();
+                        $("#c-switch_tax").attr("checked",false);
+                        $("#c-tax_rate").val("");
+                    }
                 })
                 $("#c-switch_tax").change(function () {
                     $("#c-tax_rate").closest('.form-group').toggle();
@@ -322,7 +354,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     }
                 })
             }
-        }
+        },
+        /*print: function () {
+            var beforePrint = function() {
+            };
+            var afterPrint = function() {
+                //window.history.back();
+                //$("#ribbon").show();
+            };
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
+            window.print();
+        },*/
     };
     return Controller;
 });

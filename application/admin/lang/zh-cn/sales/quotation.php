@@ -38,5 +38,5 @@ return [
     'Add Tax'          => '含税报价',
     'Tax Included'      => '含税金额',
     'Tax Rate'         => '税率',
-    'Tax'              => '税金'
+    'Tax'              => '税金',
 ];

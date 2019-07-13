@@ -1,0 +1,180 @@
+<div class="h2 text-uppercase text-center">longwei(HK) instruments Co., Limited</div>
+<div class="h3 text-uppercase text-center">Quotation Sheet</div>
+<!--<div class="col-xs-12 h4 text-uppercase no-padding">
+    <div class="col-xs-7">
+        <dl class="dl-horizontal">
+            <dt>Buyer: </dt><dd>{$client['name']}</dd>
+            <dt>Destination: </dt><dd>{$row['destination'] ? :$client['address']}</dd>
+            <dt>contact: </dt><dd>{$client['contact']['name']}</dd>
+            <dt>E-mail: </dt><dd>{$client['contact']['email']}</dd>
+        </dl>
+    </div>
+    <div class="col-xs-5">
+        <dl class="dl-horizontal">
+            <dt>Ref. No.: </dt><dd>{$row['ref_no']}</dd>
+            <dt>Data: </dt><dd>{$row['createtime']}</dd>
+            <dt>P/O No.: </dt><dd>{$row['po_no']}</dd>
+        </dl>
+    </div>
+</div>-->
+<table class="col-xs-12 h4 text-uppercase no-padding" style="margin-top: 20px">
+    <tr>
+        <td class="col-md-2 text-right text-bold">Buyer:</td>
+        <td class="col-md-4 text-left">{$client['name']}</td>
+        <td class="col-md-2 text-right text-bold">Ref. No.: </td>
+        <td class="col-md-2 text-left">{$row['ref_no']}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold">Destination: </td>
+        <td class="col-md-4 text-left">{$row['destination'] ? :$client['address']}</td>
+        <td class="col-md-2 text-right text-bold">P/O No.: </td>
+        <td class="col-md-2 text-left">{$row['po_no']}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold">Contact: </td>
+        <td class="col-md-6 text-left">{$client['contact']['name']}</td>
+        <td class="col-md-2 text-right text-bold">Data: </td>
+        <td class="col-md-2 text-left">{$row['createtime']}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold">E-mail: </td>
+        <td class="col-md-6 text-left">{$client['contact']['email']}</td>
+        <td class="col-md-2 text-right text-bold">Valid day: </td>
+        <td class="col-md-2 text-left">{$row.validay} days</td>
+    </tr>
+</table><table class="col-xs-12 h4 text-uppercase no-padding" style="margin-bottom: 10px">
+    <tr>
+        <td class="col-md-2 text-right text-bold">From: </td>
+        <td class="col-md-6 text-left">SHENZHEN, CHINA</td>
+        <td class="col-md-2 text-right text-bold">To: </td>
+        <td class="col-md-2 text-left">{$row.country.name}</td>
+    </tr>
+</table>
+<!--<div class="col-xs-12 h4 text-uppercase no-padding">
+    <div class="col-xs-6">
+        <dl class="dl-horizontal">
+            <dt>From: </dt><dd>SHENZHEN, CHINA</dd>
+        </dl>
+    </div>
+    <div class="col-xs-6>
+        <dl class="dl-horizontal">
+            <dt>To: </dt><dd>{$row.country.name}</dd>
+        </dl>
+    </div>
+</div>-->
+<div class="col-xs-12 text-uppercase text-center">
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="one">
+            <div class="widget-body no-padding">
+                <table id="table" class="table table-condensed table-bordered table-nowrap"
+                       data-search="false" data-smart-display="false" data-show-toggle="false" data-show-columns="false" data-pagination="false" cellpadding="10px"
+                       width="100%">
+                    <tr class="bg-gray-light">
+                        <th class="text-center">No.</th>
+                        <th class="text-center">Item Name.</th>
+                        <th class="text-center">Specification</th>
+                        <th class="text-center">Package</th>
+                        <!--<th class="text-center">CBM</th>-->
+                        <th class="text-center">Carton</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Unit</th>
+                        <th class="text-center">Unit Price({$row.currency})</th>
+                        <th class="text-center">Amount({$row.currency})</th>
+                    </tr>
+                    {volist name="row.items" id="item"}
+                    <tr>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$i}</td>
+                        <td>{$item.product.code}</td>
+                        <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
+                            {$item.product.specification}<br>
+                            {foreach name="item.process" item="vo"}
+                            {$vo.process}<br>
+                            {/foreach}
+                            weight: {$item.product.weight}<br>
+                            size: {$item.product.length} * {$item.product.width} * {$item.product.height}cm
+                        </td>
+                        <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
+                            {if $item.package}
+                            {$item.package.description}<br>
+                            size: {$item.package.length} * {$item.package.width} * {$item.package.height}cm<br>
+                            {else /}
+                            {$item.product.package}<br>
+                            Size: {$item.product.plength} * {$item.product.pwidth} * {$item.product.pheight}cm<br>
+                            {/if}
+                            {notempty name="item.accessory"}
+                            ACCESSORY:
+                            {foreach name="item.accessory" item="vo"}
+                            {$vo.description}<br>
+                            {/foreach}
+                            {/notempty}
+                        </td>
+                        <!--<td rowspan="2" style="vertical-align: middle !important;">{$item.cbm|number_format=3}</td>-->
+                        <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
+                            {notempty name="item.carton"}
+                            {$item.carton.rate} {$item.product.unit} / Per Carton<br>
+                            size: {$item.carton.length} * {$item.carton.width} * {$item.carton.height} CM<br>
+                            CBM: {$item.cbm / $item.quantity * $item.carton.rate|number_format=2} @ {$item.cbm|number_format=2}<br>
+                            G/W: {$item.weight / $item.quantity * $item.carton.rate|number_format=2} kg @ {$item.weight|number_format=2} kg<br>
+                            {/notempty}
+                        </td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.quantity}</td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.product.unit}</td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.unit_price|number_format=2}</td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.amount|number_format=2}</td>
+                    </tr>
+                    <tr>
+                        <td><img src="{$item.product.image}" width="150px"></td>
+                    </tr>
+                    {/volist}
+                    <tr class="text-bold">
+                        <td>Total</td>
+                        <td colspan="3"></td>
+                        <td class="text-left">CBM: {$row.total_cbm|number_format=2} / G/W: {$row.total_weight|number_format=2} kg</td>
+                        <td colspan="3"></td>
+                        <!--<td>{$row.total_cbm|number_format=3}</td>
+                        <td>{$row.total_weight|number_format=2}</td>-->
+                        <td>{$row.total_amount|number_format=2}</td>
+                    </tr>
+                    <tr class="text-bold">
+                        <td>Say total: </td>
+                        <td colspan="8" class="text-left">{$saytotal}</td>
+                    </tr>
+                    <tr class="text-bold">
+                        <td>Trade Terms: </td>
+                        <td colspan="8" class="text-left">{$row.incoterms} {$row.country.name}</td>
+                    </tr>
+                    <tr>
+                        <td>Shipment: </td>
+                        <td colspan="8" class="text-left">{neq name="row.incoterms" value="EXW"} from shenzhen by {$row.transport}{/neq}</td>
+                    </tr>
+                    <tr>
+                        <td>Leadtime: </td>
+                        <td colspan="8" class="text-left">{$row.leadtime} days after order confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>Quality Terms: </td>
+                        <td colspan="8" class="text-left">Warranty 12 months</td>
+                    </tr>
+                    <tr>
+                        <td>payment: </td>
+                        <td colspan="8" class="text-left">by T/T, Prepay 30 % of Amount as Deposit，the balance against before deliver</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <style type="text/css">
+table tr{
+        page-break-before: auto;
+    }
+</style> -->
+<!-- <script id="itemtpl" type="text/html">
+<tr>
+    <td><%=item.product_name%></td>
+    <td rowspan="2"><%=item.product.specification%></td>
+</tr>
+<tr>
+    <td><img src="%=item.product_image%>" width="100px"></td>
+</tr>
+</script> -->

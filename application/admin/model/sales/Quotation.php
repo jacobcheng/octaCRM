@@ -107,6 +107,16 @@ class Quotation extends Model
         return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount');
     }
 
+    public function getTotalCbmAttr ()
+    {
+        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('cbm');
+    }
+
+    public function getTotalWeightAttr ()
+    {
+        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('weight');
+    }
+
     //获取单位运费
     public function getUnitFee ($newcbm = 0, $newweight = 0, $id = 0)
     {

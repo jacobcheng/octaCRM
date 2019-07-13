@@ -68,8 +68,6 @@ class QuotationItem extends Model
 
 
 
-
-
     public function quotation()
     {
         return $this->belongsTo('app\admin\model\sales\Quotation', 'quotation_id', 'id', [], 'LEFT')->setEagerlyType(0);

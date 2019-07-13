@@ -25,7 +25,8 @@ class Product extends Model
 
     // 追加属性
     protected $append = [
-        'unit_text'
+        'unit_text',
+        'image'
     ];
     
 
@@ -41,6 +42,11 @@ class Product extends Model
         $value = $value ? $value : (isset($data['unit']) ? $data['unit'] : '');
         $list = $this->getUnitList();
         return isset($list[$value]) ? $list[$value] : '';
+    }
+
+    public function getImageAttr()
+    {
+        return $this->productmodel->image;
     }
 
 

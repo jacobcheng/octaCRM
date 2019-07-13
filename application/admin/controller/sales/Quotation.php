@@ -3,6 +3,7 @@
 namespace app\admin\controller\sales;
 
 use app\common\controller\Backend;
+use NumberToWords\NumberToWords;
 
 /**
  * 
@@ -120,6 +121,26 @@ class Quotation extends Backend
         }
         $this->assignconfig('quotation', $row);
         $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
+    public function print ($ids = null)
+    {
+        $row = $this->model->with(['items'])->where('id', $ids)->find();
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        $client = model('app\admin\model\sales\Client')->get($row['client_id']);
+        $numberToWords = new NumberToWords();
+        $currency = $numberToWords->getCurrencyTransformer('en');
+        $saytotal = $currency->towords($row['total_amount']*100, "USD");
+        $this->view->assign(["row" =>  $row,"client" => $client, "saytotal" => $saytotal]);
         return $this->view->fetch();
     }
 }

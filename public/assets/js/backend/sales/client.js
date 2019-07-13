@@ -61,10 +61,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     } else if (now > 17 && now <= 22) {
                         return {classes:'warning'};
                     } else {
-                        return {classes:'danger'};;
+                        return {classes:'danger'};
                     }
                 } else {
-                    return;
+                    return {classes:''};
                 }
             }
         },
