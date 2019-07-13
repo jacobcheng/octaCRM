@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function ($, undefined, Backend, Table, Form, Adminlte) {
 
     var Controller = {
         index: function () {
@@ -291,6 +291,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"), function (data,ret) {
                     Fast.api.close(ret);
+                });
+                $(".btn-append").on('fa.event.appendfieldlist', function () {
+                    Form.events.selectpicker($("form[role=form]"));
                 });
                 $('#c-contact_id').data('params', function () {
                     return {custom:{client_id:$('#c-client_id').val()}};

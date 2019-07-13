@@ -97,6 +97,11 @@ class Quotation extends Model
         return isset($list[$value]) ? $list[$value] : '';
     }
 
+    public function getServiceAttr ($value)
+    {
+        return json_decode($value, true);
+    }
+
     protected function setLeadtimeAttr($value)
     {
         return $value === '' ? null : ($value && !is_numeric($value) ? strtotime($value) : $value);
@@ -105,6 +110,15 @@ class Quotation extends Model
     public function getTotalAmountAttr ($value, $data)
     {
         return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount');
+    }
+
+    public function getServiceAmountAttr ()
+    {
+        $amount = 0;
+        foreach ($this->service as $value) {
+            $amount += $value['cost'];
+        }
+        return $amount;
     }
 
     public function getTotalCbmAttr ()

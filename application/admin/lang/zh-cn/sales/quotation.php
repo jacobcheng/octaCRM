@@ -39,4 +39,6 @@ return [
     'Tax Included'      => '含税金额',
     'Tax Rate'         => '税率',
     'Tax'              => '税金',
+    'Please select a service'   => '请选择服务',
+    'Cost'             => '成本'
 ];

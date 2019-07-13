@@ -25,7 +25,12 @@
                 <dt>{:__('Destination')}: </dt>
                 <dd>{$row.destination ? : $row.client.address}</dd>
                 <dt>{:__('Remark')}: </dt>
-                <dd>{$row.remark}</dd>
+                <dd>
+                    {foreach name="row.service" item="vo"}
+                    {eq name="site.languages.backend" value="zh-cn"}{$site.service[$vo.service]}{else /}{$vo.service}{/eq}: {$vo.cost}<br>
+                    {/foreach}
+                    {$row.remark}
+                </dd>
         </div>
         <div class="col-md-6">
             <dl class="dl-horizontal">

@@ -40,4 +40,8 @@ return array (
   array (
     'Silk Print Logo' => '丝印Logo',
   ),
+  'service' => 
+  array (
+    'Molding Fee' => '模具费',
+  ),
 );

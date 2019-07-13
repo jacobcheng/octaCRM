@@ -119,12 +119,22 @@
                         </td>
                         <td rowspan="2" style="vertical-align: middle !important;">{$item.quantity}</td>
                         <td rowspan="2" style="vertical-align: middle !important;">{$item.product.unit}</td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{$item.unit_price|number_format=2}</td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{$item.amount|number_format=2}</td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.unit_price/$row.rate|number_format=2}</td>
+                        <td rowspan="2" style="vertical-align: middle !important;">{$item.amount/$row.rate|number_format=2}</td>
                     </tr>
                     <tr>
                         <td><img src="{$item.product.image}" width="150px"></td>
                     </tr>
+                    {notempty name="row.service"}
+                    <tr>
+                        {foreach name="row.service" item="vo"}
+                        <td></td>
+                        <td height="50px" style="vertical-align: middle !important;">{$vo.service}</td>
+                        <td colspan="6"></td>
+                        <td height="50px" style="vertical-align: middle !important;">{$vo.cost/$row.rate|number_format=2}</td>
+                        {/foreach}
+                    </tr>
+                    {/notempty}
                     {/volist}
                     <tr class="text-bold">
                         <td>Total</td>
@@ -133,7 +143,7 @@
                         <td colspan="3"></td>
                         <!--<td>{$row.total_cbm|number_format=3}</td>
                         <td>{$row.total_weight|number_format=2}</td>-->
-                        <td>{$row.total_amount|number_format=2}</td>
+                        <td>{$row.total_amount/$row.rate+$row.service_amount/$row.rate|number_format=2}</td>
                     </tr>
                     <tr class="text-bold">
                         <td>Say total: </td>
@@ -157,7 +167,7 @@
                     </tr>
                     <tr>
                         <td>payment: </td>
-                        <td colspan="8" class="text-left">by T/T, Prepay 30 % of Amount as Deposit，the balance against before deliver</td>
+                        <td colspan="8" class="text-left">by T/T, Prepay 30 % of Amount as Deposit ({$row.currency} {$row.total_amount*0.3/$row.rate+$row.service_amount/$row.rate|number_format=2})，the balance against before deliver</td>
                     </tr>
                 </table>
             </div>

@@ -139,7 +139,7 @@ class Quotation extends Backend
         $client = model('app\admin\model\sales\Client')->get($row['client_id']);
         $numberToWords = new NumberToWords();
         $currency = $numberToWords->getCurrencyTransformer('en');
-        $saytotal = $currency->towords($row['total_amount']*100, "USD");
+        $saytotal = $currency->towords(round(($row['total_amount']+$row['service_amount'])/$row['rate'], 2)*100, "USD");
         $this->view->assign(["row" =>  $row,"client" => $client, "saytotal" => $saytotal]);
         return $this->view->fetch();
     }
