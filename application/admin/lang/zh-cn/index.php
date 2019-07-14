@@ -62,5 +62,7 @@ return [
     'Package'                                                    => '销售包装',
     'Carton'                                                     => '外箱',
     'Accessory'                                                  => '配件管理',
-    'Quotation'                                                  => '报价管理'
+    'Quotation'                                                  => '报价管理',
+    'Accounting'                                                 => '财务管理',
+    'Bank'                                                       => '收款账号'
 ];

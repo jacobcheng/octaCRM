@@ -167,12 +167,6 @@
                 <h3 class="box-title">{:__('Items')}</h3>
             </div>
             <div class="box-body">
-                <!--<dl class="fieldlist col-sm-12 no-padding" data-name="row[items]" data-template="itemForm">
-                    <dd>
-                        <a href="javascript:;" class="btn-append"></a>
-                    </dd>
-                    <textarea name="row[items]" class="form-control hide" cols="30" rows="5">{$row.items|json_encode|htmlentities}</textarea>
-                </dl>-->
                 {volist name="row.items" id="vo"}
                 <div class="col-xs-12 attachment-block">
                     <div class="col-xs-12 no-padding">
@@ -244,14 +238,3 @@
         <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span>
     </dd>
 </script>
-<!--<script type="text/html" id="itemForm">
-    <dd class="attachment-block form-inline">
-        <span class="btn btn-sm btn-danger btn-remove pull-right"><i class="fa fa-times"></i></span>
-        <input class="hide" name="row[copyitem][<%=index%>][id]" value="<%=row['id']%>">
-        <p class="h4"><%=row['product']['code']%></p>
-        <img width="100%" src="<%=row['product']['image']%>">
-        <input data-rule="required"  class="form-control" type="number" min="0" step="1" name="row[copyitem][<%=index%>][quantity]" value="<%=row['quantity']%>">
-        <input data-rule="required"  class="form-control" type="number" min="0" step="1" name="row[copyitem][<%=index%>][profit]" value="<%=row['profit']%>">
-        <input class="form-control" type="number" min="0" step="1" name="row[copyitem][<%=index%>][unit_price]" value="<%=row['unit_price']%>">
-    </dd>
-</script>-->

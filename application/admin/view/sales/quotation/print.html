@@ -125,6 +125,7 @@
                     <tr>
                         <td><img src="{$item.product.image}" width="150px"></td>
                     </tr>
+                    {/volist}
                     {notempty name="row.service"}
                     <tr>
                         {foreach name="row.service" item="vo"}
@@ -135,7 +136,6 @@
                         {/foreach}
                     </tr>
                     {/notempty}
-                    {/volist}
                     <tr class="text-bold">
                         <td>Total</td>
                         <td colspan="3"></td>

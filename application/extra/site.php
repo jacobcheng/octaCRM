@@ -20,6 +20,7 @@ return array (
     'article' => 'Article',
     'catalog' => 'Catalog',
     'process' => 'Process',
+    'trade_terms' => 'Trade Terms',
   ),
   'configgroup' => 
   array (
@@ -43,5 +44,6 @@ return array (
   'service' => 
   array (
     'Molding Fee' => '模具费',
+    'Design Fee' => '设计费',
   ),
 );

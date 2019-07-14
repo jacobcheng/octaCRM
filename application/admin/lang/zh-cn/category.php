@@ -16,5 +16,7 @@ return [
     'Can not change the parent to child' => '父组别不能是它的子组别',
     'Status'                             => '状态',
     'Catalog'                            => '产品目录',
-    'Nickname'                           => '英文名称'
+    'Nickname'                           => '英文名称',
+    'Process'                            => '工艺',
+    'Trade Terms'                        => '交易条款'
 ];
