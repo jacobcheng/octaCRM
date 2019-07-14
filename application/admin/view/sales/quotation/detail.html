@@ -3,9 +3,9 @@
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool btn-order" title="{:__('Order')}"><i class="fa fa-money"></i></button>
-            <button type="button" class="btn btn-box-tool btn-copy" title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
-            <button type="button" class="btn btn-box-tool" title="{:__('P/I')}">P/I</button>
+            <button type="button" class="btn btn-box-tool btn-print-pi" title="{:__('P/I')}">P/I</button>
             <button type="button" class="btn btn-box-tool btn-print" title="{:__('Print')}"><i class="fa fa-print"></i></button>
+            <button type="button" class="btn btn-box-tool btn-copy" title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
             <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('products/product_model/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>

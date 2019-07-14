@@ -1,22 +1,5 @@
 <div class="h2 text-uppercase text-center">longwei(HK) instruments Co., Limited</div>
-<div class="h3 text-uppercase text-center">Quotation Sheet</div>
-<!--<div class="col-xs-12 h4 text-uppercase no-padding">
-    <div class="col-xs-7">
-        <dl class="dl-horizontal">
-            <dt>Buyer: </dt><dd>{$client['name']}</dd>
-            <dt>Destination: </dt><dd>{$row['destination'] ? :$client['address']}</dd>
-            <dt>contact: </dt><dd>{$client['contact']['name']}</dd>
-            <dt>E-mail: </dt><dd>{$client['contact']['email']}</dd>
-        </dl>
-    </div>
-    <div class="col-xs-5">
-        <dl class="dl-horizontal">
-            <dt>Ref. No.: </dt><dd>{$row['ref_no']}</dd>
-            <dt>Data: </dt><dd>{$row['createtime']}</dd>
-            <dt>P/O No.: </dt><dd>{$row['po_no']}</dd>
-        </dl>
-    </div>
-</div>-->
+<div class="h3 text-uppercase text-center">{eq name="type" value="quotation"}Quotation Sheet{else /}PROFORMA INVOICE{/eq}</div>
 <table class="col-xs-12 h4 text-uppercase no-padding" style="margin-top: 20px">
     <tr>
         <td class="col-md-2 text-right text-bold">Buyer:</td>
@@ -169,6 +152,31 @@
                         <td>payment: </td>
                         <td colspan="8" class="text-left">by T/T, Prepay 30 % of Amount as Deposit ({$row.currency} {$row.total_amount*0.3/$row.rate+$row.service_amount/$row.rate|number_format=2})，the balance against before deliver</td>
                     </tr>
+                    {eq name="type" value="pi"}
+                    <tr>
+                        <td colspan="9" class="text-left text-bold">Bank info: </td>
+                    </tr>
+                    <tr>
+                        <td>Bank Name: </td>
+                        <td colspan="8" class="text-left">{$row.bank.bank}</td>
+                    </tr>
+                    <tr>
+                        <td>Bank Adress: </td>
+                        <td colspan="8" class="text-left">{$row.bank.bank_address}</td>
+                    </tr>
+                    <tr>
+                        <td>Account Name: </td>
+                        <td colspan="8" class="text-left">{$row.bank.account}</td>
+                    </tr>
+                    <tr>
+                        <td>Account No.: </td>
+                        <td colspan="8" class="text-left">{$row.bank.account_no}</td>
+                    </tr>
+                    <tr>
+                        <td>SWIFT: </td>
+                        <td colspan="8" class="text-left">{$row.bank.swift}</td>
+                    </tr>
+                    {/eq}
                 </table>
             </div>
         </div>

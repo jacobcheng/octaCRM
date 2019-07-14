@@ -177,7 +177,14 @@ class Quotation extends Backend
         return $this->view->fetch();
     }
 
-    public function print ($ids = null)
+    public function printpi ($ids = null)
+    {
+        $row = $this->model->get($ids);
+        $this->view->assign("row", $row);
+        return $this->view->fetch('edit');
+    }
+
+    public function print ($ids = null, $type)
     {
         $row = $this->model->with(['items'])->where('id', $ids)->find();
         if (!$row) {
@@ -189,6 +196,7 @@ class Quotation extends Backend
                 $this->error(__('You have no permission'));
             }
         }
+        $this->assign('type', $type);
         $client = model('app\admin\model\sales\Client')->get($row['client_id']);
         $numberToWords = new NumberToWords();
         $currency = $numberToWords->getCurrencyTransformer('en');

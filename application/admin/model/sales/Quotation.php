@@ -182,6 +182,13 @@ class Quotation extends Model
         return $this->belongsTo('app\admin\model\Country', 'country_code', 'code', [], 'LEFT')->setEagerlyType(0);
     }
 
+
+    public function bank()
+    {
+        return $this->belongsTo('app\admin\model\accounting\Bank', 'bank_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
+
+
     public  function items()
     {
         return $this->hasMany('app\admin\model\sales\QuotationItem', 'quotation_id', 'id', [], 'LEFT');

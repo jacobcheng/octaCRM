@@ -175,6 +175,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 this.closest(".attachment-block").remove();
             })
         },
+        printpi: function () {
+            Form.api.bindevent($("form[role=form]"),function (data, ret) {
+                Fast.api.close(ret);
+            });
+            var id = window.location.pathname.split("/");
+            id = id[id.length - 1];
+            $("form").attr("action", "sales/quotation/edit/ids/" + id);
+            $("[id!='c-bank']").closest(".form-group").hide();
+            $("#c-bank").closest(".form-group").show();
+        },
         detail: function () {
             $(".btn-edit").click(function () {
                 Fast.api.open("sales/quotation/edit/ids/" + Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no, {callback: function (data) {
@@ -185,8 +195,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             });
             
             $(".btn-print").click(function () {
-                Fast.api.open("sales/quotation/print/ids/" + Config.quotation.id,'',{area:["90%","90%"]})
+                Fast.api.open("sales/quotation/print/type/quotation/ids/" + Config.quotation.id,'',{area:["90%","90%"]})
             });
+
+            $(".btn-print-pi").click(function () {
+                Fast.api.open("sales/quotation/printpi/ids/" +  Config.quotation.id, __("Select a collection bank"), {
+                    callback: function (ret) {
+                        console.log(ret)
+                        if (ret.code ==1) {
+                            Fast.api.open("sales/quotation/print/type/pi/ids/" + Config.quotation.id,)
+                        }
+                    }
+                })
+            });
+
+            $(".btn-copy").click(function () {
+                Fast.api.open("sales/quotation/copy/ids/" + Config.quotation.id,__("Copy"),{
+                    callback: function (value) {
+                        Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
+                    }
+                })
+            });
+
             // 初始化表格参数配置
             Table.api.init({
                 showFooter:true,
@@ -278,26 +308,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                             }},
                         {field: 'profit', title: __('Profit')},
                         {field: 'unit_price', title: __('Unit_price'), operate:'BETWEEN', formatter: function (value, row) {
-                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
                             }},
                         {field: 'amount', title: __('Amount'), operate:'BETWEEN', formatter: function (value, row) {
-                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
                             }, footerFormatter: function (row) {
                                 var sum = 0;
                                 $.map(row, function(val){
                                     sum += val['amount'];
                                 });
-                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+sum.toFixed(2)+"</span>";
+                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+sum.toFixed(2)+"</span>";
                             }},
                         {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
                                 var tax_amount = (row['amount']/(1 - Config.quotation.tax_rate/100));
-                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+tax_amount.toFixed(2)+"</span>";
+                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+"￥ "+tax_amount.toFixed(2)+"</span>";
                             }, footerFormatter: function (row) {
                                 var sum = 0;
+                                var amount = 0;
                                 $.map(row, function (val) {
                                     sum += val['amount']/(1 - Config.quotation.tax_rate/100);
+                                    amount += val['amount'];
                                 });
-                                return sum.toFixed(2);
+                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (sum - amount).toFixed(2) +"'>"+"￥ "+sum.toFixed(2)+"</span>";
                             }},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
@@ -387,17 +419,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 })
             }
         },
-        /*print: function () {
+        print: function () {
             var beforePrint = function() {
             };
             var afterPrint = function() {
-                //window.history.back();
+                parent.Layer.closeAll();
                 //$("#ribbon").show();
             };
             window.onbeforeprint = beforePrint;
             window.onafterprint = afterPrint;
             window.print();
-        },*/
+        },
     };
     return Controller;
 });

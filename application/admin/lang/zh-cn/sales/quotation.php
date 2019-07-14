@@ -35,6 +35,7 @@ return [
     'Amount'           => '总价',
     'Total Amount'     => '总金额',
     'Copy'             => '复制',
+    'Print'            => '打印',
     'Add Tax'          => '含税报价',
     'Tax Included'      => '含税金额',
     'Tax Rate'         => '税率',
@@ -42,4 +43,5 @@ return [
     'Please select a service'   => '请选择服务',
     'Service'          => '服务',
     'Cost'             => '成本',
+    'Select a collection bank'  => '选择收款银行'
 ];
