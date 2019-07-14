@@ -167,12 +167,59 @@
                 <h3 class="box-title">{:__('Items')}</h3>
             </div>
             <div class="box-body">
-                <dl class="fieldlist col-sm-12 no-padding" data-name="row[items]" data-template="itemForm">
+                <!--<dl class="fieldlist col-sm-12 no-padding" data-name="row[items]" data-template="itemForm">
                     <dd>
                         <a href="javascript:;" class="btn-append"></a>
                     </dd>
                     <textarea name="row[items]" class="form-control hide" cols="30" rows="5">{$row.items|json_encode|htmlentities}</textarea>
-                </dl>
+                </dl>-->
+                {volist name="row.items" id="vo"}
+                <div class="col-xs-12 attachment-block">
+                    <div class="col-xs-12 no-padding">
+                        <button class="btn btn-sm btn-danger pull-right btn-remove"><i class="fa fa-times"></i> </button>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="box-title h3">{$vo.product.code}</div>
+                        <img width="100%" src="{$vo.product.image}">
+                    </div>
+                    <div class="col-xs-12" style="margin-top: 30px">
+                        <input class="hide" name="row[copyitem][{$i}][id]" value="{$vo.id}">
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3">{:__('Quantity')}:</label>
+                            <div class="col-xs-12 col-sm-7">
+                                <div class="input-group">
+                                    <input data-rule="required" class="form-control" name="row[copyitem][{$i}][quantity]" min="0" step="1" type="number" value="{$vo.quantity|htmlentities}">
+                                    <div class="input-group-addon">
+                                        <span>{$vo.product.unit}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3">{:__('Profit')}:</label>
+                            <div class="col-xs-12 col-sm-7">
+                                <div class="input-group">
+                                    <input data-rule="required" class="form-control" name="row[copyitem][{$i}][profit]" min="0" step="1" type="number" value="{$vo.profit|htmlentities}">
+                                    <div class="input-group-addon">
+                                        <span>%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-12 col-sm-3">{:__('Unit_price')}:</label>
+                            <div class="col-xs-12 col-sm-7">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span>￥</span>
+                                    </div>
+                                    <input class="form-control" name="row[copyitem][{$i}][unit_price]" min="0" step="0.01" type="number" value="{$vo.unit_price|htmlentities}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
             </div>
         </div>
     </div>
@@ -197,7 +244,7 @@
         <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span>
     </dd>
 </script>
-<script type="text/html" id="itemForm">
+<!--<script type="text/html" id="itemForm">
     <dd class="attachment-block form-inline">
         <span class="btn btn-sm btn-danger btn-remove pull-right"><i class="fa fa-times"></i></span>
         <input class="hide" name="row[copyitem][<%=index%>][id]" value="<%=row['id']%>">
@@ -207,4 +254,4 @@
         <input data-rule="required"  class="form-control" type="number" min="0" step="1" name="row[copyitem][<%=index%>][profit]" value="<%=row['profit']%>">
         <input class="form-control" type="number" min="0" step="1" name="row[copyitem][<%=index%>][unit_price]" value="<%=row['unit_price']%>">
     </dd>
-</script>
+</script>-->

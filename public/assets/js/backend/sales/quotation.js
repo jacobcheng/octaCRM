@@ -70,7 +70,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     url: 'sales/quotation/copy/update/false',
                                     confirm: '是否复制该报价？',
                                     callback: function (value) {
-                                        console.log(value);
                                         Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
                                     }
                                 }
@@ -167,8 +166,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             $(function () {
                 Layer.confirm("是否更新到最新参数价格？", {btn:["更新", "维持"]}, function (index) {
                     $("form").attr("action", "sales/quotation/copy/update/true/ids/" + ids + location.search);
+                    $("[name*='[unit_price]").val('');
                     Layer.close(index);
                 })
+            })
+
+            $(".btn-remove").click(function () {
+                this.closest(".attachment-block").remove();
             })
         },
         detail: function () {
