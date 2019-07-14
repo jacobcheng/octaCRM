@@ -40,5 +40,6 @@ return [
     'Tax Rate'         => '税率',
     'Tax'              => '税金',
     'Please select a service'   => '请选择服务',
-    'Cost'             => '成本'
+    'Service'          => '服务',
+    'Cost'             => '成本',
 ];

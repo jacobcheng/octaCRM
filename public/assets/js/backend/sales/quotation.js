@@ -56,16 +56,31 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     title: function (row) {
                                         return row.ref_no + __('Detail');
                                     },
-                                    classname: 'btn btn-xs btn-success btn-addtabs btn-click',
+                                    classname: 'btn btn-xs btn-success btn-click',
                                     icon: 'fa fa-list',
-                                    //url: 'sales/quotation/detail'
                                     click: function (value,row) {
                                         Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
                                     }
+                                },
+                                {
+                                    name: 'Copy',
+                                    title: __('Copy'),
+                                    classname: 'btn btn-xs btn-success btn-dialog btn-copyone',
+                                    icon: 'fa fa-copy',
+                                    url: 'sales/quotation/copy/update/false',
+                                    confirm: '是否复制该报价？',
+                                    callback: function (value) {
+                                        console.log(value);
+                                        Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
+                                    }
                                 }
                             ]}
-                    ]
-                ]
+                    ],
+
+                ],
+                onLoadSuccess: function () {
+                    $('.btn-copyone').data('area', ['90%', '90%']);
+                }
             });
 
             // 为表格绑定事件
@@ -145,6 +160,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
         edit: function () {
             Controller.api.bindevent();
         },
+        copy: function () {
+            Controller.api.bindevent();
+            var ids = window.location.pathname.split('/');
+            ids = ids[ids.length - 1];
+            $(function () {
+                Layer.confirm("是否更新到最新参数价格？", {btn:["更新", "维持"]}, function (index) {
+                    $("form").attr("action", "sales/quotation/copy/update/true/ids/" + ids + location.search);
+                    Layer.close(index);
+                })
+            })
+        },
         detail: function () {
             $(".btn-edit").click(function () {
                 Fast.api.open("sales/quotation/edit/ids/" + Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no, {callback: function (data) {
@@ -156,7 +182,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             
             $(".btn-print").click(function () {
                 Fast.api.open("sales/quotation/print/ids/" + Config.quotation.id,'',{area:["90%","90%"]})
-            })
+            });
             // 初始化表格参数配置
             Table.api.init({
                 showFooter:true,
@@ -251,7 +277,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
                             }},
                         {field: 'amount', title: __('Amount'), operate:'BETWEEN', formatter: function (value, row) {
-                                //var currency = row['quotation']['currency'] === "USD"  ? "$":"￥";
                                 return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
                             }, footerFormatter: function (row) {
                                 var sum = 0;
@@ -316,7 +341,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         $("#c-switch_tax").attr("checked",false);
                         $("#c-tax_rate").val("");
                     }
-                })
+                });
                 $("#c-switch_tax").change(function () {
                     $("#c-tax_rate").closest('.form-group').toggle();
                 });

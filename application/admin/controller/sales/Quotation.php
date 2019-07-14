@@ -4,6 +4,11 @@ namespace app\admin\controller\sales;
 
 use app\common\controller\Backend;
 use NumberToWords\NumberToWords;
+use think\Db;
+use think\Exception;
+use think\exception\PDOException;
+use think\exception\ValidateException;
+use app\admin\controller\sales\QuotationItem;
 
 /**
  * 
@@ -124,6 +129,54 @@ class Quotation extends Backend
         return $this->view->fetch();
     }
 
+    public function copy ($ids = null, $update = false) {
+        $row = $this->model->get($ids);
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+
+                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                    $params[$this->dataLimitField] = $this->auth->id;
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                        $this->model->validateFailException(true)->validate($validate);
+                    }
+                    //$params = $this->prepareSave($params, $update, $row);
+                    unset($params['id']);
+                    $result = $this->model->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    if (!empty($params['copyitem'])) {
+                        $this->copyitems($params['copyitem'], $params['olditems'], $update);
+                    }
+                    $this->success('', '', ['ids' => $this->model->id, 'ref_no' => $this->model->ref_no]);
+                } else {
+                    $this->error(__('No rows were inserted'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
     public function print ($ids = null)
     {
         $row = $this->model->with(['items'])->where('id', $ids)->find();
@@ -142,5 +195,22 @@ class Quotation extends Backend
         $saytotal = $currency->towords(round(($row['total_amount']+$row['service_amount'])/$row['rate'], 2)*100, "USD");
         $this->view->assign(["row" =>  $row,"client" => $client, "saytotal" => $saytotal]);
         return $this->view->fetch();
+    }
+
+    public function  copyitems ($data, $items, $update)
+    {
+        $items = json_decode($items,true);
+        foreach ($items as $value) {
+            foreach ($data as $val) {
+                if ($value['id'] == $val['id']) {
+                    $params = $value;
+                    $params['quantity'] = $val['quantity'];
+                    $params['unit_price'] = $val['unit_price'];
+                    unset($params['id'], $params['createtime'], $params['updatetime'], $params['updatetime']);
+                    $params = QuotationItem::prepareSave($params, $update, $params);
+                    $this->model->items()->save($params);
+                }
+            }
+        }
     }
 }

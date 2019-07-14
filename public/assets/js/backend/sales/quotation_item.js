@@ -117,20 +117,27 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                 var product = window.location.pathname.split("/");
                 var that = this;
                 Fast.api.ajax({
-                    url : "sales/quotation_item/checkupdate/ids/" + product[product.length - 1],
-                    data: {product:$("#c-product_id").val(),package:$("#c-package_id").val(),carton:$("#c-carton_id").val(),accessory:$("#c-accessory_ids").val()}
+                    url : "sales/quotation_item/checkupdate/ids/" + product[product.length - 1] + location.search,
+                    data: {
+                        product:$("#c-product_id").val(),
+                        package:$("#c-package_id").val(),
+                        carton:$("#c-carton_id").val(),
+                        accessory:$("#c-accessory_ids").val()
+                    }
                 },
-                function (data, ret) {
+                function () {
                     $(that).closest("form").trigger("submit");
                 },
                 function (data, ret) {
                     Layer.confirm(ret.msg + "有更新，是否需要更新报价内容？",{btn:["更新","维持"]},
-                        function () {
+                        function (index) {
                             $("#c-unit_price").val("");
-                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/true/ids/" + product[product.length - 1]);
+                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/true/ids/" + product[product.length - 1] + location.search);
+                            Layer.close(index);
                             $(that).closest("form").trigger("submit");
                         },
-                        function () {
+                        function (index) {
+                            Layer.close(index);
                             $(that).closest("form").trigger("submit");
                         }
                     );
@@ -139,16 +146,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                 return false;
             });
 
-
             $(function () {
-                Layer.confirm("此次编辑是否需要自动更新单价？", {}, function (index) {
+                Layer.confirm("是否需要清空单价，自动计算单价？", {}, function (index) {
                     $("#c-unit_price").val("");
                     Layer.close(index);
                 });
             });
         },
         copy: function () {
-            Controller.edit();
+            Controller.api.bindevent();
         },
         api: {
             bindevent: function () {
@@ -164,11 +170,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                 });
 
                 $("#c-catalog").change(function(){
-                    if($("#c-product-model").val()){
-                        $("#c-product-model").selectPageClear();
-                    };
-                    if($("#c-product").val()){
-                        $("#c-product").selectPageClear();
+                    if($("#c-product_model").val()){
+                        $("#c-product_model").selectPageClear();
+                    }
+                    if($("#c-product_id").val()){
+                        $("#c-product_id").selectPageClear();
+                    }
+                });
+
+                $("#c-product_model").change(function () {
+                    if($("#c-product_id").val()){
+                        $("#c-product_id").selectPageClear();
                     }
                 });
             }

@@ -225,7 +225,7 @@ class QuotationItem extends Backend
         return $this->view->fetch();
     }
 
-    protected function prepareSave ($data, $update = true, $row = [])
+    public static function prepareSave ($data, $update = true, $row = [])
     {
         $product = (!empty($row) && !$update && $data['product'] == (isset($row['product']['id']) ? : $data['product'])) ?  $row['product']: model('app\admin\model\products\Product')->find($data['product']);
         $productCBM = $product['length']*$product['width']*$product['height'];
@@ -327,7 +327,7 @@ class QuotationItem extends Backend
                         if (isset($row[$key])) {
                             $uckey = ucwords($key);
                             $cost = model('app\admin\model\products\\' . $uckey)->where('id', $params[$key])->value('cost');
-                            if ($row[$key]['cost'] != $cost) {
+                            if (isset($row[$key]['cost']) && $row[$key]['cost'] != $cost) {
                                 $data = $data . (empty($data) ? __($uckey) : ', '.__($uckey));
                             }
                         }
