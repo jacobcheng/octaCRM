@@ -67,17 +67,7 @@ class QuotationItem extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','product','accessory','package','carton','process','weight','cbm','quantity','profit','unit_price','amount']);
-                /*$row->visible(['quotation']);
-				$row->getRelation('quotation')->visible(['ref_no']);
-				$row->visible(['product']);
-				$row->getRelation('product')->visible(['code']);
-				$row->visible(['accessory']);
-				$row->getRelation('accessory')->visible(['name']);
-				$row->visible(['package']);
-				$row->getRelation('package')->visible(['name']);
-				$row->visible(['carton']);
-				$row->getRelation('carton')->visible(['name']);*/
+                $row->visible(['id','product','accessory','package','carton','process','weight','cbm','quantity','profit','unit_price','usd_unit_price','amount','usd_amount','tax_amount']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
@@ -176,6 +166,7 @@ class QuotationItem extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
+        $this->assignconfig("quotation", $row->quotation);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
@@ -227,9 +218,10 @@ class QuotationItem extends Backend
 
     public static function prepareSave ($data, $update = true, $row = [])
     {
+        $quotation =  model('app\admin\model\sales\Quotation')->get($data['quotation_id']);
         $product = (!empty($row) && !$update && $data['product'] == (isset($row['product']['id']) ? : $data['product'])) ?  $row['product']: model('app\admin\model\products\Product')->find($data['product']);
-        $productCBM = $product['length']*$product['width']*$product['height'];
-        $packageCBM = $product['plength']*$product['pwidth']*$product['pheight'];
+        $productCBM = $product['length'] * $product['width'] * $product['height'];
+        $packageCBM = $product['plength'] * $product['pwidth'] * $product['pheight'];
         $cbm = $packageCBM > $productCBM ? $packageCBM : $productCBM;
         list($data['cbm'], $data['weight'], $data['unit_cost']) = [round($cbm/1000000,3) * $data['quantity'], ($product['pweight'] ? : $product['weight'])*$data['quantity'], $product['cost']];
         $data['product'] = json_encode($product);
@@ -286,8 +278,7 @@ class QuotationItem extends Backend
             }
         }
 
-        if (!$data['unit_price']){
-            $quotation =  model('app\admin\model\sales\Quotation')->get($data['quotation_id']);
+        if (!isset($data['unit_price']) || !$data['unit_price']) {
             $id = isset($row['id']) ? $row['id'] : '0';
             $unit_fee = $quotation->getUnitFee($data['cbm'], $data['weight'], $id);
             if (count($quotation->items) > 0) {
@@ -295,13 +286,23 @@ class QuotationItem extends Backend
                     if ($value['id'] != $id) {
                         $value['unit_price'] = round((($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + ($value['unit_cost'] * (1 + $value['profit'] / 100)) + $value['carton']['cost'] + $value['package']['cost']) * (1 + $quotation->insurance / 10000), 2);
                         $value['amount'] = $value['unit_price'] * $value['quantity'];
+                        $value['usd_unit_price'] = round($value['unit_price'] / $quotation['rate'], 2);
+                        $value['usd_amount'] = $value['usd_unit_price'] * $value['quantity'];
+                        $value['tax_amount'] = $quotation['rate'] > 0 ? $value['amount']/(1 - $quotation['tax_rate']/100):'';
                         $value->save();
                     }
                 }
             }
             $data['unit_price'] = round((($data[key($unit_fee)] * current($unit_fee)/$data['quantity']) + ($data['unit_cost'] * (1 + $data['profit']/100)) + $pnc) * (1 + $quotation->insurance/10000), 2);
         }
+        if ($quotation['currency'] == "USD" && (!isset($data['usd_unit_price']) || !$data['usd_unit_price'])) {
+            $data['usd_unit_price'] = round($data['unit_price']/$quotation['rate'],2);
+            $data['usd_amount'] = $data['usd_unit_price'] * $data['quantity'];
+        }
         $data['amount'] = $data['unit_price'] * $data['quantity'];
+        if ($quotation['tax_rate'] > 0) {
+            $data['tax_amount'] = $data['amount']/(1 - $quotation['tax_rate']/100);
+        }
         return $data;
     }
 
@@ -341,4 +342,25 @@ class QuotationItem extends Backend
             }
         }
     }
+
+    /*public function updateitems ($quotation_id = null, $items = [], $id = 0, $unit_fee = [])
+    {
+        $quotation = model("Quotation")->get($quotation_id);
+        if (empty($items)) {
+            $items = $quotation->items;
+        }
+        if (empty($unit_fee)) {
+            $unit_fee = $quotation->getUnitFee();
+        }
+        foreach ($items as $value) {
+            if ($value['id'] != $id) {
+                $value['unit_price'] = round((($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + ($value['unit_cost'] * (1 + $value['profit'] / 100)) + $value['carton']['cost'] + $value['package']['cost']) * (1 + $quotation->insurance / 10000), 2);
+                $value['amount'] = $value['unit_price'] * $value['quantity'];
+                $value['usd_unit_price'] = round($value['unit_price'] / $quotation['rate'], 2);
+                $value['usd_amount'] = $value['usd_unit_price'] * $value['quantity'];
+                $value['tax_amount'] = $quotation['rate'] > 0 ? $value['amount']/(1 - $quotation['tax_rate']/100):'';
+                $value->save();
+            }
+        }
+    }*/
 }

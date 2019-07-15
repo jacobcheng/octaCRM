@@ -177,16 +177,9 @@ class Quotation extends Backend
         return $this->view->fetch();
     }
 
-    public function printpi ($ids = null)
-    {
-        $row = $this->model->get($ids);
-        $this->view->assign("row", $row);
-        return $this->view->fetch('edit');
-    }
-
     public function print ($ids = null, $type)
     {
-        $row = $this->model->with(['items'])->where('id', $ids)->find();
+        $row = $this->model->get($ids);
         if (!$row) {
             $this->error(__('No Results were found'));
         }
@@ -196,12 +189,21 @@ class Quotation extends Backend
                 $this->error(__('You have no permission'));
             }
         }
-        $this->assign('type', $type);
+        if ($type === "bank") {
+            $this->view->assign("row", $row);
+            return $this->view->fetch('edit');
+        }
+        //$this->assign('type', $type);
         $client = model('app\admin\model\sales\Client')->get($row['client_id']);
+        if ( $row['currency']==="CNY" ) {
+            $totalamount = $row['tax_rate'] > 0 ? $row['total_tax_amount'] : $row['total_amount'];
+        } else {
+            $totalamount = $row['total_usd_amount'];
+        }
         $numberToWords = new NumberToWords();
         $currency = $numberToWords->getCurrencyTransformer('en');
-        $saytotal = $currency->towords(round(($row['total_amount']+$row['service_amount'])/$row['rate'], 2)*100, "USD");
-        $this->view->assign(["row" =>  $row,"client" => $client, "saytotal" => $saytotal]);
+        $saytotal = $currency->towords(($totalamount+$row['service_amount'])*100, "USD");
+        $this->view->assign(["row" =>  $row, "client" => $client, "saytotal" => $saytotal, "type" => $type]);
         return $this->view->fetch();
     }
 
@@ -212,13 +214,28 @@ class Quotation extends Backend
             foreach ($data as $val) {
                 if ($value['id'] == $val['id']) {
                     $params = $value;
-                    $params['quantity'] = $val['quantity'];
-                    $params['unit_price'] = $val['unit_price'];
+                    /*$params['quantity'] = $val['quantity'];
+                    $params['unit_price'] = isset($val['unit_price']) ? :'';
+                    $params['usd_unit_price'] = isset($val['usd_unit_price']) ? :'';*/
+                    list($params['quantity'], $params['profit'], $params['unit_price'], $params['usd_unit_price']) = [$val['quantity'], $val['profit'], isset($val['unit_price']) ? :'', isset($val['usd_unit_price']) ? :''];
                     unset($params['id'], $params['createtime'], $params['updatetime'], $params['updatetime']);
                     $params = QuotationItem::prepareSave($params, $update, $params);
                     $this->model->items()->save($params);
                 }
             }
         }
+    }
+
+    public function updateitems ($ids)
+    {
+        $quotation = $this->model->get($ids);
+        if (count($quotation->items) > 0) {
+            foreach ($quotation->items as $value) {
+                list($value['unit_price'], $value['usd_unit_price'], $value['amount'], $value['usd_amount'], $value['tax_amount']) = ['','','','',''];
+                $value = QuotationItem::prepareSave($value, false, $value);
+                $value->save();
+            }
+        }
+        $this->success();
     }
 }

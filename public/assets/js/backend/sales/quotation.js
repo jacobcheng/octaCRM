@@ -20,7 +20,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
-                sortName: 'createtime',
+                sortName: 'id',
                 rowStyle: rowStyle,
                 columns: [
                     [
@@ -46,7 +46,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                             }},*/
                         //{field: 'transport', title: __('Transport'), searchList: {"Express Service":__('Express Service'),"By Sea":__('By Sea'),"By Air":__('By Air'),"By Train":__('By Train'),"By Road":__('By Road')}, formatter: Table.api.formatter.normal},
                         {field: 'total_amount', title: __('Total Amount'), formatter: function (value, row) {
-                                return "<span data-toggle='tooltip' title='USD "+ (value/row.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                                //return "<span data-toggle='tooltip' title='USD "+ (value/row.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
+                                return value.toFixed(2);
                             }},
                         {field: 'user.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
@@ -71,15 +72,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     confirm: '是否复制该报价？',
                                     callback: function (value) {
                                         Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
-                                    }
+                                    },
+                                    extend: 'data-area=\'["90%","90%"]\'',
                                 }
                             ]}
                     ],
 
                 ],
-                onLoadSuccess: function () {
-                    $('.btn-copyone').data('area', ['90%', '90%']);
-                }
             });
 
             // 为表格绑定事件
@@ -166,43 +165,144 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             $(function () {
                 Layer.confirm("是否更新到最新参数价格？", {btn:["更新", "维持"]}, function (index) {
                     $("form").attr("action", "sales/quotation/copy/update/true/ids/" + ids + location.search);
-                    $("[name*='[unit_price]").val('');
+                    $("[name*='unit_price'],[name*='usd_unit_price']").val('');
                     Layer.close(index);
                 })
-            })
+            });
 
             $(".btn-remove").click(function () {
                 this.closest(".attachment-block").remove();
             })
         },
-        printpi: function () {
-            Form.api.bindevent($("form[role=form]"),function (data, ret) {
-                Fast.api.close(ret);
-            });
-            var id = window.location.pathname.split("/");
-            id = id[id.length - 1];
-            $("form").attr("action", "sales/quotation/edit/ids/" + id);
-            $("[id!='c-bank']").closest(".form-group").hide();
-            $("#c-bank").closest(".form-group").show();
+        print: function () {
+           var type = window.location.pathname.split('/');
+           type = type[type.length - 3];
+            var ids = window.location.pathname.split("/");
+            ids = ids[ids.length - 1];
+           if (type === "bank") {
+               Controller.api.bindevent();
+               $("form").attr("action", "sales/quotation/edit/ids/" + ids);
+               $("[id!='c-bank']").closest(".form-group").hide();
+               $("#c-bank").closest(".form-group").show();
+           } else {
+                var beforePrint = function() {
+                };
+                var afterPrint = function() {
+                    parent.Layer.closeAll();
+                };
+                window.onbeforeprint = beforePrint;
+                window.onafterprint = afterPrint;
+                window.print();
+           }
+        },
+        api: {
+            bindevent: function () {
+                Form.api.bindevent($("form[role=form]"), function (data,ret) {
+                    Fast.api.close(ret);
+                });
+                $(".btn-append").on('fa.event.appendfieldlist', function () {
+                    Form.events.selectpicker($("form[role=form]"));
+                });
+
+                //控制客户和联系人
+                $('#c-contact_id').data('params', function () {
+                    return {custom:{client_id:$('#c-client_id').val()}};
+                });
+                $("#c-client_id").change(function () {
+                    $("#c-contact_id").selectPageClear();
+                });
+
+                //控制是否使用第三方目的地
+                $('#c-switch').change(function () {
+                    if ($(this).is(':checked')){
+                        $('#c-destination,#c-country_code').closest('.form-group').show();
+                        $('.sp_container').css('width', '100%');
+                    } else {
+                        $('#c-destination,#c-country_code').val('').closest('.form-group').hide();
+                    }
+                });
+
+                //根据币种控制汇率税率显示
+                $("#c-currency").change(function () {
+                    if ($(this).val() === "CNY") {
+                        $("#c-switch_tax,#c-switch_tax").closest(".form-group").show();
+                        $("#c-rate").val('1').closest(".form-group").hide();
+                    } else {
+                        $("#c-rate").val('').closest(".form-group").show();
+                        $("#c-switch_tax,#c-tax_rate").closest(".form-group").hide();
+                        $("#c-switch_tax").attr("checked",false);
+                        $("#c-tax_rate").val("");
+                    }
+                });
+
+                //控制显示税率控件
+                $("#c-switch_tax").change(function () {
+                    if ($(this).is(":checked")){
+                        $("#c-tax_rate").closest('.form-group').show();
+                    } else {
+                        $("#c-tax_rate").val('').closest('.form-group').hide();
+                    }
+                });
+
+                //根据贸易术语控制运输方式，运费，保险税率显示
+                $('#c-incoterms').change(function () {
+                    var terms = $(this).val();
+                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
+                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
+                        $('#c-insurance').val('').closest('.form-group').hide();
+                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
+                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
+                    } else  {
+                        $("#c-transport,#c-transport_fee,#c-insurance").val('').closest('.form-group').hide();
+                    }
+                });
+
+                $(function () {
+                    if ($('#c-destination').val()) {
+                        $('#c-switch').trigger('click');
+                    }
+                    var terms = $('#c-incoterms').val();
+                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
+                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
+                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
+                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
+                    } else {
+                        return;
+                    }
+
+                    if ($("#c-currency").val() === "CNY") {
+                        $("#c-switch_tax").closest(".form-group").show();
+                        $("#c-rate").closest(".form-group").hide();
+                    }
+
+                    if ($("#c-tax_rate").val() > 0) {
+                        $("#c-switch_tax").trigger("click");
+                    }
+                })
+            }
         },
         detail: function () {
             $(".btn-edit").click(function () {
-                Fast.api.open("sales/quotation/edit/ids/" + Config.quotation.id, __('Edit')+' '+Config.quotation.ref_no, {callback: function (data) {
-                        if (data.code === 1) {
+                Fast.api.open("sales/quotation/edit/ids/" + Config.quotation.id, __('Edit') +' '+ Config.quotation.ref_no, {callback: function (data) {
+                    Layer.confirm("是否自动更新该报价下item的价格",{},function (index) {
+                        Fast.api.ajax("sales/quotation/updateitems/ids/"+Config.quotation.id, function () {
+                            Layer.close(index);
                             window.location.reload();
-                        }
-                    }})
+                        })
+                    });
+                    }
+                })
             });
-            
+
             $(".btn-print").click(function () {
                 Fast.api.open("sales/quotation/print/type/quotation/ids/" + Config.quotation.id,'',{area:["90%","90%"]})
             });
 
             $(".btn-print-pi").click(function () {
-                Fast.api.open("sales/quotation/printpi/ids/" +  Config.quotation.id, __("Select a collection bank"), {
+                Fast.api.open("sales/quotation/print/type/bank/ids/" +  Config.quotation.id, __("Select a collection bank"), {
+                    area:["90%","90%"],
                     callback: function (ret) {
-                        console.log(ret)
-                        if (ret.code ==1) {
+                        if (ret.code === 1) {
                             Fast.api.open("sales/quotation/print/type/pi/ids/" + Config.quotation.id,)
                         }
                     }
@@ -210,10 +310,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             });
 
             $(".btn-copy").click(function () {
-                Fast.api.open("sales/quotation/copy/ids/" + Config.quotation.id,__("Copy"),{
-                    callback: function (value) {
-                        Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
-                    }
+                Fast.api.open("sales/quotation/copy/update/false/ids/" + Config.quotation.id, __("Copy"),{
+                    callback: function (data) {
+                        Fast.api.addtabs("sales/quotation/detail/ids/"+ data.data.ids, data.data.ref_no + ' ' + __("Detail"))
+                    },
+                    area: ["90%","90%"],
                 })
             });
 
@@ -222,8 +323,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 showFooter:true,
                 extend: {
                     index_url: 'sales/quotation_item/index' + location.search,
-                    add_url: 'sales/quotation_item/add/quotation_id/' + Config.quotation.id,
-                    edit_url: 'sales/quotation_item/edit/update/false',
+                    add_url: 'sales/quotation_item/add/currency/' + Config.quotation.currency + '/quotation_id/' + Config.quotation.id,
+                    edit_url: 'sales/quotation_item/edit/currency/'+ Config.quotation.currency +'/update/false',
                     del_url: 'sales/quotation_item/del',
                     multi_url: 'sales/quotation_item/multi',
                     table: 'quotation_item',
@@ -231,6 +332,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             });
 
             var table = $("#table");
+
+            if (Config.quotation.currency === "CNY"){
+                cny = true; usd = false;
+            } else {
+                cny = false; usd = true;
+            }
+            Config.quotation.tax_rate > 0 ? tax = true: tax = false;
 
             // 初始化表格
             table.bootstrapTable({
@@ -250,7 +358,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                     [
                         {checkbox: true},
                         {field: 'product.code', title: __('Product'),footerFormatter: function () {
-                                return "Total"
+                                return "Total";
                             }},
                         {field: 'accessory', title: __('Accessory'), formatter: function (value) {
                                 if (value.length > 0){
@@ -308,36 +416,57 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                             }},
                         {field: 'profit', title: __('Profit')},
                         {field: 'unit_price', title: __('Unit_price'), operate:'BETWEEN', formatter: function (value, row) {
-                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
-                            }},
+                                //return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
+                                return "￥ " + value.toFixed(2);
+                            },visible: cny},
+                        {field: 'usd_unit_price', title: __('Unit_price'), operate: "BETWEEN", formatter: function (value) {
+                                return "$ " + value.toFixed(2);
+                            },visible: usd},
                         {field: 'amount', title: __('Amount'), operate:'BETWEEN', formatter: function (value, row) {
-                                return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
+                                //return "<span data-toggle='tooltip' title='USD "+ (value/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+value.toFixed(2)+"</span>";
+                                return "￥ " + value.toFixed(2);
                             }, footerFormatter: function (row) {
                                 var sum = 0;
                                 $.map(row, function(val){
                                     sum += val['amount'];
                                 });
-                                return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+sum.toFixed(2)+"</span>";
-                            }},
-                        {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
-                                var tax_amount = (row['amount']/(1 - Config.quotation.tax_rate/100));
-                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+"￥ "+tax_amount.toFixed(2)+"</span>";
+                                //return "<span data-toggle='tooltip' title='USD "+ (sum/Config.quotation.rate).toFixed(2)+"'>"+"￥ "+sum.toFixed(2)+"</span>";
+                                return "￥ " + sum.toFixed(2);
+                            },visible: !tax&&!usd},
+                        {field: 'usd_amount', title: __('Amount'), operate: 'EETWEEN', formatter: function (value) {
+                                return "$ " + value.toFixed(2);
                             }, footerFormatter: function (row) {
                                 var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['usd_amount'];
+                                })
+                                return "$ " + sum.toFixed(2);
+                            },visible: usd},
+                        {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
+                                //var tax_amount = (row['amount']/(1 - Config.quotation.tax_rate/100));
+                                //return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+"￥ "+tax_amount.toFixed(2)+"</span>";
+                                return "￥ " + value.toFixed(2);
+                            }, footerFormatter: function (row) {
+                                /*var sum = 0;
                                 var amount = 0;
                                 $.map(row, function (val) {
                                     sum += val['amount']/(1 - Config.quotation.tax_rate/100);
                                     amount += val['amount'];
                                 });
-                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (sum - amount).toFixed(2) +"'>"+"￥ "+sum.toFixed(2)+"</span>";
-                            }},
+                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (sum - amount).toFixed(2) +"'>"+"￥ "+sum.toFixed(2)+"</span>";*/
+                                var sum = 0;
+                                $.map(row, function (val) {
+                                    sum += val['tax_amount'];
+                                })
+                                return "￥ " + sum.toFixed(2);
+                            },visible: tax},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
                                     name: 'copy',
                                     title: __('Copy'),
                                     classname: 'btn btn-xs btn-success btn-dialog',
                                     icon: 'fa fa-copy',
-                                    url: 'sales/quotation_item/copy',
+                                    url: 'sales/quotation_item/copy/currency/'+ Config.quotation.currency,
                                     confirm: '是否复制该产品？'
                                 }
                             ]}
@@ -347,88 +476,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
 
             // 为表格绑定事件
             Table.api.bindevent(table);
-        },
-        api: {
-            bindevent: function () {
-                Form.api.bindevent($("form[role=form]"), function (data,ret) {
-                    Fast.api.close(ret);
-                });
-                $(".btn-append").on('fa.event.appendfieldlist', function () {
-                    Form.events.selectpicker($("form[role=form]"));
-                });
-                $('#c-contact_id').data('params', function () {
-                    return {custom:{client_id:$('#c-client_id').val()}};
-                });
-                $('#c-switch').change(function () {
-                    var destination = $('#c-destination,#c-country_code');
-                    if ($(this).is(':checked')){
-                        destination.closest('.form-group').show();
-                        $('.sp_container').css('width', '100%');
-                    } else {
-                        destination.closest('.form-group').hide();
-                        destination.val('');
-                    }
-                });
-                $("#c-currency").change(function () {
-                    if ($(this).val() == "CNY") {
-                        $("#c-switch_tax,#c-tax_rate").closest(".form-group").show();
-                    } else {
-                        $("#c-switch_tax,#c-tax_rate").closest(".form-group").hide();
-                        $("#c-switch_tax").attr("checked",false);
-                        $("#c-tax_rate").val("");
-                    }
-                });
-                $("#c-switch_tax").change(function () {
-                    $("#c-tax_rate").closest('.form-group').toggle();
-                });
-                $('#c-incoterms').change(function () {
-                    var terms = $(this).val();
-                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
-                        var insurance = $('#c-insurance');
-                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
-                        insurance .closest('.form-group').hide();
-                        insurance .val('');
-                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
-                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
-                    } else  {
-                        var selectors = $("#c-transport,#c-transport_fee,#c-insurance");
-                        selectors.closest('.form-group').hide();
-                        selectors.val('');
-                    }
-                });
-                $(function () {
-                    if ($('#c-destination').val()) {
-                        $('#c-switch').trigger('click');
-                    }
-                    var terms = $('#c-incoterms').val();
-                    if (terms === 'FCA'|| terms === 'FAS'|| terms === 'FOB'|| terms === 'CFR'|| terms === 'CPT') {
-                        $("#c-transport,#c-transport_fee").closest('.form-group').show();
-                    } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
-                        $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
-                    } else {
-                        return;
-                    }
-                    var currency = $("#c-currency").val();
-                    if (currency === "CNY") {
-                        $("#c-switch_tax").closest(".form-group").show();
-                    }
-                    var tax = $("#c-tax_rate").val();
-                    if (tax > 0) {
-                        $("#c-switch_tax").trigger("click");
-                    }
-                })
-            }
-        },
-        print: function () {
-            var beforePrint = function() {
-            };
-            var afterPrint = function() {
-                parent.Layer.closeAll();
-                //$("#ribbon").show();
-            };
-            window.onbeforeprint = beforePrint;
-            window.onafterprint = afterPrint;
-            window.print();
         },
     };
     return Controller;

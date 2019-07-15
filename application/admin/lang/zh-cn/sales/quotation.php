@@ -43,5 +43,6 @@ return [
     'Please select a service'   => '请选择服务',
     'Service'          => '服务',
     'Cost'             => '成本',
-    'Select a collection bank'  => '选择收款银行'
+    'Select a collection bank'  => '选择收款银行',
+    'USD Unit Price'   => '美元单价',
 ];

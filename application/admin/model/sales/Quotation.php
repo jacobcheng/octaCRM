@@ -109,14 +109,27 @@ class Quotation extends Model
 
     public function getTotalAmountAttr ($value, $data)
     {
+        //var_dump(Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount'));
         return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount');
+    }
+
+    public function getTotalUsdAmountAttr ($value, $data)
+    {
+        return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('usd_amount');
+    }
+
+    public function getTotalTaxAmountAttr ($value, $data)
+    {
+        return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('tax_amount');
     }
 
     public function getServiceAmountAttr ()
     {
         $amount = 0;
-        foreach ($this->service as $value) {
-            $amount += $value['cost'];
+        if ($this->service) {
+            foreach ($this->service as $value) {
+                $amount += $value['cost'];
+            }
         }
         return $amount;
     }

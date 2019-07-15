@@ -114,10 +114,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
         edit: function () {
             Controller.api.bindevent();
             $("[type='submit']").click(function () {
-                var product = window.location.pathname.split("/");
+                var ids = window.location.pathname.split("/");
                 var that = this;
                 Fast.api.ajax({
-                    url : "sales/quotation_item/checkupdate/ids/" + product[product.length - 1] + location.search,
+                    url : "sales/quotation_item/checkupdate/ids/" + ids[ids.length - 1] + location.search,
                     data: {
                         product:$("#c-product_id").val(),
                         package:$("#c-package_id").val(),
@@ -132,7 +132,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                     Layer.confirm(ret.msg + "有更新，是否需要更新报价内容？",{btn:["更新","维持"]},
                         function (index) {
                             $("#c-unit_price").val("");
-                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/true/ids/" + product[product.length - 1] + location.search);
+                            $(that).closest("form").attr("action","sales/quotation_item/edit/update/true/ids/" + ids[ids.length - 1] + location.search);
                             Layer.close(index);
                             $(that).closest("form").trigger("submit");
                         },
@@ -148,7 +148,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
 
             $(function () {
                 Layer.confirm("是否需要清空单价，自动计算单价？", {}, function (index) {
-                    $("#c-unit_price").val("");
+                    $("#c-unit_price, #c-usd_unit_price").val("");
                     Layer.close(index);
                 });
             });
@@ -165,7 +165,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
                 $("#c-product_id").data("params", function () {
                     return {custom:{model_id:$("#c-product_model").val()}};
                 });
-                $(".btn-append").on('fa.event.appendfieldlist', function () {
+                $(".btn-append").on("fa.event.appendfieldlist", function () {
                     Form.events.selectpicker($("form[role=form]"));
                 });
 
