@@ -27,13 +27,16 @@ class Contact extends Model
     protected $append = [
 
     ];
-    
-
-    
 
 
 
 
+
+
+    public function admin()
+    {
+        return $this->belongsTo('app\admin\model\Admin', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
 
 
 

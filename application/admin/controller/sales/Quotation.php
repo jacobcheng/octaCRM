@@ -81,13 +81,13 @@ class Quotation extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['client','user','country'])
+                    ->with(['client','admin','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['client','contact','user','country'])
+                    ->with(['client','contact','admin','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
@@ -99,8 +99,8 @@ class Quotation extends Backend
                 $row->getRelation('client')->visible(['short_name']);
                 $row->visible(['contact']);
                 $row->getRelation('contact')->visible(['appellation','email','cc_email']);
-				$row->visible(['user']);
-				$row->getRelation('user')->visible(['nickname']);
+				$row->visible(['admin']);
+				$row->getRelation('admin')->visible(['nickname']);
                 $row->visible(['country']);
                 $row->getRelation('country')->visible(['country_name']);
             }

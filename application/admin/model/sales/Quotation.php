@@ -184,9 +184,9 @@ class Quotation extends Model
     }
 
 
-    public function user()
+    public function Admin()
     {
-        return $this->belongsTo('app\admin\model\User', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\Admin', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 
 

@@ -49,7 +49,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 //return "<span data-toggle='tooltip' title='USD "+ (value/row.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
                                 return value.toFixed(2);
                             }},
-                        {field: 'user.nickname', title: __('Admin_id')},
+                        {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {

@@ -71,4 +71,8 @@ class Calendar extends Model
         return $value && !is_numeric($value) ? strtotime($value) : $value;
     }
 
+    public function Admin()
+    {
+        return $this->belongsTo('app\admin\model\Admin', 'admin_id', 'id', [], 'LEFT')->setEagerlyType(0);
+    }
 }
