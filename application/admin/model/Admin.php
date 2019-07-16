@@ -17,6 +17,9 @@ class Admin extends Model
     protected $updateTime = 'updatetime';
     protected $deleteTime = 'deletetime';
 
+    protected $append = [
+        'department'
+    ];
     /**
      * 重置用户密码
      * @author baiyouwen
@@ -28,10 +31,20 @@ class Admin extends Model
         return $ret;
     }
 
+    public function getDepartmentAttr ($value, $data) {
+        //return $data['department_id'] > 0 ? $this->department()->name : "超级管理员";
+        return $data['department_id'] > 0 ? model('Category')->where('id', $data['department_id'])->value('name') : '超级管理员';
+    }
+
     // 密码加密
     protected function encryptPassword($password, $salt = '', $encrypt = 'md5')
     {
         return $encrypt($password . $salt);
     }
+
+    /*public function department ()
+    {
+        return $this->belongsTo('Category','department_id', 'id', '', 'LEFT')->setEagerlyType(0);
+    }*/
 
 }

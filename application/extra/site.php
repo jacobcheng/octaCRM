@@ -16,11 +16,11 @@ return array (
   'categorytype' => 
   array (
     'default' => 'Default',
+    'catalog' => 'Catalog',
+    'department' => 'Department',
+    'trade_terms' => 'Trade Terms',
     'page' => 'Page',
     'article' => 'Article',
-    'catalog' => 'Catalog',
-    'process' => 'Process',
-    'trade_terms' => 'Trade Terms',
   ),
   'configgroup' => 
   array (

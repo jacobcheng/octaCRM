@@ -45,6 +45,8 @@ return [
     'Fixed page'                  => '后台固定页',
     'Category type'               => '分类类型',
     'Config group'                => '配置分组',
+    'Process'                     => '工艺',
+    'Service'                     => '服务',
     'Mail type'                   => '邮件发送方式',
     'Mail smtp host'              => 'SMTP服务器',
     'Mail smtp port'              => 'SMTP端口',

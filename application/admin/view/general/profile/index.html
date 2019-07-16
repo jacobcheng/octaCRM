@@ -56,6 +56,7 @@
                         </div>
 
                         <h3 class="profile-username text-center">{$admin.username}</h3>
+                        <h4 class="profile-username text-center">{$admin.department}</h4>
 
                         <p class="text-muted text-center">{$admin.email}</p>
                         <div class="form-group">
@@ -63,12 +64,20 @@
                             <input type="text" class="form-control" id="username" name="row[username]" value="{$admin.username|htmlentities}" disabled/>
                         </div>
                         <div class="form-group">
+                            <label for="nickname" class="control-label">{:__('Nickname')}:</label>
+                            <input type="text" class="form-control" id="nickname" name="row[nickname]" value="{$admin.nickname|htmlentities}" data-rule="required"/>
+                        </div>
+                        <div class="form-group">
                             <label for="email" class="control-label">{:__('Email')}:</label>
                             <input type="text" class="form-control" id="email" name="row[email]" value="{$admin.email|htmlentities}" data-rule="required;email"/>
                         </div>
                         <div class="form-group">
-                            <label for="nickname" class="control-label">{:__('Nickname')}:</label>
-                            <input type="text" class="form-control" id="nickname" name="row[nickname]" value="{$admin.nickname|htmlentities}" data-rule="required"/>
+                            <label for="mobile" class="control-label">{:__('Mobile')}:</label>
+                            <input type="text" class="form-control" id="mobile" name="row[mobile]" value="{$admin.mobile|htmlentities}" data-rule="required"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthday" class="control-label">{:__('Birthday')}:</label>
+                            <input type="text" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-date-default-date="2000-01-01" id="birthday" name="row[birthday]" value="{$admin.birthday|htmlentities}" />
                         </div>
                         <div class="form-group">
                             <label for="password" class="control-label">{:__('Password')}:</label>
