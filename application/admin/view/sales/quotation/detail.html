@@ -27,7 +27,7 @@
                 <dt>{:__('Remark')}: </dt>
                 <dd>
                     {foreach name="row.service" item="vo"}
-                    {eq name="site.languages.backend" value="zh-cn"}{$site.service[$vo.service]}{else /}{$vo.service}{/eq}: {$vo.cost}<br>
+                    {eq name="site.languages.backend" value="zh-cn"}{$site.service[$vo.service]}{else /}{$vo.service}{/eq}: {eq name="row.currency" value="CNY"}￥ {else/}${/eq}{$vo.cost}<br>
                     {/foreach}
                     {$row.remark}
                 </dd>
