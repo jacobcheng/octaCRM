@@ -33,7 +33,7 @@ class Calendar extends Backend
      */
     public function index()
     {
-        $adminList = Admin::where('id', 'in', $this->childrenAdminIds)->field('id,username as name')->select();
+        $adminList = Admin::where('id', 'in', $this->childrenAdminIds)->field('id,nickname as name,department_id')->select();
         $this->assignconfig('admins', $adminList);
         //设置过滤方法
         $this->request->filter(['strip_tags']);
@@ -56,12 +56,14 @@ class Calendar extends Backend
             $adminIds = $admin_id ? [$admin_id] : $this->childrenAdminIds;
 
             $list = $this->model
+                    ->with('admin')
                     ->where('admin_id', 'in', $adminIds)
                     ->where('starttime', 'between', [strtotime($start), strtotime($end)])
                     ->order('id desc')
                     ->select();
 
             $repeatevent = $this->model
+                    ->with('admin')
                     ->where(['admin_id' => ['in',$adminIds], 'distance' => ['>=',1]])
                     ->select();
 
@@ -74,15 +76,21 @@ class Calendar extends Backend
             }
 
             $result = [];
-            //$time = time();
             foreach ($list as $k => $v)
             {
-                $result[] = $v['render'];
+                $render = $v['render'];
+                if ($type === "all") {
+
+                    $render['title'] =  $v['render']['title'].' '.$v['admin']['nickname'];
+                    //var_dump($v['admin']['id']);
+                }
+                //var_dump($v['render']['title']);
+                $result[] = $render;
             }
             return json($result);
         }
-        $eventList = CalendarEvent::where('admin_id', $this->auth->id)->order('id desc')->select();
-        $this->view->assign("eventList", $eventList);
+        //$eventList = CalendarEvent::where('admin_id', $this->auth->id)->order('id desc')->select();
+        //$this->view->assign("eventList", $eventList);
         return $this->view->fetch();
     }
 
@@ -190,7 +198,8 @@ class Calendar extends Backend
             $this->error(__('No Results were found'));
         if ($this->request->isPost())
         {
-            if (!in_array($row->admin_id, $this->childrenAdminIds))
+            //if (!in_array($row->admin_id, $this->childrenAdminIds))
+            if ($row->admin_id !== $this->auth->id)
             {
                 $this->error(__('You have no permission'));
             }
@@ -259,10 +268,11 @@ class Calendar extends Backend
             if ($this->request->has('params'))
             {
                 parse_str($this->request->post("params"), $values);
-                $values = array_intersect_key($values, array_flip(is_array($this->multiFields) ? $this->multiFields : explode(',', $this->multiFields)));
-                if ($values)
+                //$values = array_intersect_key($values, array_flip(is_array($this->multiFields) ? $this->multiFields : explode(',', $this->multiFields)));
+                $admin_id = $this->model->where('id', $ids)->value('admin_id');
+                if ($admin_id == $this->auth->id)
                 {
-                    $count = $this->model->where($this->model->getPk(), 'in', $ids)->where('admin_id', 'in', $this->childrenAdminIds)->update($values);
+                    $count = $this->model->where($this->model->getPk(), 'in', $ids)->where('admin_id', $this->auth->id)->update($values);
                     $this->success();
                 }
                 else
@@ -276,11 +286,11 @@ class Calendar extends Backend
 
     protected function getRepeatEvents ($repeatevent, $start, $end)
     {
-        $result = [];
-
-        foreach ($repeatevent as $value) {
+        foreach ($repeatevent as $key => $value) {
+            $result = [];
             $i = $value['distance'];
             do {
+               //$item = $value;
                 $allDay = ($value['starttime'] === $value['endtime'] && date("H:i:s", $value['starttime']) == '00:00:00');
                 $newstart = date('c', $value['starttime']);
                 $newend = date('c', $value['endtime']);
@@ -288,7 +298,8 @@ class Calendar extends Backend
                 $eventend = strtotime($newend."+".$i.$value['period']);
 
                 if ($eventend > strtotime($start) && $eventstart < strtotime($end)) {
-                    $result[]['render'] = [
+                    $item = $value->toArray();
+                    $item['render'] = [
                         'id'              => $value['id'],
                         'title'           => $value['title'],
                         'start'           => date("c", $eventstart),
@@ -299,6 +310,7 @@ class Calendar extends Backend
                         'url'             => $value['url'] ? : '',
                         'className'       => "{$value['classname']} fc-{$value['status']}" . (($allDay ? $eventend + 86400 : $eventend) < time() ? ' fc-expired' : '')
                     ];
+                    $result[] = $item;
                 }
                 $i += $value['distance'];
             } while ($eventstart < strtotime($end));

@@ -12,7 +12,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
                 url: "calendar/index",
                 data: function () {
                     return {
-                        type: $(".fc-my-button.fc-state-active").size() > 0 ? 'my' : 'all',
+                        type: $(".fc-all-button.fc-state-active").size() === 0 ? 'my' : 'all',
                         admin_id: $("#c-admin_id").size() > 0 ? $("#c-admin_id").val() : 0
                     };
                 }
@@ -48,8 +48,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
             function toggle_button() {
                 $(".fc-all-button,.fc-my-button").removeClass("fc-state-active");
                 $(this).addClass("fc-state-active");
+                if ($(this).hasClass("fc-all-button")){
+                    $("#c-admin_id").closest(".form-inline").removeClass("hide");
+                } else {
+                    $("#c-admin_id").closest(".form-inline").addClass("hide");
+                }
                 $('.selectpage').selectPageClear();
-                $('#calendar').fullCalendar('refetchEvents');
+                //$('#calendar').fullCalendar('refetchEvents');
             }
 
             ini_events($('#external-events div.external-event'));
@@ -163,8 +168,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
                 eventAfterAllRender: function (view) {
                     if ($(".fc-all-button.fc-state-active,.fc-my-button.fc-state-active").size() == 0) {
                         $(".fc-toolbar").append('<div id="calendarTrash" class="calendar-trash"><i class="fa fa-trash-o"></i><b>' + __('Drag here to delete') + '</b></div>');
-                        $(".fc-all-button").addClass("fc-state-active");
-                        $(".fc-toolbar .fc-left").append('<form class="form-inline"><input type="text" id="c-admin_id" name="admin_id" placeholder="' + __('Please select a user') + '" class="form-control input-sm selectpage" /></form>');
+                        $(".fc-my-button").addClass("fc-state-active");
+                        $(".fc-toolbar .fc-left").append('<form class="form-inline hide"><input type="text" id="c-admin_id" data-drop-button="false" name="admin_id" placeholder="' + __('Please select a user') + '" class="form-control selectpage" /></form>');
                         $(".fc-toolbar .fc-left .selectpage").data("source", Config.admins);
                         Form.events.selectpage($(".fc-toolbar .fc-left form"));
                     }
@@ -178,14 +183,19 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template', 'jquery-u
                 currColor = $(this).css("color");
                 $("input[name='row[background]']").val(rgb2hex(currColor));
             });
+            $(document).on("change", "input[name='admin_id']", function () {
+                $('#calendar').fullCalendar('refetchEvents');
+            });
             //$('#c-starttime').val(new Date('YYYY-mm-dd 00:00:00'));
             $(document).on("click", "input[name=type]", function (e) {
                 var value = $(this).val();
+                var starttime = $('#c-starttime');
+                var endtime = $('#c-endtime');
                 $("#c-endtime,#reminder").toggle(value === 'calendar');
-                $('#c-starttime').data("DateTimePicker").date(getStartTime());
-                $('#c-endtime').data("DateTimePicker").date(getEndTime($('#c-starttime').val()));
-                $('#c-starttime').data("DateTimePicker").minDate(new Date());
-                $('#c-endtime').data("DateTimePicker").minDate($('#c-starttime').val());
+                starttime .data("DateTimePicker").date(getStartTime());
+                endtime.data("DateTimePicker").date(getEndTime(starttime .val()));
+                starttime .data("DateTimePicker").minDate(new Date());
+                endtime.data("DateTimePicker").minDate(starttime .val());
                 //$("#add-form").attr("action", value === 'calendar' ? "calendar/add" : "calendar/addevent");
             });
             $('#c-switch').change(function () {

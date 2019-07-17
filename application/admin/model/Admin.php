@@ -31,9 +31,8 @@ class Admin extends Model
         return $ret;
     }
 
-    public function getDepartmentAttr ($value, $data) {
-        //return $data['department_id'] > 0 ? $this->department()->name : "超级管理员";
-        return $data['department_id'] > 0 ? model('Category')->where('id', $data['department_id'])->value('name') : '超级管理员';
+    public function getDepartmentAttr () {
+        return $this->id = 1 ? '超级管理员' : model('Category')->where('id', $this->department_id)->value('name');
     }
 
     // 密码加密
@@ -41,10 +40,5 @@ class Admin extends Model
     {
         return $encrypt($password . $salt);
     }
-
-    /*public function department ()
-    {
-        return $this->belongsTo('Category','department_id', 'id', '', 'LEFT')->setEagerlyType(0);
-    }*/
 
 }
