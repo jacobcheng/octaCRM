@@ -145,8 +145,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         mobile: [/\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d|2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/, "请输入正确的国际通用手机号码"],
                     },
                     fields:{
-                        'row[name]': 'required; length[~128]; remote(sales/client/checkdata)',
-                        'row[short_name]': 'required; length[~64]; remote(sales/client/checkdata)',
+                        'row[name]': "required; length[~128]; remote(sales/client/checkdata, id:#id)",
+                        'row[short_name]': 'required; length[~64]; remote(sales/client/checkdata, id:#id)',
                         'row[source]': 'required',
                         'row[type]': 'required',
                         'row[star]': 'required',
@@ -161,14 +161,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     if (size <= 2) {
                         $(".box").removeClass("box-default").addClass("box-danger box-solid");
                         $(".box-body").children("span").addClass("text-danger").text("联系人不能为空");
-                        //return false;
+                        return false;
                     } else {
                         $(".box-body").children("span").addClass("text-success").text("");
                         $(".box").removeClass("box-default box-danger box-solid").addClass("box-success box-solid");
-                        Form.api.submit(this);
+                        //Form.api.submit(this);
                         return ;
                     }
-                    return false;
+                    //return false;
                 });
                 $('#c-city_code').data('params', function () {
                     return {custom:{country_code:$('#c-country_code').val()}}
@@ -180,7 +180,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     var num = $(this).parent().children().length - 1;
                     var html = $('#addContactForm').html();
                     $(this).before(html.replace(/0/g,num));
-                    //Form.api.bindevent($("form[role=form]"));
                     Controller.api.delForm($('.delForm'));
                     Form.events.datetimepicker($("form[role=form]"));
                 });

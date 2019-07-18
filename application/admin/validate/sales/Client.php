@@ -28,7 +28,7 @@ class Client extends Validate
      * 验证场景
      */
     protected $scene = [
-        'add'  => [],
+        'add'  => ['name','short_name'],
         'edit' => [],
         'name' => ['name' => 'require'],
         'short_name' => ['short_name' => 'require'],

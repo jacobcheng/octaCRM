@@ -255,11 +255,17 @@ class Client extends Backend
     public function checkdata()
     {
         if ($this->request->isPost()) {
-            $validate = validate('app\admin\validate\sales\Client');
-            //$validate = validate('Client');
             $params = $this->request->post('row/a');
-            if (!$validate->scene(key($params))->check($params)){
-                return $this->error($validate->getError());
+            $id = $this->request->post('id');
+            $client = $this->model->withTrashed()->where(key($params), current($params))->find();
+            if ($client && $client['admin_id'] === $this->auth->id) {
+                if ($id){
+                    return $this->success();
+                } else {
+                    return $this->error("该客户已存在".($client['deletetime'] ? "并被删除": ""));
+                }
+            } elseif ($client && $client['admin_id'] !== session('admin.id')) {
+                return $this->error("该客户属于 ".session('admin.nickname').($client['deletetime'] ? " 并被删除": ""));
             } else {
                 return $this->success();
             }
