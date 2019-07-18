@@ -15,7 +15,12 @@ use think\exception\ValidateException;
  */
 class Contact extends Backend
 {
-    
+    /**
+     * 无需鉴权的方法,但需要登录
+     * @var array
+     */
+    protected $noNeedRight = ['index', 'checkdata'];
+
     /**
      * Contactor模型对象
      * @var \app\admin\model\sales\Contact
@@ -102,7 +107,7 @@ class Contact extends Backend
         return $this->view->fetch();
     }
 
-    public function addContact ($params, $id)
+    /*public function addContact ($params, $id)
     {
         if ($params) {
             $params = $this->preExcludeFields($params);
@@ -132,7 +137,7 @@ class Contact extends Backend
                 $this->error($e->getMessage());
             }
         }
-    }
+    }*/
 
     public function editContact($params)
     {

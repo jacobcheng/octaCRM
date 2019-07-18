@@ -7,6 +7,12 @@ use app\common\controller\Backend;
 
 class Location extends Backend
 {
+    /**
+     * 无需鉴权的方法,但需要登录
+     * @var array
+     */
+    protected $noNeedRight = ['index'];
+
     protected  $model = null;
     public function _initialize()
     {
@@ -90,7 +96,6 @@ class Location extends Backend
                 $list[] = [
                     $primarykey => isset($item[$primarykey]) ? $item[$primarykey] : '',
                     $field      => isset($item[$field]) ? $item[$field] : '',
-                    //'pid'       => isset($item['pid']) ? $item['pid'] : 0
                 ];
             }
         }

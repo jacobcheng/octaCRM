@@ -23,6 +23,12 @@ class Client extends Backend
     protected $model = null;
 
     /**
+     * 无需鉴权的方法,但需要登录
+     * @var array
+     */
+    protected $noNeedRight = ['checkdata'];
+
+    /**
      * 是否开启数据限制
      * 支持auth/personal
      * 表示按权限判断/仅限个人
@@ -142,7 +148,7 @@ class Client extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    $this->addContact($params['addcontact'], $this->model->id);
+                    $this->addContact($params['addcontact'], $this->model);
                     $this->updateContact($this->model);
                     $this->success();
                 } else {
@@ -207,7 +213,7 @@ class Client extends Backend
                         $this->delContact(array_column($row['allcontact'], 'id'));
                     }
                     if (isset($params['addcontact'])) {
-                        $this->addContact($params['addcontact'],$row->id);
+                        $this->addContact($params['addcontact'],$row);
                     }
                     $this->updateContact($row);
                     $this->success();
@@ -231,11 +237,12 @@ class Client extends Backend
         }
     }
 
-    private function addContact($contacts,$id)
+    private function addContact($contacts,$row)
     {
-        foreach ($contacts as $row) {
-            $contact = new Contact;
-            $contact->addContact($row, $id);
+        foreach ($contacts as $contact) {
+            /*$contact = new Contact;
+            $contact->addContact($row, $id);*/
+            $row->allcontact()->save($contact);
         }
     }
 
@@ -249,6 +256,7 @@ class Client extends Backend
     {
         if ($this->request->isPost()) {
             $validate = validate('app\admin\validate\sales\Client');
+            //$validate = validate('Client');
             $params = $this->request->post('row/a');
             if (!$validate->scene(key($params))->check($params)){
                 return $this->error($validate->getError());

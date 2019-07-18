@@ -18,13 +18,15 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input id="c-name" data-rule="required;remote(sales/client/checkdata)" class="form-control" name="row[name]" type="text" value="">
+                <input id="c-name" data-rule="required" class="form-control" name="row[name]" type="text" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Short_name')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input id="c-short_name" data-rule="required;remote(sales/client/checkdata)" class="form-control" name="row[short_name]" type="text" value="">
+                <input id="c-short_name" data-rule="required" class="form-control" name="row[short_name]" type="text" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
@@ -36,6 +38,7 @@
                         <option value="{$key}" {in name="key" value="独立网站"}selected{/in}>{$vo}</option>
                     {/foreach}
                 </select>
+                <span class="msg-box"></span>
 
             </div>
         </div>
@@ -48,6 +51,7 @@
                         <option value="{$key}" {in name="key" value="零售商"}selected{/in}>{$vo}</option>
                     {/foreach}
                 </select>
+                <span class="msg-box"></span>
 
             </div>
         </div>
@@ -60,6 +64,7 @@
                         <option value="{$key}" {in name="key" value="0"}selected{/in}>{$vo}</option>
                     {/foreach}
                 </select>
+                <span class="msg-box"></span>
 
             </div>
         </div>
@@ -67,42 +72,49 @@
             <label class="control-label col-xs-12 col-sm-2">{:__('Country')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <input id="c-country_code" data-rule="required" class="form-control selectpage" data-source="location/index" data-show-field="country_name" data-key-field="code" data-search-field="name,name_cn" data-and-or="or" data-order-by="name" name="row[country_code]" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('City')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <input id="c-city_code" class="form-control selectpage" data-source="location/index" data-show-field="city_name" data-key-field="code" data-search-field="name,name_cn" data-and-or="or" data-order-by="name" name="row[city_code]" type="text">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Website')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <input id="c-website" class="form-control" name="row[website]" type="text" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Tel')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <input id="c-tel" class="form-control" name="row[tel]" type="text" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Fax')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <input id="c-fax" class="form-control" name="row[fax]" type="text" value="">
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Address')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <textarea id="c-address" class="form-control " rows="5" name="row[address]" cols="50"></textarea>
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Remark')}:</label>
             <div class="col-xs-12 col-sm-8">
                 <textarea id="c-remark" class="form-control " rows="5" name="row[remark]" cols="50"></textarea>
+                <span class="msg-box"></span>
             </div>
         </div>
         <div class="form-group">
@@ -123,7 +135,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">{:__('Contacts')}</h3>
             </div>
-            <div class="box-body">
+            <div id="box-body" class="box-body">
                 <span class="msg-box" for=".box-body"></span>
                 <button id="addForm" type="button" class="btn btn-default btn-block"><span class="fa fa-plus"></span></button>
             </div>
@@ -148,19 +160,19 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Contact Name')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][name]" type="text">
+                <input data-rule="length[~64]" class="form-control" name="row[addcontact][0][name]" type="text">
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Appellation')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input data-rule="required" class="form-control" name="row[addcontact][0][appellation]" type="text">
+                <input data-rule="required;length[~32]" class="form-control" name="row[addcontact][0][appellation]" type="text">
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Title')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][title]" type="text">
+                <input data-rule="length[~32]" class="form-control" name="row[addcontact][0][title]" type="text">
             </div>
         </div>
         <div class="form-group">
@@ -178,19 +190,19 @@
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Linkedin')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][linkedin]" type="text">
+                <input data-rule="length[~128]" class="form-control" name="row[addcontact][0][linkedin]" type="text">
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Tel')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][tel]" type="text">
+                <input data-rule="length[~32]" class="form-control" name="row[addcontact][0][tel]" type="text">
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-12 col-sm-2">{:__('Mobile')}:</label>
             <div class="col-xs-12 col-sm-8">
-                <input class="form-control" name="row[addcontact][0][mobile]" type="text">
+                <input data-rule="length[~64];mobile" class="form-control" name="row[addcontact][0][mobile]" type="text">
             </div>
         </div>
         <div class="form-group">

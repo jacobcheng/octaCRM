@@ -140,7 +140,36 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         api: {
             bindevent: function () {
-                Form.api.bindevent($("form[role=form]"));
+                $("form[role=form]").validator({
+                    rule: {
+                        mobile: [/\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d|2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/, "请输入正确的国际通用手机号码"],
+                    },
+                    fields:{
+                        'row[name]': 'required; length[~128]; remote(sales/client/checkdata)',
+                        'row[short_name]': 'required; length[~64]; remote(sales/client/checkdata)',
+                        'row[source]': 'required',
+                        'row[type]': 'required',
+                        'row[star]': 'required',
+                        'row[country]': 'required',
+                        'row[website]': 'url; length[~128]',
+                        'row[address]': 'length[~255]',
+                        'row[tel]': 'length[~32]',
+                    },
+                });
+                Form.api.bindevent($("form[role=form]"), '', '', function () {
+                    var size = $(".box-body").children().size();
+                    if (size <= 2) {
+                        $(".box").removeClass("box-default").addClass("box-danger box-solid");
+                        $(".box-body").children("span").addClass("text-danger").text("联系人不能为空");
+                        //return false;
+                    } else {
+                        $(".box-body").children("span").addClass("text-success").text("");
+                        $(".box").removeClass("box-default box-danger box-solid").addClass("box-success box-solid");
+                        Form.api.submit(this);
+                        return ;
+                    }
+                    return false;
+                });
                 $('#c-city_code').data('params', function () {
                     return {custom:{country_code:$('#c-country_code').val()}}
                 });

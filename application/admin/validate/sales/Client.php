@@ -10,8 +10,14 @@ class Client extends Validate
      * 验证规则
      */
     protected $rule = [
-        'name|客户全名' => 'require|unique:client',
-        'short_name|简称' => 'require|unique:client'
+        'name|客户全名' => 'require|unique:client|max:128',
+        'short_name|简称' => 'require|unique:client|max:64',
+        'country_code' => 'require|max:3',
+        'city_code' => 'max:9',
+        'website' => 'url|max:255',
+        'tel' => 'max:32',
+        'fax' => 'max:32',
+        'address' => 'max:255',
     ];
     /**
      * 提示消息
@@ -24,8 +30,8 @@ class Client extends Validate
     protected $scene = [
         'add'  => [],
         'edit' => [],
-        'name' => ['name'],
-        'short_name' => ['short_name'],
+        'name' => ['name' => 'require'],
+        'short_name' => ['short_name' => 'require'],
     ];
     
 }
