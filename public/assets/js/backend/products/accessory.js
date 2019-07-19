@@ -118,6 +118,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         api: {
             bindevent: function () {
+                $("form[role=form]").validator({
+                    fields: {
+                        "#c-name" : "required;length[~128]",
+                        "#c-description" : "required;length[~255]",
+                        "#c-weight" : "required;range(0~99999)",
+                        "#c-cost" : "required;range(0~999999)"
+                    }
+                });
                 Form.api.bindevent($("form[role=form]"));
             }
         }

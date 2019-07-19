@@ -258,6 +258,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
         },
         api: {
             bindevent: function () {
+                $("form[role=form]").validator({
+                    fields: {
+                        "#c-model" : "required;length[~32]",
+                        "#c-category_id" : "required",
+                        "#c-description" : "required;length[~64]",
+                        "#c-description_cn" : "required;length[~128]",
+                        "#c-hscode" : "length[~10]",
+                        "#c-rebate_rate" : "integer(+0);range(0~99)"
+                    }
+                });
                 Form.api.bindevent($("form[role=form]"));
             }
         }
