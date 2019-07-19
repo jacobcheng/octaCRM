@@ -21,6 +21,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'id',
+                showColumns: false,
+                showToggle: false,
+                showExport: false,
                 rowStyle: rowStyle,
                 columns: [
                     [
@@ -361,6 +364,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'id',
                 sortName: 'id',
+                showColumns: false,
+                showToggle: false,
+                showExport: false,
                 queryParams: function(params){
                     var filter = JSON.parse(params.filter);
                     var op = JSON.parse(params.op);
