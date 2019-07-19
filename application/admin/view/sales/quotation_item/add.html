@@ -26,18 +26,21 @@
         <label class="control-label col-xs-12 col-sm-2">{:__('Accessory')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-accessory_ids" data-source="products/accessory/index" data-multiple="true" class="form-control selectpage" name="row[accessory]" type="text" value="">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Package')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-package_id" data-source="products/package/index" class="form-control selectpage" name="row[package]" type="text" value="">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Carton')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-carton_id" data-source="products/carton/index" class="form-control selectpage" name="row[carton]" type="text" value="">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
@@ -77,6 +80,7 @@
                     <span>￥</span>
                 </div>
                 <input id="c-unit_price" class="form-control" step="0.01" name="row[unit_price]" min="0" step="0.01" type="number" placeholder="不填则自动计算">
+                <span class="msg-box"></span>
             </div>
         </div>
     </div>
@@ -89,6 +93,7 @@
                     <span>$</span>
                 </div>
                 <input id="c-usd_unit_price" class="form-control" step="0.01" name="row[usd_unit_price]" min="0" step="0.01" type="number" placeholder="不填则自动计算">
+                <span class="msg-box"></span>
             </div>
         </div>
     </div>
@@ -103,19 +108,19 @@
 </form>
 <script type="text/html" id="processForm">
     <dd class="form-inline">
-            <select class="form-control selectpicker col-xs-6" name="row[process][<%=index%>][process]"  type="text">
-                <option value="">{:__('Please select a process')}</option>
-                {foreach name="site.process" item="vo" key="k"}
-                <option value="{$k}">{$vo}</option>
-                {/foreach}
-            </select>
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <span>￥</span>
-                </div>
-                <input data-rule="required" name="row[process][<%=index%>][cost]" min="0" step="0.01" type="number" class="form-control" placeholder="请用报价币种填写">
+        <select data-rule="required" class="form-control selectpicker col-xs-6" name="row[process][<%=index%>][process]"  type="text">
+            <option value="">{:__('Please select a process')}</option>
+            {foreach name="site.process" item="vo" key="k"}
+            <option value="{$k}">{$vo}</option>
+            {/foreach}
+        </select>
+        <div class="input-group">
+            <div class="input-group-addon">
+                <span>￥</span>
             </div>
-            <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span>
+            <input data-rule="required;range(0~999999)" name="row[process][<%=index%>][cost]" min="0" step="0.01" type="number" class="form-control" placeholder="请用报价币种填写">
+        </div>
+        <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span>
         <span class="msg-box"></span>
     </dd>
 </script>

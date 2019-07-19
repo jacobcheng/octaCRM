@@ -17,7 +17,8 @@ use app\admin\controller\sales\QuotationItem;
  */
 class Quotation extends Backend
 {
-    
+
+    protected $noNeedRight = ['updateitems'];
     /**
      * Quotation模型对象
      * @var \app\admin\model\sales\Quotation

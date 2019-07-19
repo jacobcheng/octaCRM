@@ -11,7 +11,8 @@ use app\common\controller\Backend;
  */
 class ProductModel extends Backend
 {
-    
+
+    protected $noNeedRight = ["getCatalog"];
     /**
      * ProductModel模型对象
      * @var \app\admin\model\ProductModel

@@ -34,7 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                 return "<span data-toggle='tooltip' title='"+row.feedback+"'>"+value+"</span>";
                             }},
                         //{field: 'feedback', title: __('Feedback')},
-                        {field: 'user.nickname', title: __('Admin_id')},
+                        {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'status', title: __('Status'), searchList: {"1":__('Pending'),"2":__('Arranged'),"3":__('Completed'),"4":__('Canceled')}, formatter: Table.api.formatter.status},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]

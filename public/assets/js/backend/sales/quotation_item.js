@@ -158,6 +158,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','fast', 'layer'], func
         },
         api: {
             bindevent: function () {
+                $("form[role=form]").validator({
+                    fields: {
+                        "#c-catalog" : "required",
+                        "#c-product_model" : "required",
+                        "#c-product_id" : "required",
+                        "#c-quantity" : "required;integer(+0);range(0~999999)",
+                        "#c-profit" : "required;integer(+0);range(0~999)"
+                    }
+                });
                 Form.api.bindevent($("form[role=form]"));
                 $("#c-product_model").data("params", function () {
                     return {custom:{category_id:$("#c-catalog").val()}};

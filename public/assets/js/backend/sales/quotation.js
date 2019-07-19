@@ -197,6 +197,22 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
         },
         api: {
             bindevent: function () {
+                $("form[role=form]").validator({
+                    ignore: ":hidden",
+                    fields: {
+                        "#c-po_no" : "length[~16]",
+                        "#c-client_id" : "required",
+                        "#c-contact_id" : "required",
+                        "#c-country_code" : "required(#c-switch:checked)",
+                        "#c-destination" : "required(#c-switch:checked)",
+                        "#c-tax_rate" : "required(#c-switch_tax:checked);integer(+)",
+                        "#c-validay" : "required;integer(+);range(1~365)",
+                        "#c-leadtime" : "required;integer(+);range(1~365)",
+                        "#c-prepay" : "integer(+);range(10~100)",
+                        "#c-transport" : "required",
+                        "#c-transport_fee" : "range(0~999999)"
+                    }
+                });
                 Form.api.bindevent($("form[role=form]"), function (data,ret) {
                     Fast.api.close(ret);
                 });

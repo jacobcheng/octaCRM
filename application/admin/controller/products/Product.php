@@ -15,7 +15,8 @@ use think\exception\ValidateException;
  */
 class Product extends Backend
 {
-    
+
+    protected $noNeedRight = [];
     /**
      * Product模型对象
      * @var \app\admin\model\products\Product

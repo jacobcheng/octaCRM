@@ -42,9 +42,6 @@
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Process')}:</label>
-        <!--<div class="col-xs-12 col-sm-8">
-            <textarea id="c-process" class="form-control " rows="5" name="row[process]" cols="50">{$row.process|json_encode|htmlentities}</textarea>
-        </div>-->
         <dl class="fieldlist col-sm-8" data-name="row[process]" data-template="processForm">
             <dd>
                 <a href="javascript:;" class="btn btn-sm btn-success btn-append"><i class="fa fa-plus"></i>{:__('Add')} </a>
@@ -80,6 +77,7 @@
                     <span>￥</span>
                 </div>
                 <input id="c-unit_price" class="form-control" step="0.01" name="row[unit_price]" type="number">
+                <span class="msg-box"></span>
             </div>
         </div>
     </div>
@@ -92,6 +90,7 @@
                     <span>$</span>
                 </div>
                 <input id="c-usd_unit_price" class="form-control" step="0.01" name="row[usd_unit_price]" min="0" step="0.01" type="number">
+                <span class="msg-box"></span>
             </div>
         </div>
     </div>
@@ -106,13 +105,13 @@
 </form>
 <script type="text/html" id="processForm">
     <dd class="form-inline">
-        <select class="form-control selectpicker col-xs-6" name="row[process][<%=index%>][process]"  type="text">
+        <select data-rule="required" class="form-control selectpicker col-xs-6" name="row[process][<%=index%>][process]"  type="text">
             <option value="">{:__('Please select a process')}</option>
             {foreach name="site.process" item="vo" key="k"}
             <option value="{$k}" <% if (row['process']=='{$k}') { %>selected<% } %>>{$vo}</option>
             {/foreach}
         </select>
-        <input data-rule="required" name="row[process][<%=index%>][cost]" min="0" step="0.01" type="number" class="form-control" placeholder="{:__('Cost')}" value="<%=row['cost']%>">
+        <input data-rule="required;range(0~999999)" name="row[process][<%=index%>][cost]" min="0" step="0.01" type="number" class="form-control" placeholder="{:__('Cost')}" value="<%=row['cost']%>">
         <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span>
         <span class="msg-box"></span>
     </dd>

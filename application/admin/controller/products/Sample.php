@@ -50,13 +50,13 @@ class Sample extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['client','user'])
+                    ->with(['client','admin'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['client','user'])
+                    ->with(['client','admin'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
@@ -66,8 +66,8 @@ class Sample extends Backend
                 $row->visible(['id','ref_no','requiredate','client_id','requirement','admin_id','estimateddate','feedback','status','createtime']);
                 $row->visible(['client']);
 				$row->getRelation('client')->visible(['short_name']);
-                $row->visible(['user']);
-                $row->getRelation('user')->visible(['nickname']);
+                $row->visible(['admin']);
+                $row->getRelation('admin')->visible(['nickname']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
