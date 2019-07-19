@@ -1,7 +1,7 @@
 <?php
 
 return array (
-  'name' => 'FastAdmin',
+  'name' => 'Octatronics',
   'beian' => '',
   'cdnurl' => '',
   'version' => '1.0.1',
@@ -25,6 +25,7 @@ return array (
   'configgroup' => 
   array (
     'basic' => 'Basic',
+    'company' => 'Company',
     'email' => 'Email',
     'dictionary' => 'Dictionary',
     'user' => 'User',
@@ -46,4 +47,12 @@ return array (
     'Molding Fee' => '模具费',
     'Design Fee' => '设计费',
   ),
+  'logo' => '',
+  'company_name' => '深圳市龙威（香港）设备仪器有限公司',
+  'company_name_en' => 'Longwei Instruments (HK) Co., Ltd.',
+  'address' => '深圳市宝安区',
+  'address_en' => 'No.1113 Hongyu Building, 2nd Gushu Road, Xixiang Baoan District, Shenzhen, China.',
+  'tel' => '+ 86 662 6612468',
+  'fax' => '+ 86 662 6612468',
+  'website' => 'http://www.longweielec.com',
 );
