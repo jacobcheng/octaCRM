@@ -20,5 +20,6 @@ return [
     'Pheight'            => '包装高度(CM)',
     'Cost'               => '采购成本',
     'Remark'             => '备注',
-    'Productmodel.model' => '型号'
+    'Productmodel.model' => '型号',
+    'Has Default Package' => '有默认包装'
 ];

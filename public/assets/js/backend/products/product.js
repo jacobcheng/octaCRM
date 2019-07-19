@@ -121,6 +121,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 $("form[role=form]").validator({
+                    ignore: "hidden",
                     fields: {
                         "#c-code" : "required;length[~64]",
                         "#c-description" : "required;length[~64]",
@@ -132,15 +133,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         "#c-length" : "required;range(0~9999)",
                         "#c-width" : "required;range(0~9999)",
                         "#c-height" : "required;range(0~9999)",
-                        "#c-package" : "required;length[~64]",
-                        "#c-pweight" : "required;range(0~99999)",
-                        "#c-plength" : "required;range(0~9999)",
-                        "#c-pwidth" : "required;range(0~9999)",
-                        "#c-pheight" : "required;range(0~9999)",
+                        "#c-package" : "required(#c-switch:checked);length[~64]",
+                        "#c-pweight" : "required(#c-switch:checked);range(0~99999)",
+                        "#c-plength" : "required(#c-switch:checked);range(0~9999)",
+                        "#c-pwidth" : "required(#c-switch:checked);range(0~9999)",
+                        "#c-pheight" : "required(#c-switch:checked);range(0~9999)",
                         "#c-cost" : "required;range(0~999999)"
                     }
                 });
                 Form.api.bindevent($("form[role=form]"));
+                $("#c-switch").click(function () {
+                    if ($(this).is(":checked")){
+                        $("#c-package,#c-pweight,#c-plength,#c-pwidth,#c-pheight").closest(".form-group").show();
+                    } else {
+                        $("#c-package,#c-pweight,#c-plength,#c-pwidth,#c-pheight").val("").closest(".form-group").hide();
+                    }
+                });
+                $(function () {
+                    var packing= $("#c-package").val();
+                    if (packing) {
+                        $("#c-switch").trigger("click");
+                    }
+                });
             }
         }
     };

@@ -94,24 +94,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
                 commonSearch: false,
                 showExport: false,
                 detailView: true,
-                cardView: true,
-                /*columns: [
-                    [
-                        {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'model', title: __('Model')},
-                        {field: 'category_id', title: __('Category_id')},
-                        {field: 'client_id', title: __('Client_id')},
-                        {field: 'description', title: __('Description')},
-                        {field: 'description_cn', title: __('Description_cn')},
-                        {field: 'hscode', title: __('Hscode')},
-                        {field: 'rebate_rate', title: __('Rebate_rate')},
-                        {field: 'category.name', title: __('Category.name')},
-                        {field: 'category.nickname', title: __('Category.nickname')},
-                        {field: 'client.short_name', title: __('Client.short_name')},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
-                    ]
-                ]*/
+                cardView: true
             });
 
             // 为表格绑定事件
@@ -228,13 +211,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'jstree', 'adminlte']
                         {field: 'size', title: __('Size'), formatter: function (value, row) {
                                 return row['length'] + ' × ' + row['width'] + ' × ' + row['height']
                             }},
-                        {field: 'package', title: __('Package')},
-                        {field: 'pweight', title: __('Package Weight'), operate:'BETWEEN'},
+                        {field: 'package', title: __('Package'), formatter: function (value) {
+                                return value ? value : '-';
+                            }},
+                        {field: 'pweight', title: __('Package Weight'), operate:'BETWEEN', formatter: function (value, row) {
+                                return row['package'] ? value : '-';
+                            }},
                         /*{field: 'plength', title: __('Plength'), operate:'BETWEEN'},
                         {field: 'pwidth', title: __('Pwidth'), operate:'BETWEEN'},
                         {field: 'pheight', title: __('Pheight'), operate:'BETWEEN'},*/
                         {field: 'psize', title: __('Package Size'),formatter: function (value, row) {
-                                return row['plength'] + ' × ' + row['pwidth'] + ' × ' + row['pheight']
+                                return row['package'] ? row['plength'] + ' × ' + row['pwidth'] + ' × ' + row['pheight'] : '-';
                             }},
                         {field: 'cost', title: __('Cost'), operate:'BETWEEN', formatter: function (value) {
                                 return value.toFixed(2);
