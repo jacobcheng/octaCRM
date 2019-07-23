@@ -7,6 +7,7 @@ return [
     'Lc_no'               => '信用证号',
     'Client_id'           => '客户',
     'Contact_id'          => '联系人',
+    'Quotation_id'        => '关联报价单',
     'Country_code'        => '目的国家',
     'Destination'         => '目的地',
     'Currency'            => '货币',
