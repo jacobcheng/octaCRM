@@ -3,19 +3,17 @@
 namespace app\admin\controller\sales;
 
 use app\common\controller\Backend;
-use NumberToWords\NumberToWords;
 use think\Db;
 use think\Exception;
 use think\exception\PDOException;
 use think\exception\ValidateException;
-use app\admin\controller\sales\QuotationItem;
 
 /**
  * 
  *
  * @icon fa fa-circle-o
  */
-class Quotation extends Backend
+class Order extends Backend
 {
 
     protected $noNeedRight = ['updateitems', 'updatestatus'];
@@ -51,7 +49,7 @@ class Quotation extends Backend
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = new \app\admin\model\sales\Quotation;
+        $this->model = new \app\admin\model\sales\Order;
         $this->view->assign("currencyList", $this->model->getCurrencyList());
         $this->view->assign("incotermsList", $this->model->getIncotermsList());
         $this->view->assign("transportList", $this->model->getTransportList());
@@ -83,28 +81,28 @@ class Quotation extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['client','admin','country'])
+                    ->with(['client','contact','country','admin'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
 
             $list = $this->model
-                    ->with(['client','contact','admin','country'])
+                    ->with(['client','contact','country','admin'])
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','ref_no','po_no','destination','currency','rate','incoterms','validay','leadtime','transport','total_amount','createtime','status']);
+                $row->visible(['id','ref_no','currency','incoterms','leadtime','transport','balance','admin_id','createtime','status']);
                 $row->visible(['client']);
-                $row->getRelation('client')->visible(['short_name']);
-                $row->visible(['contact']);
-                $row->getRelation('contact')->visible(['appellation','email','cc_email']);
+				$row->getRelation('client')->visible(['short_name']);
+				$row->visible(['contact']);
+				$row->getRelation('contact')->visible(['appellation']);
+				$row->visible(['country']);
+				$row->getRelation('country')->visible(['country_name']);
 				$row->visible(['admin']);
 				$row->getRelation('admin')->visible(['nickname']);
-                $row->visible(['country']);
-                $row->getRelation('country')->visible(['country_name']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
@@ -114,7 +112,7 @@ class Quotation extends Backend
         return $this->view->fetch();
     }
 
-    public function detail ($ids = NULL)
+    public function detail ($ids = null)
     {
         $row = $this->model->get($ids);
         if (!$row) {
@@ -126,12 +124,14 @@ class Quotation extends Backend
                 $this->error(__('You have no permission'));
             }
         }
-        $this->assignconfig('quotation', $row);
+        $this->assignconfig('order', $row);
         $this->view->assign("row", $row);
         return $this->view->fetch();
     }
 
-    public function copy ($ids = null, $update = false) {
+    public function placeorder ($ids = null)
+    {
+        $row = model("app\admin\model\sales\Quotation")->get($ids);
         if ($this->request->isPost()) {
             $params = $this->request->post("row/a");
             if ($params) {
@@ -149,8 +149,8 @@ class Quotation extends Backend
                         $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
                         $this->model->validateFailException(true)->validate($validate);
                     }
-                    //$params = $this->prepareSave($params, $update, $row);
-                    unset($params['id']);
+                    $params['quotation_id'] = $ids;
+                    $params['balance'] = round($row['service_amount'] + ($row['currency'] === "CNY" ? ($row['tax_rate'] > 0 ? $row['total_tax_amount']:$row['total_amount']) : $row['total_usd_amount']), 2);
                     $result = $this->model->allowField(true)->save($params);
                     Db::commit();
                 } catch (ValidateException $e) {
@@ -164,8 +164,14 @@ class Quotation extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    if (!empty($params['copyitem'])) {
-                        $this->copyitems($params['copyitem'], $params['olditems'], $update);
+                    foreach ($row->items as $item) {
+                        unset($item['id'], $item['quotation_id'], $item['unit_cost']);
+                        $item['product'] = json_encode($item['product']);
+                        $item['accessory'] = json_encode($item['accessory']);
+                        $item['package'] = json_encode($item['package']);
+                        $item['accessory'] = json_encode($item['accessory']);
+                        $item['carton'] = json_encode($item['carton']);
+                        $this->model->items()->save($item);
                     }
                     $this->success('', '', ['ids' => $this->model->id, 'ref_no' => $this->model->ref_no]);
                 } else {
@@ -174,78 +180,8 @@ class Quotation extends Backend
             }
             $this->error(__('Parameter %s can not be empty', ''));
         }
-        $row = $this->model->get($ids);
-        $this->view->assign("row", $row);
-        return $this->view->fetch();
-    }
-
-    public function print ($ids = null, $type)
-    {
-        $row = $this->model->get($ids);
-        if (!$row) {
-            $this->error(__('No Results were found'));
-        }
-        $adminIds = $this->getDataLimitAdminIds();
-        if (is_array($adminIds)) {
-            if (!in_array($row[$this->dataLimitField], $adminIds)) {
-                $this->error(__('You have no permission'));
-            }
-        }
-        if ($type === "bank") {
-            $this->view->assign("row", $row);
-            return $this->view->fetch('edit');
-        }
-        //$this->assign('type', $type);
-        $client = model('app\admin\model\sales\Client')->get($row['client_id']);
-        if ( $row['currency']==="CNY" ) {
-            $totalamount = $row['tax_rate'] > 0 ? $row['total_tax_amount'] : $row['total_amount'];
-        } else {
-            $totalamount = $row['total_usd_amount'];
-        }
-        $numberToWords = new NumberToWords();
-        $currency = $numberToWords->getCurrencyTransformer('en');
-        $saytotal = $currency->towords(($totalamount+$row['service_amount'])*100, "USD");
-        $this->view->assign(["row" =>  $row, "client" => $client, "saytotal" => $saytotal, "type" => $type]);
-        return $this->view->fetch();
-    }
-
-    public function  copyitems ($data, $items, $update)
-    {
-        $items = json_decode($items,true);
-        foreach ($items as $value) {
-            foreach ($data as $val) {
-                if ($value['id'] == $val['id']) {
-                    $params = $value;
-                    /*$params['quantity'] = $val['quantity'];
-                    $params['unit_price'] = isset($val['unit_price']) ? :'';
-                    $params['usd_unit_price'] = isset($val['usd_unit_price']) ? :'';*/
-                    list($params['quantity'], $params['profit'], $params['unit_price'], $params['usd_unit_price']) = [$val['quantity'], $val['profit'], isset($val['unit_price']) ? :'', isset($val['usd_unit_price']) ? :''];
-                    unset($params['id'], $params['createtime'], $params['updatetime'], $params['updatetime']);
-                    $params = QuotationItem::prepareSave($params, $update, $params);
-                    $this->model->items()->save($params);
-                }
-            }
-        }
-    }
-
-    public function updateitems ($ids)
-    {
-        $quotation = $this->model->get($ids);
-        if (count($quotation->items) > 0) {
-            foreach ($quotation->items as $value) {
-                list($value['unit_price'], $value['usd_unit_price'], $value['amount'], $value['usd_amount'], $value['tax_amount']) = ['','','','',''];
-                $value = QuotationItem::prepareSave($value, false, $value);
-                $value->save();
-            }
-        }
-        $this->success();
-    }
-
-    public function updatestatus($status, $ids)
-    {
-        $quotation = $this->model->get($ids);
-        if ($quotation['status'] < $status) {
-            $quotation->save(['status' => $status]);
-        }
+        $row['leadtime'] = date('Y-m-d', time() + ($row['leadtime'] * 24 * 60 * 60));
+        $this->view->assign('row', $row);
+        return $this->fetch('edit');
     }
 }

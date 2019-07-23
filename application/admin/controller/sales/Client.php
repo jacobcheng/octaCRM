@@ -26,7 +26,7 @@ class Client extends Backend
      * 无需鉴权的方法,但需要登录
      * @var array
      */
-    protected $noNeedRight = ['checkdata'];
+    protected $noNeedRight = ['checkdata','updatestatus'];
 
     /**
      * 是否开启数据限制
@@ -271,4 +271,10 @@ class Client extends Backend
             }
         }
     }
+
+    /*public function updatestatus ($status, $ids)
+    {
+        $client
+        $this->model->where('id', $ids)->setField(['status' => $status]);
+    }*/
 }

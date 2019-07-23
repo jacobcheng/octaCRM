@@ -2,11 +2,11 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool btn-order {:$auth->check('sales/quotation/placeorder')?'':'hide'}" {eq name="row.status" value="30"}disabled{/eq} title="{:__('Order')}"><i class="fa fa-money"></i></button>
-            <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/quotation/print')?'':'hide'}" title="{:__('P/I')}">P/I</button>
-            <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/quotation/print')?'':'hide'}" title="{:__('Print')}"><i class="fa fa-print"></i></button>
-            <button type="button" class="btn btn-box-tool btn-copy {:$auth->check('sales/quotation/copy')?'':'hide'}" title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
-            <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('sales/quotation/edit')?'':'hide'}" {eq name="row.status" value="30"}disabled{/eq} title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
+            <button type="button" class="btn btn-box-tool btn-order" title="{:__('Order')}"><i class="fa fa-money"></i></button>
+            <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/order/print')?'':'hide'}" title="{:__('P/I')}">P/I</button>
+            <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/order/print')?'':'hide'}" title="{:__('Print')}"><i class="fa fa-print"></i></button>
+            <button type="button" class="btn btn-box-tool btn-copy {:$auth->check('sales/order/copy')?'':'hide'}" title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
+            <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('sales/order/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>
         </div>
@@ -18,6 +18,8 @@
                 <dd>{$row.client.short_name}</dd>
                 <dt>{:__('Po_no')}: </dt>
                 <dd>{$row.po_no}</dd>
+                <dt>{:__('Lc_no')}: </dt>
+                <dd>{$row.lc_no}</dd>
                 <dt>{:__('Contact')}: </dt>
                 <dd><a href="mailto:{$row.contact.email}{$row.contact.cc_email ? '?cc='.$row.contact.cc_email:''}">{$row.contact.appellation}</a></dd>
                 <dt>{:__('Country')}: </dt>
@@ -40,28 +42,26 @@
             <dl class="dl-horizontal">
                 <dt>{:__('Createtime')}: </dt>
                 <dd>{$row.createtime}</dd>
-                <dt>{:__('Validay')}: </dt>
-                <dd>{$row.validay} Days</dd>
                 <dt>{:__('leadtime')}: </dt>
-                <dd>{$row.leadtime} Days</dd>
+                <dd>{$row.leadtime}</dd>
                 <dt>{:__('Currency')}/{:__('Rate')}: </dt>
                 <dd>{$row.currency}/{$row.rate}</dd>
-                <dt>{:__('Tax Rate')}: </dt>
+                {neq name="row.tax_rate" value="0"}
+                <dt>{:__('Tax_rate')}: </dt>
                 <dd>{$row.tax_rate} %</dd>
+                {/neq}
                 <dt>{:__('Incoterms')}: </dt>
                 <dd>{$row.incoterms}</dd>
                 {neq name="row.incoterms" value="EXW"}
                 <dt>{:__('Transport')}: </dt>
                 <dd>{$row.transport}</dd>
-                <dt>{:__('Transport_fee')}: </dt>
-                <dd>￥ <span>{$row.transport_fee}<span></dd>
                 {/neq}
                 {in name="row.incoterms" value="CIF,CIP,DAT,DPT,DAP,DDP"}
                 <dt>{:__('Insurance')}: </dt>
                 <dd>{$row.insurance} ‱</dd>
                 {/in}
-                <dt>{:__('Prepay')}: </dt>
-                <dd>{$row.prepay} %</dd>
+                <dt>{:__('Paid')}: </dt>
+                <dd>{$row.paid} / {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}￥ {$row.total_tax_amount|number_format=2}{else/}￥ {$row.total_amount|number_format=2}{/gt}{else/}$ {$row.total_usd_amount|number_format=2}{/eq}</dd>
         </div>
     </div>
 </div>
@@ -72,13 +72,12 @@
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="one">
                 <div class="widget-body no-padding">
-                    {neq name="row.status" value="30"}
                     <div id="toolbar" class="toolbar">
                         <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" ><i class="fa fa-refresh"></i> </a>
                         <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('sales/quotation_item/add')?'':'hide'}" title="{:__('Add')}" ><i class="fa fa-plus"></i> {:__('Add')}</a>
                         <a href="javascript:;" class="btn btn-success btn-edit btn-disabled disabled {:$auth->check('sales/quotation_item/edit')?'':'hide'}" title="{:__('Edit')}" ><i class="fa fa-pencil"></i> {:__('Edit')}</a>
                         <a href="javascript:;" class="btn btn-danger btn-del btn-disabled disabled {:$auth->check('sales/quotation_item/del')?'':'hide'}" title="{:__('Delete')}" ><i class="fa fa-trash"></i> {:__('Delete')}</a>
-                        <a href="javascript:;" class="btn btn-danger btn-import {:$auth->check('sales/quotation_item/import')?'':'hide'}" {title="{:__('Import')}" id="btn-import-file" data-url="ajax/upload" data-mimetype="csv,xls,xlsx" data-multiple="false"><i class="fa fa-upload"></i> {:__('Import')}</a>
+                        <a href="javascript:;" class="btn btn-danger btn-import {:$auth->check('sales/quotation_item/import')?'':'hide'}" title="{:__('Import')}" id="btn-import-file" data-url="ajax/upload" data-mimetype="csv,xls,xlsx" data-multiple="false"><i class="fa fa-upload"></i> {:__('Import')}</a>
 
                         <div class="dropdown btn-group {:$auth->check('sales/quotation_item/multi')?'':'hide'}">
                             <a class="btn btn-primary btn-more dropdown-toggle btn-disabled disabled" data-toggle="dropdown"><i class="fa fa-cog"></i> {:__('More')}</a>
@@ -88,9 +87,8 @@
                             </ul>
                         </div>
 
-                        <a class="btn btn-success btn-recyclebin btn-dialog {:$auth->check('sales/quotation_item/recyclebin')?'':'hide'}" {eq name="row.status" value="ordered"}disabled{/eq} href="sales/quotation_item/recyclebin" title="{:__('Recycle bin')}"><i class="fa fa-recycle"></i> {:__('Recycle bin')}</a>
+                        <a class="btn btn-success btn-recyclebin btn-dialog {:$auth->check('sales/quotation_item/recyclebin')?'':'hide'}" href="sales/quotation_item/recyclebin" title="{:__('Recycle bin')}"><i class="fa fa-recycle"></i> {:__('Recycle bin')}</a>
                     </div>
-                    {/neq}
                     <table id="table" class="table table-striped table-bordered table-hover table-nowrap"
                            data-operate-edit="{:$auth->check('sales/quotation_item/edit')}"
                            data-operate-del="{:$auth->check('sales/quotation_item/del')}"

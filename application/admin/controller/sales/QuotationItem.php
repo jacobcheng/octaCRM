@@ -348,25 +348,4 @@ class QuotationItem extends Backend
             }
         }
     }
-
-    /*public function updateitems ($quotation_id = null, $items = [], $id = 0, $unit_fee = [])
-    {
-        $quotation = model("Quotation")->get($quotation_id);
-        if (empty($items)) {
-            $items = $quotation->items;
-        }
-        if (empty($unit_fee)) {
-            $unit_fee = $quotation->getUnitFee();
-        }
-        foreach ($items as $value) {
-            if ($value['id'] != $id) {
-                $value['unit_price'] = round((($value[key($unit_fee)] * current($unit_fee) / $value['quantity']) + ($value['unit_cost'] * (1 + $value['profit'] / 100)) + $value['carton']['cost'] + $value['package']['cost']) * (1 + $quotation->insurance / 10000), 2);
-                $value['amount'] = $value['unit_price'] * $value['quantity'];
-                $value['usd_unit_price'] = round($value['unit_price'] / $quotation['rate'], 2);
-                $value['usd_amount'] = $value['usd_unit_price'] * $value['quantity'];
-                $value['tax_amount'] = $quotation['rate'] > 0 ? $value['amount']/(1 - $quotation['tax_rate']/100):'';
-                $value->save();
-            }
-        }
-    }*/
 }

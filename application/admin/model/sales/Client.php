@@ -30,7 +30,10 @@ class Client extends Model
         'star_text',
         'status_text'
     ];
-    
+
+    protected $insert = [
+        'status' => '10'
+    ];
 
     
     public function getSourceList()
@@ -45,12 +48,12 @@ class Client extends Model
 
     public function getStarList()
     {
-        return ['1' => __('Star 1'), '2' => __('Star 2'), '3' => __('Star 3'), '4' => __('Star 4'), '5' => __('Star 5')];
+        return ['1' => __('★'), '2' => __('★★'), '3' => __('★★★'), '4' => __('★★★★'), '5' => __('★★★★★')];
     }
 
     public function getStatusList()
     {
-        return ['new' => __('Status new'), 'followed' => __('Status followed'), 'inquired' => __('Status inquired'), 'ordered' => __('Status ordered'), 'invalid' => __('Status invalid')];
+        return ['10' => __('New'), '20' => __('Followed'), '30' => __('Quoted'), '40' => __('Ordered'), '-1' => __('Invalid')];
     }
 
 

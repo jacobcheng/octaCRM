@@ -32,7 +32,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'short_name', title: __('Short_name')},
                         {field: 'source', title: __('Source'), searchList: {"独立网站":__('独立网站'),"阿里巴巴国际":__('阿里巴巴国际'),"中国制造":__('中国制造')}, formatter: Table.api.formatter.normal},
                         {field: 'type', title: __('Type'), searchList: {"零售商":__('零售商'),"批发商":__('批发商'),"品牌商":__('品牌商'),"进口商":__('进口商')}, formatter: Table.api.formatter.normal},
-                        {field: 'star', title: __('Star'), searchList: {"1":__('Star 1'),"2":__('Star 2'),"3":__('Star 3'),"4":__('Star 4'),"5":__('Star 5')}, formatter: Table.api.formatter.normal},
+                        {field: 'star', title: __('Star'), searchList: {"1":__('★'),"2":__('★★'),"3":__('★★★'),"4":__('★★★★'),"5":__('★★★★★')}, formatter: Table.api.formatter.normal, custom: {'1':'gray','2':'info','3':'success','4':'warning','5':'danger'}},
                         {field: 'country.country_name', title: __('Country'),formatter: function (value, row) {
                                 var now = new Date(new Date().getTime()+(row['country']['timezone']-8)*60*60*1000);
                                 return "<span data-toggle='tooltip' title='Current Time: "+now.toLocaleString()+"'>"+value+"</span>";
@@ -44,7 +44,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             }
                         },
                         {field: 'admin.nickname', title: __('Admin')},
-                        {field: 'status', title: __('Status'), searchList: {"new":__('Status new'),"followed":__('Status followed'),"inquired":__('Status inquired'),"ordered":__('Status ordered'),"invalid":__('Status invalid')}, formatter: Table.api.formatter.status},
+                        {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Followed'),"30":__('Quoted'),"40":__('Ordered'),"-1":__('Invalid')}, formatter: Table.api.formatter.status, custom: {'10':'gray','20':'info','30':'warning','40':'success','-1':'danger'}},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ],

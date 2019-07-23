@@ -54,9 +54,31 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                             }},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
+                        {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
+                        //{field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons:
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: function (value, row, index) {
+
+                                    $.map(this.buttons, function (btn) {
+                                        if (row.status === "30" && (btn.name === "edit" || btn.name === "del")) {
+                                            btn.classname += " disabled";
+                                        } else {
+                                            btn.classname = btn.classname.replace(/ disabled/, '');
+                                        }
+                                    });
+
+                                return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');
+                            }, buttons:
+                            [
                                 {
-                                    name: 'Detail',
+                                    name: 'edit',
+                                    icon: 'fa fa-pencil',
+                                    title: __('Edit'),
+                                    extend: 'data-toggle="tooltip"',
+                                    classname: 'btn btn-xs btn-success btn-editone',
+                                    url: $.fn.bootstrapTable.defaults.extend.edit_url,
+                                },
+                                {
+                                    name: 'detail',
                                     title: function (row) {
                                         return row.ref_no + __('Detail');
                                     },
@@ -67,7 +89,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     }
                                 },
                                 {
-                                    name: 'Copy',
+                                    name: 'copy',
                                     title: __('Copy'),
                                     classname: 'btn btn-xs btn-success btn-dialog btn-copyone',
                                     icon: 'fa fa-copy',
@@ -77,11 +99,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                         Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
                                     },
                                     extend: 'data-area=\'["90%","90%"]\'',
+                                },
+                                {
+                                    name: 'del',
+                                    icon: 'fa fa-trash',
+                                    title: __('Del'),
+                                    extend: 'data-toggle="tooltip"',
+                                    classname: 'btn btn-xs btn-danger btn-delone'
                                 }
                             ]}
                     ],
-
-                ],
+                ]
             });
 
             // 为表格绑定事件
@@ -191,6 +219,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 var beforePrint = function() {
                 };
                 var afterPrint = function() {
+                    Fast.api.ajax("sales/quotation/updatestatus/status/20/ids" + ids, function () {
+                        return false;
+                    });
                     parent.Layer.closeAll();
                 };
                 window.onbeforeprint = beforePrint;
@@ -336,6 +367,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                     area: ["90%","90%"],
                 })
             });
+            
+            $(".btn-order").click(function () {
+                Layer.confirm("确定要创建订单吗？", {}, function (index) {
+                    Fast.api.open("sales/order/placeorder/ids/" + Config.quotation.id, "创建订单", {
+                        callback: function (data) {
+                            Fast.api.addtabs("sales/order/detail/ids/"+ data.ids, data.ref_no + " " + __("Detail"));
+                            window.location.reload();
+                        }
+                    });
+                    Layer.close(index);
+                });
+            });
 
             // 初始化表格参数配置
             Table.api.init({
@@ -350,7 +393,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 }
             });
 
+
             var table = $("#table");
+
+            if (Config.quotation.status === "ordered") {
+                diabled = false;
+            }
 
             if (Config.quotation.currency === "CNY"){
                 cny = true; usd = false;
@@ -358,6 +406,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 cny = false; usd = true;
             }
             Config.quotation.tax_rate > 0 ? tax = true: tax = false;
+            Config.quotation.status === "30" ? view = false: view = true;
 
             // 初始化表格
             table.bootstrapTable({
@@ -469,13 +518,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 //return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (tax_amount - row['amount']).toFixed(2) +"'>"+"￥ "+tax_amount.toFixed(2)+"</span>";
                                 return "￥ " + value.toFixed(2);
                             }, footerFormatter: function (row) {
-                                /*var sum = 0;
-                                var amount = 0;
-                                $.map(row, function (val) {
-                                    sum += val['amount']/(1 - Config.quotation.tax_rate/100);
-                                    amount += val['amount'];
-                                });
-                                return "<span data-toggle='tooltip' title='"+__('Tax')+": "+ (sum - amount).toFixed(2) +"'>"+"￥ "+sum.toFixed(2)+"</span>";*/
                                 var sum = 0;
                                 $.map(row, function (val) {
                                     sum += val['tax_amount'];
@@ -491,7 +533,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     url: 'sales/quotation_item/copy/currency/'+ Config.quotation.currency,
                                     confirm: '是否复制该产品？'
                                 }
-                            ]}
+                            ],visible: view}
                     ]
                 ]
             });

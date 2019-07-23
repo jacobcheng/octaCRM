@@ -30,10 +30,21 @@ class Quotation extends Model
         'incoterms_text',
         'leadtime_text',
         'transport_text',
+        'status_text',
         'total_amount'
     ];
 
-    protected $insert = ['ref_no'];
+    protected $insert = ['ref_no', 'status' => 1];
+
+    protected  static function init()
+    {
+        Quotation::event('after_insert', function ($quotation) {
+            $client = model('Client')->get($quotation->client_id);
+            if ($client->status < '30') {
+                $client->save(['status' => '30']);
+            }
+        });
+    }
 
     protected function setRefNoAttr ()
     {
@@ -66,6 +77,11 @@ class Quotation extends Model
         return ['Express Service' => __('Express Service'), 'By Sea' => __('By Sea'), 'By Air' => __('By Air'), 'By Train' => __('By Train'), 'By Road' => __('By Road')];
     }
 
+    public function getStatusList()
+    {
+        return ['10' => __('New'), '20' => __('Quoted'), '30' => __('Ordered'), '-1' => __('Expired')];
+    }
+
 
     public function getCurrencyTextAttr($value, $data)
     {
@@ -94,6 +110,14 @@ class Quotation extends Model
     {
         $value = $value ? $value : (isset($data['transport']) ? $data['transport'] : '');
         $list = $this->getTransportList();
+        return isset($list[$value]) ? $list[$value] : '';
+    }
+
+
+    public function getStatusTextAttr($value, $data)
+    {
+        $value = $value ? $value : (isset($data['status']) ? $data['status'] : '');
+        $list = $this->getStatusList();
         return isset($list[$value]) ? $list[$value] : '';
     }
 

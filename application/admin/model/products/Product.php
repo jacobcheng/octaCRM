@@ -2,6 +2,7 @@
 
 namespace app\admin\model\products;
 
+use think\Db;
 use think\Model;
 use traits\model\SoftDelete;
 
@@ -26,7 +27,8 @@ class Product extends Model
     // 追加属性
     protected $append = [
         'unit_text',
-        'image'
+        'image',
+        'catalog_id'
     ];
     
 
@@ -47,6 +49,11 @@ class Product extends Model
     public function getImageAttr()
     {
         return $this->productmodel->image;
+    }
+
+    public function getCatalogIdAttr ($value, $data)
+    {
+        return Db::name('product_model')->where('id', $data['model_id'])->value('category_id');
     }
 
 

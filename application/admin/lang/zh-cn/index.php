@@ -63,6 +63,7 @@ return [
     'Carton'                                                     => '外箱',
     'Accessory'                                                  => '配件管理',
     'Quotation'                                                  => '报价管理',
+    'Order'                                                      => '订单管理',
     'Accounting'                                                 => '财务管理',
     'Bank'                                                       => '收款账号',
     'Sample'                                                     => '样品管理'
