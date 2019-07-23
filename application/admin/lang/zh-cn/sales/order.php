@@ -44,4 +44,5 @@ return [
     'Unit_price'       => '单价',
     'Amount'           => '合计',
     'Total Amount'     => '总金额',
+    'Collected'         => '已收款',
 ];

@@ -80,9 +80,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 {
                                     name: 'detail',
                                     title: function (row) {
-                                        return row.ref_no + __('Detail');
+                                        return row.ref_no + " " +  __('Detail');
                                     },
                                     classname: 'btn btn-xs btn-success btn-click',
+                                    extend: 'data-toggle="tooltip"',
                                     icon: 'fa fa-list',
                                     click: function (value,row) {
                                         Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
@@ -93,6 +94,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     title: __('Copy'),
                                     classname: 'btn btn-xs btn-success btn-dialog btn-copyone',
                                     icon: 'fa fa-copy',
+                                    extend: 'data-toggle="tooltip"',
                                     url: 'sales/quotation/copy/update/false',
                                     confirm: '是否复制该报价？',
                                     callback: function (value) {
@@ -120,7 +122,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 if (validay < new Date()) {
                     return {classes:'active'};
                 } else {
-                    return {dlasses:''}
+                    return {classes:''}
                 }
             }
         },
@@ -434,7 +436,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {field: 'accessory', title: __('Accessory'), formatter: function (value) {
                                 if (value.length > 0){
                                     return $.map(value, function(val){
-                                        return val['name']
+                                        return val['name'];
                                     })
                                 } else {
                                     return '-';

@@ -47,7 +47,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         /*{field: 'admin_id', title: __('Admin_id')},*/
                         {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status, custom: {"10":"gray","20":"info","30":"warning","40":"success","-1":"danger"}},
                         {field: 'admin.nickname', title: __('Admin_id')},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
+                                {
+                                    name: 'detail',
+                                    title: function (row) {
+                                        return row.ref_no + " " + __('Detail');
+                                    },
+                                    classname: 'btn btn-xs btn-success btn-click',
+                                    extend: 'data-toggle="tooltip"',
+                                    icon: 'fa fa-list',
+                                    click: function (value,row) {
+                                        Backend.api.addtabs("sales/order/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
+                                    }
+                                },
+                            ]}
                     ]
                 ]
             });
