@@ -72,7 +72,7 @@ class Order extends Model
 
     public function getStatusList()
     {
-        return ['1' => __('Pending'), '2' => __('Processing'), '4' => __('Completed'), '-1' => __('Cancel')];
+        return ['10' => __('Pending'), '20' => __('Processing'), '30' => __('Collected'), '40' => __('Completed'), '-1' => __('Cancel')];
     }
 
 

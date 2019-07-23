@@ -45,7 +45,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {field: 'paid', title: __('Paid'), operate:'BETWEEN'},
                         {field: 'balance', title: __('Balance'), operate:'BETWEEN'},*/
                         /*{field: 'admin_id', title: __('Admin_id')},*/
-                        {field: 'status', title: __('Status'), searchList: {"1":__('Pending'),"2":__('Processing'),"4":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status},
+                        {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
