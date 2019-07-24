@@ -202,6 +202,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             }
         },
         detail: function () {
+            $(".btn-edit").click(function () {
+                Fast.api.open("sales/order/edit/ids/" + Config.order.id, __('Edit') +' '+ Config.order.ref_no, {callback: function (data) {
+                    }
+                })
+            });
+
+            $(".btn-receivables").click(function () {
+                Fast.api.open("accounting/receivables/add" , __("Receivables"))
+            });
 
             Table.api.init({
                 showFooter:true,

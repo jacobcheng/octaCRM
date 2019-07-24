@@ -54,7 +54,6 @@ class Order extends Model
             $receivable = new \app\admin\model\accounting\Receivables;
             $receivable['order_id'] = $order->id;
             $receivable['currency'] = $order->currency;
-            $receivable['total_amount'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount);
             $receivable['receivables'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount) * $order->prepay / 100;
             $receivable['bank_id'] = $order->quotation->bank_id;
             $receivable['admin_id'] = $order->quotation->admin_id;

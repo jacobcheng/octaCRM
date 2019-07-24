@@ -126,15 +126,6 @@ class Receivables extends Backend
                     $this->error($e->getMessage());
                 }
                 if ($result !== false) {
-                    /*if ($row->type === "prepay" && $row->status === '2') {
-                        $row->order->save(['paid' => $row->receivables, 'balance' => $row->order->balance - $row->receivables, 'status' => '20']);
-                    }
-                    if ($row->type === "middlepay" && $row->status === '2') {
-                        $row->order->save(['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables]);
-                    }
-                    if ($row->type === "tailpay" && $row->status === '2') {
-                        $row->order->save(['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables, 'status' => '30']);
-                    }*/
                     if ($row->status === '2') {
                         $update = ['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables];
                         if ($row->type === "prepay") {

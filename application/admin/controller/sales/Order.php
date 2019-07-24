@@ -112,6 +112,54 @@ class Order extends Backend
         return $this->view->fetch();
     }
 
+    public function copy ($ids = null, $update = false) {
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+
+                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                    $params[$this->dataLimitField] = $this->auth->id;
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                        $this->model->validateFailException(true)->validate($validate);
+                    }
+                    //$params = $this->prepareSave($params, $update, $row);
+                    unset($params['id']);
+                    $result = $this->model->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    if (!empty($params['copyitem'])) {
+                        $this->copyitems($params['copyitem'], $params['olditems'], $update);
+                    }
+                    $this->success('', '', ['ids' => $this->model->id, 'ref_no' => $this->model->ref_no]);
+                } else {
+                    $this->error(__('No rows were inserted'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $row = $this->model->get($ids);
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
     public function detail ($ids = null)
     {
         $row = $this->model->get($ids);

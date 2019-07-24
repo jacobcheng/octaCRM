@@ -2,10 +2,9 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool btn-order" data-toggle="tooltip" title="{:__('Order')}"><i class="fa fa-money"></i></button>
+            <button type="button" class="btn btn-box-tool btn-receivables" data-toggle="tooltip" title="{:__('Receivables')}"><i class="fa fa-money"></i></button>
             <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('C/I')}">C/I</button>
             <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('Print')}"><i class="fa fa-print"></i></button>
-            <button type="button" class="btn btn-box-tool btn-copy {:$auth->check('sales/order/copy')?'':'hide'}" data-toggle="tooltip"  title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
             <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('sales/order/edit')?'':'hide'}" data-toggle="tooltip"  title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>
