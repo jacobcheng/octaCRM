@@ -6,6 +6,4 @@ return [
     'group' => '分组',
     'type'  => '类型',
     'value' => '变量值',
-    "Company" => "公司信息",
-    "Company Name" => "公司名"
 ];

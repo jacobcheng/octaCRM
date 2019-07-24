@@ -59,4 +59,13 @@ return [
     'This is a test mail content' => '这是一封来自FastAdmin校验邮件,用于校验邮件配置是否正常!',
     'This is a test mail'         => '这是一封来自FastAdmin的邮件',
     'Please input your email'     => '请输入测试接收者邮箱',
+    "Company"                     => "公司信息",
+    "Company Name"                => "公司名",
+    'English Name'                => '英文全名',
+    'English Address'             => '英文地址',
+    'Address'                     => '地址',
+    'Tel'                         => '电话',
+    'Fax'                         => '传真',
+    'Website'                     => '网站',
+    'Department'                  => '部门',
 ];

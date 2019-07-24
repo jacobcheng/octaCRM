@@ -55,4 +55,10 @@ return array (
   'tel' => '+ 86 662 6612468',
   'fax' => '+ 86 662 6612468',
   'website' => 'http://www.longweielec.com',
+  'department' => 
+  array (
+    'sales' => 'Sales Department',
+    'product' => 'Product Department',
+    'accounting' => 'Accounting',
+  ),
 );

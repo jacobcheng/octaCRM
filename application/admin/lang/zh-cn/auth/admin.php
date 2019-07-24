@@ -5,5 +5,4 @@ return [
     'Loginfailure' => '登录失败次数',
     'Login time'   => '最后登录',
     'mobile'       => '手机号码',
-    'Department'   => '部门'
 ];
