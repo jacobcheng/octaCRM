@@ -57,15 +57,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
                         //{field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons:
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: function (value, row, index) {
-
-                                    $.map(this.buttons, function (btn) {
-                                        if (row.status === "30" && (btn.name === "edit" || btn.name === "del")) {
-                                            btn.classname += " disabled";
-                                        } else {
-                                            btn.classname = btn.classname.replace(/ disabled/, '');
-                                        }
-                                    });
-
+                                $.map(this.buttons, function (btn) {
+                                    if ((row.status === "30" || row.status === "-1") && (btn.name === "edit" || btn.name === "del")) {
+                                        btn.classname += " disabled";
+                                    } else {
+                                        btn.classname = btn.classname.replace(/ disabled/, '');
+                                    }
+                                });
                                 return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');
                             }, buttons:
                             [
@@ -75,7 +73,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     title: __('Edit'),
                                     extend: 'data-toggle="tooltip"',
                                     classname: 'btn btn-xs btn-success btn-editone',
-                                    url: $.fn.bootstrapTable.defaults.extend.edit_url,
                                 },
                                 {
                                     name: 'detail',
