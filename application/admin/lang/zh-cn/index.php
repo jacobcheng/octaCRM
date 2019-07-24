@@ -66,5 +66,6 @@ return [
     'Order'                                                      => '订单管理',
     'Accounting'                                                 => '财务管理',
     'Bank'                                                       => '收款账号',
-    'Sample'                                                     => '样品管理'
+    'Sample'                                                     => '样品管理',
+    'Receivables'                                                => '应收款',
 ];

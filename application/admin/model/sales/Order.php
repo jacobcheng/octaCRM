@@ -51,6 +51,14 @@ class Order extends Model
             if ($client->status < '40') {
                 $client->save(['status' => '40']);
             }
+            $receivable = new \app\admin\model\accounting\Receivables;
+            $receivable['order_id'] = $order->id;
+            $receivable['currency'] = $order->currency;
+            $receivable['total_amount'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount);
+            $receivable['receivables'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount) * $order->prepay / 100;
+            $receivable['bank_id'] = $order->quotation->bank_id;
+            $receivable['admin_id'] = $order->quotation->admin_id;
+            $receivable->save();
         });
     }
 
@@ -140,6 +148,17 @@ class Order extends Model
     public function getTotalTaxAmountAttr ($value, $data)
     {
         return Db::name('OrderItem')->where('order_id',$data['id'])->sum('tax_amount');
+    }
+
+    public function getServiceAmountAttr ()
+    {
+        $amount = 0;
+        if ($this->service) {
+            foreach ($this->service as $value) {
+                $amount += $value['cost'];
+            }
+        }
+        return $amount;
     }
 
     public function getServiceAttr ($value)
