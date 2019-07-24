@@ -209,7 +209,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             });
 
             $(".btn-receivables").click(function () {
-                Fast.api.open("accounting/receivables/add" , __("Receivables"))
+                Fast.api.open("accounting/receivables/add/order_id/" +  Config.order.id, __("Receivables"))
             });
 
             Table.api.init({
