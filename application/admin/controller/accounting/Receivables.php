@@ -3,6 +3,10 @@
 namespace app\admin\controller\accounting;
 
 use app\common\controller\Backend;
+use think\Db;
+use think\Exception;
+use think\exception\PDOException;
+use think\exception\ValidateException;
 
 /**
  * 
@@ -22,6 +26,7 @@ class Receivables extends Backend
     {
         parent::_initialize();
         $this->model = new \app\admin\model\accounting\Receivables;
+        $this->view->assign("typeList", $this->model->getTypeList());
         $this->view->assign("currencyList", $this->model->getCurrencyList());
         $this->view->assign("statusList", $this->model->getStatusList());
     }
@@ -64,7 +69,7 @@ class Receivables extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','order_id','currency','total_amount','receivables','bank_id','paymentdate','reveivedate','reveives','admin_id','status']);
+                $row->visible(['id','order_id','currency','total_amount','receivables','bank_id','paymentdate','receivedate','receives','admin_id','status']);
                 $row->visible(['order']);
 				$row->getRelation('order')->visible(['ref_no']);
 				$row->visible(['bank']);
@@ -77,6 +82,77 @@ class Receivables extends Backend
 
             return json($result);
         }
+        return $this->view->fetch();
+    }
+
+    public function edit($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+                $result = false;
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
+                        $row->validateFailException(true)->validate($validate);
+                    }
+                    if ($params['paymentdate'] && $params['receivedate'] && $params['receives']) {
+                        $params['status'] = "2";
+                    }
+                    $result = $row->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    /*if ($row->type === "prepay" && $row->status === '2') {
+                        $row->order->save(['paid' => $row->receivables, 'balance' => $row->order->balance - $row->receivables, 'status' => '20']);
+                    }
+                    if ($row->type === "middlepay" && $row->status === '2') {
+                        $row->order->save(['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables]);
+                    }
+                    if ($row->type === "tailpay" && $row->status === '2') {
+                        $row->order->save(['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables, 'status' => '30']);
+                    }*/
+                    if ($row->status === '2') {
+                        $update = ['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables];
+                        if ($row->type === "prepay") {
+                            $update['status'] = '20';
+                        }
+                        if ($row->type === "tailpay") {
+                            $update['status'] =  '30';
+                        }
+                        $row->order->save($update);
+                    }
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were updated'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $this->view->assign("row", $row);
         return $this->view->fetch();
     }
 }

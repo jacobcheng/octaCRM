@@ -63,7 +63,7 @@
                 <dd>{$row.insurance} ‱</dd>
                 {/in}
                 <dt>{:__('Paid')}: </dt>
-                <dd>{$row.paid} / {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}￥ {$row.total_tax_amount|number_format=2}{else/}￥ {$row.total_amount|number_format=2}{/gt}{else/}$ {$row.total_usd_amount|number_format=2}{/eq}</dd>
+                <dd>{$row.currency} {$row.paid} / {$row.balance}</dd>
         </div>
     </div>
 </div>

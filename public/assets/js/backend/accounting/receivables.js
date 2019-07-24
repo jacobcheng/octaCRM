@@ -30,8 +30,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'receivables', title: __('Receivables'), operate:'BETWEEN'},
                         {field: 'bank.name', title: __('Bank_id')},
                         {field: 'paymentdate', title: __('Paymentdate'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'reveivedate', title: __('Reveivedate'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'reveives', title: __('Reveives'), operate:'BETWEEN'},
+                        {field: 'receivedate', title: __('Receivedate'), operate:'RANGE', addclass:'datetimerange'},
+                        {field: 'receives', title: __('Receives'), operate:'BETWEEN'},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'status', title: __('Status'), searchList: {"1":__('Pending'),"2":__('Confirm')}, formatter: Table.api.formatter.status},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
