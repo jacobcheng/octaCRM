@@ -215,10 +215,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                $("[id!='c-bank']").closest(".form-group").hide();
                $("#c-bank").closest(".form-group").show();
            } else {
+                var status = type === 'pi' ? "30" : "20";
                 var beforePrint = function() {
                 };
                 var afterPrint = function() {
-                    Fast.api.ajax("sales/quotation/updatestatus/status/20/ids" + ids, function () {
+                    Fast.api.ajax("sales/quotation/updatestatus/status/" + status + "/ids/" + ids, function () {
                         return false;
                     });
                     parent.Layer.closeAll();
@@ -405,7 +406,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 cny = false; usd = true;
             }
             Config.quotation.tax_rate > 0 ? tax = true: tax = false;
-            Config.quotation.status === "30" ? view = false: view = true;
+            Config.quotation.status === "40" ? view = false: view = true;
 
             // 初始化表格
             table.bootstrapTable({

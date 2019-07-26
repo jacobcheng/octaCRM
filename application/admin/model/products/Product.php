@@ -28,7 +28,9 @@ class Product extends Model
     protected $append = [
         'unit_text',
         'image',
-        'catalog_id'
+        'catalog_id',
+        'full_description',
+        'hscode'
     ];
     
 
@@ -54,6 +56,16 @@ class Product extends Model
     public function getCatalogIdAttr ($value, $data)
     {
         return Db::name('product_model')->where('id', $data['model_id'])->value('category_id');
+    }
+
+    public function getFullDescriptionAttr ()
+    {
+        return $this->productmodel->description ." " . $this->description;
+    }
+
+    public function getHscodeAttr ()
+    {
+        return $this->productmodel->hscode;
     }
 
 

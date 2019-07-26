@@ -216,9 +216,6 @@ class Quotation extends Backend
             foreach ($data as $val) {
                 if ($value['id'] == $val['id']) {
                     $params = $value;
-                    /*$params['quantity'] = $val['quantity'];
-                    $params['unit_price'] = isset($val['unit_price']) ? :'';
-                    $params['usd_unit_price'] = isset($val['usd_unit_price']) ? :'';*/
                     list($params['quantity'], $params['profit'], $params['unit_price'], $params['usd_unit_price']) = [$val['quantity'], $val['profit'], isset($val['unit_price']) ? :'', isset($val['usd_unit_price']) ? :''];
                     unset($params['id'], $params['createtime'], $params['updatetime'], $params['updatetime']);
                     $params = QuotationItem::prepareSave($params, $update, $params);

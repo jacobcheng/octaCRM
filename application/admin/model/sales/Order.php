@@ -43,8 +43,8 @@ class Order extends Model
         Order::event("after_insert", function ($order) {
             if (!empty($order->quotation_id)) {
                 $quotation = $order->quotation;
-                if ($quotation['status'] < '30') {
-                    $quotation->save(['status' => "30"]);
+                if ($quotation['status'] < '40') {
+                    $quotation->save(['status' => "40"]);
                 }
             };
             $client = $order->client;
@@ -54,7 +54,7 @@ class Order extends Model
             $receivable = new \app\admin\model\accounting\Receivables;
             $receivable['order_id'] = $order->id;
             $receivable['currency'] = $order->currency;
-            $receivable['receivables'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount) * $order->prepay / 100;
+            $receivable['receivables'] = $order->quotation->service_amount + ($order->currency === 'CNY' ? ($order->tax_rate > 0 ? $order->quotation->total_tax_amount:$order->quotation->total_amount):$order->quotation->total_usd_amount) * $order->quotation->prepay / 100;
             $receivable['bank_id'] = $order->quotation->bank_id;
             $receivable['admin_id'] = $order->quotation->admin_id;
             $receivable->save();

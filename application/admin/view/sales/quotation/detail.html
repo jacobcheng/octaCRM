@@ -2,7 +2,7 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool btn-order {:$auth->check('sales/quotation/placeorder')?'':'hide'}" data-toggle="tooltip"  {eq name="row.status" value="30"}disabled{/eq} title="{:__('Order')}"><i class="fa fa-money"></i></button>
+            <button type="button" class="btn btn-box-tool btn-order {:$auth->check('sales/quotation/placeorder')?'':'hide'}" data-toggle="tooltip"  {neq name="row.status" value="30"}disabled{/neq} title="{:__('Order')}"><i class="fa fa-money"></i></button>
             <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/quotation/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('P/I')}">P/I</button>
             <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/quotation/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('Print')}"><i class="fa fa-print"></i></button>
             <button type="button" class="btn btn-box-tool btn-copy {:$auth->check('sales/quotation/copy')?'':'hide'}" data-toggle="tooltip"  title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
@@ -72,7 +72,7 @@
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="one">
                 <div class="widget-body no-padding">
-                    {neq name="row.status" value="30"}
+                    {neq name="row.status" value="40"}
                     <div id="toolbar" class="toolbar">
                         <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" ><i class="fa fa-refresh"></i> </a>
                         <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('sales/quotation_item/add')?'':'hide'}" title="{:__('Add')}" ><i class="fa fa-plus"></i> {:__('Add')}</a>

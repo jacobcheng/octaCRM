@@ -60,12 +60,8 @@
                         <td rowspan="2" style="vertical-align: middle !important;">{$i}</td>
                         <td>{$item.product.code}</td>
                         <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
-                            {$item.product.specification}<br>
-                            {foreach name="item.process" item="vo"}
-                            {$vo.process}<br>
-                            {/foreach}
-                            weight: {$item.product.weight}<br>
-                            size: {$item.product.length} * {$item.product.width} * {$item.product.height}cm
+                            {$item.product.full_description}<br>
+                            {$item.product.hscode ? "HS CODE: ".$item.product.hscode:''}<br>
                         </td>
                         <td rowspan="2" style="vertical-align: middle !important;">{$item.quantity}</td>
                         <td rowspan="2" style="vertical-align: middle !important;">{$item.product.unit}</td>
@@ -96,7 +92,7 @@
                     </tr>
                     <tr class="text-bold">
                         <td colspan="2">Trade Terms (贸易条款): </td>
-                        <td colspan="6" class="text-left">{$row.incoterms} {$row.country.name}</td>
+                        <td colspan="6" class="text-left">{:$row.incoterms == "EXW" ? "SHENZHEN ".$row.incoterms:$row.incoterms." ".$row.country.name}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Shipment (运输条款): </td>
@@ -104,7 +100,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">Leadtime (交期条款): </td>
-                        <td colspan="6" class="text-left">{$row.leadtime} days after order confirmed</td>
+                        <td colspan="6" class="text-left">{$row.quotation.leadtime} days after order confirmed</td>
                     </tr>
                     <tr>
                         <td colspan="2">Quality Terms (质量条款): </td>
@@ -112,7 +108,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">payment (付款条款): </td>
-                        <td colspan="6" class="text-left">by T/T, Prepay {$row.quotation.prepay} % of Amount as Deposit ({$row.currency}  {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}{else/}{$row.total_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}{/eq}，the balance against before deliver</td>
+                        <td colspan="6" class="text-left">by T/T, Prepay {$row.quotation.prepay} % of Amount as Deposit ({$row.currency}  {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}{else/}{$row.total_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount*$row.quotation.prepay/100+$row.service_amount|number_format=2}){/eq}，the balance against before deliver</td>
                     </tr>
                 </table>
             </div>

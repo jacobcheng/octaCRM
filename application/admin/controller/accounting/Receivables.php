@@ -27,7 +27,7 @@ class Receivables extends Backend
     {
         parent::_initialize();
         $this->model = new \app\admin\model\accounting\Receivables;
-        $this->view->assign("typeList", $this->model->getTypeList());
+        /*$this->view->assign("typeList", $this->model->getTypeList());*/
         $this->view->assign("currencyList", $this->model->getCurrencyList());
         $this->view->assign("statusList", $this->model->getStatusList());
     }

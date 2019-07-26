@@ -38,7 +38,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                                     if (row.status === "2" && (btn.name === "edit" || btn.name === "del")) {
                                         btn.classname += " disabled";
                                     } else {
-                                        btn.classname = btn.classname.replace(/ disabled/, '');
+                                        btn.classname = btn.classname.replace(/ disabled/, "");
                                     }
                                 });
                                 return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');

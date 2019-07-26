@@ -202,7 +202,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                     } else if (terms === 'CIF'|| terms === 'CIP'|| terms === 'DAT'|| terms === 'DPT'|| terms === 'DAP' || terms === 'DDP') {
                         $("#c-transport,#c-transport_fee,#c-insurance").closest('.form-group').show();
                     } else {
-                        return;
+                        $("#c-transport").val('').closest('.form-group').hide();
                     }
 
                     if ($("#c-currency").val() === "CNY") {

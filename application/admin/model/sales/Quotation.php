@@ -39,7 +39,7 @@ class Quotation extends Model
     protected  static function init()
     {
         Quotation::event('after_insert', function ($quotation) {
-            $client = model('Client')->get($quotation->client_id);
+            $client = model('app\admin\model\sales\Client')->get($quotation->client_id);
             if ($client->status < '30') {
                 $client->save(['status' => '30']);
             }
