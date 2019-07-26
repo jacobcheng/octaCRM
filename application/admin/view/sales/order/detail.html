@@ -2,10 +2,11 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool btn-receivables" data-toggle="tooltip" title="{:__('Receivables')}"><i class="fa fa-money"></i></button>
-            <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('C/I')}">C/I</button>
+            <button id="btn-receivables" type="button" class="btn btn-box-tool {egt name='row.status' value='30'}disabled{/egt}" data-toggle="tooltip" title="{:__('Receivables')}"><i class="fa fa-money"></i></button>
+            <button id="btn-print-pl" type="button" class="btn btn-box-tool {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('P/L')}">P/L</button>
+            <button id="btn-print-ci" type="button" class="btn btn-box-tool {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('C/I')}">C/I</button>
             <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('Print')}"><i class="fa fa-print"></i></button>
-            <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('sales/order/edit')?'':'hide'}" data-toggle="tooltip"  title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
+            <button id="btn-edit" type="button" class="btn btn-box-tool {egt name='row.status' value='20'}disabled{/egt} {:$auth->check('sales/order/edit')?'':'hide'}" data-toggle="tooltip"  title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>
         </div>
@@ -73,6 +74,7 @@
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="one">
                 <div class="widget-body no-padding">
+                    {lt name="row.status" value="20"}
                     <div id="toolbar" class="toolbar">
                         <a href="javascript:;" class="btn btn-primary btn-refresh" title="{:__('Refresh')}" ><i class="fa fa-refresh"></i> </a>
                         <a href="javascript:;" class="btn btn-success btn-add {:$auth->check('sales/quotation_item/add')?'':'hide'}" title="{:__('Add')}" ><i class="fa fa-plus"></i> {:__('Add')}</a>
@@ -90,6 +92,7 @@
 
                         <a class="btn btn-success btn-recyclebin btn-dialog {:$auth->check('sales/quotation_item/recyclebin')?'':'hide'}" href="sales/quotation_item/recyclebin" title="{:__('Recycle bin')}"><i class="fa fa-recycle"></i> {:__('Recycle bin')}</a>
                     </div>
+                    {/lt}
                     <table id="table" class="table table-striped table-bordered table-hover table-nowrap"
                            data-operate-edit="{:$auth->check('sales/quotation_item/edit')}"
                            data-operate-del="{:$auth->check('sales/quotation_item/del')}"

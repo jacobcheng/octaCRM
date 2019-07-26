@@ -136,6 +136,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
         placeorder: function () {
             Controller.api.bindevent();
         },
+        print: function () {
+            var type = window.location.pathname.split('/');
+            type = type[type.length - 3];
+            var ids = window.location.pathname.split("/");
+            ids = ids[ids.length - 1];
+
+            /*var beforePrint = function() {
+            };
+            var afterPrint = function() {
+                parent.Layer.closeAll();
+            };
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
+            window.print();*/
+        },
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"), function (data) {
@@ -202,14 +217,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             }
         },
         detail: function () {
-            $(".btn-edit").click(function () {
+            $("#btn-edit").click(function () {
                 Fast.api.open("sales/order/edit/ids/" + Config.order.id, __('Edit') +' '+ Config.order.ref_no, {callback: function (data) {
                     }
                 })
             });
 
-            $(".btn-receivables").click(function () {
-                Fast.api.open("accounting/receivables/add/order_id/" +  Config.order.id, __("Receivables"))
+            $("#btn-receivables").click(function () {
+                Fast.api.open("accounting/receivables/add/order_id/" +  Config.order.id, __("Receivables"), function () {
+                    parent.location.reload();
+                })
+            });
+
+            $("#btn-print-ci").click(function () {
+                Fast.api.open("sales/order/print/type/ci/ids/" + Config.order.id,'',{area:["90%","90%"]})
             });
 
             Table.api.init({
@@ -232,6 +253,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 cny = false; usd = true;
             }
             Config.order.tax_rate > 0 ? tax = true: tax = false;
+            Config.order.status < 20 ? view = true: view = false;
 
             // 初始化表格
             table.bootstrapTable({
@@ -349,7 +371,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 })
                                 return "￥ " + sum.toFixed(2);
                             },visible: tax},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, visible: view}
                     ]
                 ]
             });

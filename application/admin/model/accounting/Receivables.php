@@ -27,17 +27,17 @@ class Receivables extends Model
     protected $append = [
         'currency_text',
         'status_text',
-        'type_text'
+        /*'type_text'*/
     ];
 
     protected $insert = [
         'status' => 1
     ];
 
-    public function getTypeList()
+    /*public function getTypeList()
     {
         return ['middlepay' => __('Middle Pay'), 'tailpay' => __('Tail Pay'), 'prepay' => __('Prepay')];
-    }
+    }*/
     
     public function getCurrencyList()
     {
@@ -49,12 +49,12 @@ class Receivables extends Model
         return ['1' => __('Pending'), '2' => __('Confirm')];
     }
 
-    public function getTypeTextAttr($value, $data)
+    /*public function getTypeTextAttr($value, $data)
     {
         $value = $value ? $value : (isset($data['type']) ? $data['type'] : '');
         $list = $this->getTypeList();
         return isset($list[$value]) ? $list[$value] : '';
-    }
+    }*/
 
     public function getCurrencyTextAttr($value, $data)
     {

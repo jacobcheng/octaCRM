@@ -22,6 +22,7 @@ class Receivables extends Backend
      */
     protected $model = null;
 
+
     public function _initialize()
     {
         parent::_initialize();
@@ -69,7 +70,7 @@ class Receivables extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','order_id','currency','total_amount','receivables','bank_id','paymentdate','receivedate','receives','admin_id','status']);
+                $row->visible(['id','order_id','currency','receivables','bank_id','paymentdate','receivedate','receives','admin_id','status']);
                 $row->visible(['order']);
 				$row->getRelation('order')->visible(['ref_no']);
 				$row->visible(['bank']);
@@ -81,6 +82,52 @@ class Receivables extends Backend
             $result = array("total" => $total, "rows" => $list);
 
             return json($result);
+        }
+        return $this->view->fetch();
+    }
+
+    /**
+     * 添加
+     */
+    public function add()
+    {
+        if ($this->request->isPost()) {
+            $params = $this->request->post("row/a");
+            if ($params) {
+                $params = $this->preExcludeFields($params);
+
+                if ($this->dataLimit && $this->dataLimitFieldAutoFill) {
+                    $params[$this->dataLimitField] = $this->auth->id;
+                }
+                $result = false;
+                Db::startTrans();
+                try {
+                    //是否采用模型验证
+                    if ($this->modelValidate) {
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
+                        $this->model->validateFailException(true)->validate($validate);
+                    }
+                    $params['admin_id'] = $this->auth->id;
+                    $result = $this->model->allowField(true)->save($params);
+                    Db::commit();
+                } catch (ValidateException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (PDOException $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                } catch (Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                if ($result !== false) {
+                    $this->success();
+                } else {
+                    $this->error(__('No rows were inserted'));
+                }
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
         }
         return $this->view->fetch();
     }
@@ -127,11 +174,13 @@ class Receivables extends Backend
                 }
                 if ($result !== false) {
                     if ($row->status === '2') {
-                        $update = ['paid' => $row->receivables + $row->order->paid, 'balance' => $row->order->balance - $row->receivables];
-                        if ($row->type === "prepay") {
+                        $paid = $row->receivables + $row->order->paid;
+                        $balance = $row->order->balance - $row->receivables;
+                        $update = ['paid' => $paid, 'balance' => $balance];
+                        if ($row->order->paid == 0) {
                             $update['status'] = '20';
                         }
-                        if ($row->type === "tailpay") {
+                        if ($balance == 0) {
                             $update['status'] =  '30';
                         }
                         $row->order->save($update);

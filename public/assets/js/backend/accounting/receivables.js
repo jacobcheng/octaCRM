@@ -26,7 +26,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         {field: 'order.ref_no', title: __('Order_id')},
                         {field: 'currency', title: __('Currency'), searchList: {"USD":__('USD'),"CNY":__('CNY')}, formatter: Table.api.formatter.normal},
-                        {field: 'total_amount', title: __('Total_amount'), operate:'BETWEEN'},
                         {field: 'receivables', title: __('Receivables'), operate:'BETWEEN'},
                         {field: 'bank.name', title: __('Bank_id')},
                         {field: 'paymentdate', title: __('Paymentdate'), operate:'RANGE', addclass:'datetimerange'},

@@ -3,6 +3,7 @@
 namespace app\admin\controller\sales;
 
 use app\common\controller\Backend;
+use NumberToWords\NumberToWords;
 use think\Db;
 use think\Exception;
 use think\exception\PDOException;
@@ -231,5 +232,31 @@ class Order extends Backend
         $row['leadtime'] = date('Y-m-d', time() + ($row['leadtime'] * 24 * 60 * 60));
         $this->view->assign('row', $row);
         return $this->fetch('edit');
+    }
+
+    public function print ($ids = null, $type)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $adminIds = $this->getDataLimitAdminIds();
+        if (is_array($adminIds)) {
+            if (!in_array($row[$this->dataLimitField], $adminIds)) {
+                $this->error(__('You have no permission'));
+            }
+        }
+        $client = model('app\admin\model\sales\Client')->get($row['client_id']);
+        /*if ( $row['currency']==="CNY" ) {
+            $totalamount = $row['tax_rate'] > 0 ? $row['total_tax_amount'] : $row['total_amount'];
+        } else {
+            $totalamount = $row['total_usd_amount'];
+        }*/
+        $totalamount = $row['currency']==="CNY" ? ($row['tax_rate'] > 0 ? $row['total_tax_amount'] : $row['total_amount']) : $row['total_usd_amount'];
+        $numberToWords = new NumberToWords();
+        $currency = $numberToWords->getCurrencyTransformer('en');
+        $saytotal = $currency->towords(($totalamount+$row['service_amount'])*100, "USD");
+        $this->view->assign(["row" =>  $row, "client" => $client, "saytotal" => $saytotal, "type" => $type]);
+        return $this->view->fetch();
     }
 }
