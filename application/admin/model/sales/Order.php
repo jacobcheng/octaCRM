@@ -160,32 +160,24 @@ class Order extends Model
         return Db::name('order_item')->where('order_id', $this->id)->sum('cbm');
     }
 
-    public function getTotalGwAttr ()
-    {
-        return Db::name('order_item')->where('order_id', $this->id)->sum('weight');
-    }
-
     public function getTotalQtyAttr ()
     {
         return Db::name('order_item')->where('order_id', $this->id)->sum('quantity');
     }
 
-    public function getTotalNwAttr ()
+    public function getTotalGrossWeightAttr ()
     {
-        $nw = 0;
-        foreach ($this->items as $item) {
-            $nw += $item->unit_nw * $item->quantity;
-        }
-        return $nw;
+        return Db::name('order_item')->where('order_id', $this->id)->sum('grossw');
+    }
+
+    public function getTotalNetWeightAttr ()
+    {
+        return Db::name('order_item')->where('order_id', $this->id)->sum('netw');
     }
 
     public function getTotalCtnAttr()
     {
-        $total_ctn = 0;
-        foreach ($this->items as $item) {
-            $total_ctn += $item['ctn'];
-        }
-        return $total_ctn;
+        return Db::name('order_item')->where('order_id', $this->id)->sum('ctn');
     }
 
     public function getServiceAttr ($value)

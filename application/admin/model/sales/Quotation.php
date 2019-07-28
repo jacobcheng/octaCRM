@@ -133,7 +133,6 @@ class Quotation extends Model
 
     public function getTotalAmountAttr ($value, $data)
     {
-        //var_dump(Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount'));
         return Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount');
     }
 
@@ -163,16 +162,26 @@ class Quotation extends Model
         return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('cbm');
     }
 
-    public function getTotalWeightAttr ()
+    public function getTotalGrossWeightAttr ()
     {
-        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('weight');
+        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('grossw');
+    }
+
+    public function getTotalNetWeightAttr ()
+    {
+        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('netw');
+    }
+
+    public function getTotalCtnAttr ()
+    {
+        return Db::name('quotation_item')->where('quotation_id', $this->id)->sum('ctn');
     }
 
     //获取单位运费
     public function getUnitFee ($newcbm = 0, $newweight = 0, $id = 0)
     {
         $total_cbm = Db::name('quotation_item')->where(['quotation_id' => $this->id, 'id' => ['<>', $id]])->sum('cbm') + $newcbm;
-        $total_weight = Db::name('quotation_item')->where(['quotation_id' => $this->id, 'id' => ['<>', $id]])->sum('weight') + $newweight;
+        $total_weight = Db::name('quotation_item')->where(['quotation_id' => $this->id, 'id' => ['<>', $id]])->sum('grossw') + $newweight;
         if ($this->incoterms !== "EXW" && $total_cbm != 0){
             switch ($this->incoterms) {
                 case 'Express Service':
@@ -190,7 +199,7 @@ class Quotation extends Model
                     break;
             }
         } else {
-            return ['weight' => 0];
+            return ['grossw' => 0];
         }
     }
 

@@ -230,7 +230,7 @@ class Quotation extends Backend
         if (count($quotation->items) > 0) {
             foreach ($quotation->items as $value) {
                 $item = $value->toArray();
-                list($item['unit_price'], $item['usd_unit_price'], $item['amount'], $item['usd_amount'], $item['tax_amount'], $item['accessory']) = ['','','','','',array_column($value['accessory'],'id')];
+                list($item['unit_price'], $item['usd_unit_price'], $item['amount'], $item['usd_amount'], $item['tax_amount'], $item['accessory'], $item['process']) = ['','','','','',array_column($value['accessory'],'id'), json_encode($value['process'])];
                 $item = QuotationItem::prepareSave($item, false, $value);
                 $value->save($item);
             }

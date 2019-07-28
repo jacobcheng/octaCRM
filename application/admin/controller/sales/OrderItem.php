@@ -63,7 +63,7 @@ class OrderItem extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','order_id','product','accessory','package','carton','process','weight','cbm','quantity','profit','unit_price','usd_unit_price','amount','usd_amount','tax_amount']);
+                $row->visible(['id','order_id','product','accessory','package','carton','process','grossw','cbm','ctn','quantity','profit','unit_price','usd_unit_price','amount','usd_amount','tax_amount']);
                 $row->visible(['order']);
 				$row->getRelation('order')->visible(['ref_no']);
             }

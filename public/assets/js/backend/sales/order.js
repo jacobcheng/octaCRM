@@ -30,21 +30,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {field: 'client.short_name', title: __('Client_id')},
                         {field: 'country.country_name', title: __('Country_code')},
                         {field: 'contact.appellation', title: __('Contact_id')},
-                        /*{field: 'po_no', title: __('Po_no')},
-                        {field: 'lc_no', title: __('Lc_no')},
-                        {field: 'client_id', title: __('Client_id')},
-                        {field: 'contact_id', title: __('Contact_id')},
-                        {field: 'country_code', title: __('Country_code')},*/
                         {field: 'currency', title: __('Currency'), searchList: {"USD":__('USD'),"CNY":__('CNY')}, formatter: Table.api.formatter.normal},
-                        /*{field: 'tax_rate', title: __('Tax_rate')},
-                        {field: 'rate', title: __('Rate'), operate:'BETWEEN'},*/
                         {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
                         {field: 'leadtime', title: __('Leadtime')},
-                        /*{field: 'transport', title: __('Transport'), searchList: {"Express Service":__('Express service'),"By Sea":__('By sea'),"By Air":__('By air'),"By Train":__('By train'),"By Road":__('By road')}, formatter: Table.api.formatter.normal},
-                        {field: 'insurance', title: __('Insurance')},
-                        {field: 'paid', title: __('Paid'), operate:'BETWEEN'},
-                        {field: 'balance', title: __('Balance'), operate:'BETWEEN'},*/
-                        /*{field: 'admin_id', title: __('Admin_id')},*/
                         {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status, custom: {"10":"gray","20":"info","30":"warning","40":"success","-1":"danger"}},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
@@ -251,13 +239,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
 
             var table = $("#table");
 
-            if (Config.order.currency === "CNY"){
-                cny = true; usd = false;
-            } else {
-                cny = false; usd = true;
-            }
-            Config.order.tax_rate > 0 ? tax = true: tax = false;
-            Config.order.status < 20 ? view = true: view = false;
+            var cny = Config.order.currency === "CNY";
+            var usd = !cny;
+            var tax = Config.order.tax_rate > 0;
+            var view = Config.order.status < 20;
 
             // 初始化表格
             table.bootstrapTable({
@@ -301,10 +286,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     return '-';
                                 }
                             }},
-                        {field: 'weight', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
+                        {field: 'ctn', title: __('Carton'), footerFormatter: function (row) {
+                                var sum = 0;
+                                $.map(row, function(val){
+                                    sum += val['ctn'];
+                                });
+                                return sum;
+                            }},
+                        {field: 'grossw', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
                                 var sum = 0;
                                 $.map(row, function (val) {
-                                    sum += val['weight'];
+                                    sum += val['grossw'];
                                 });
                                 return sum
                             }},
@@ -321,19 +313,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     sum += val['quantity'];
                                 });
                                 //return "<span class='text-center'>"+sum+"</span>";
-                                return sum;
-                            }},
-                        {field: 'carton', title: __('Carton'), formatter: function (value, row) {
-                                return value ? Math.ceil(row['quantity']/value['rate']):row['quantity'];
-                            }, footerFormatter: function (row) {
-                                var sum = 0;
-                                $.map(row, function(val){
-                                    if(val['carton']){
-                                        sum += Math.ceil(val['quantity']/val['carton']['rate']);
-                                    } else {
-                                        sum += val['quantity'];
-                                    }
-                                });
                                 return sum;
                             }},
                         {field: 'profit', title: __('Profit')},

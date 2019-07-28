@@ -67,18 +67,18 @@
                         </td>
                         <td style="vertical-align: middle !important;">{$item.ctn}</td>
                         <td style="vertical-align: middle !important;">{$item.quantity} {$item.product.unit}</td>
-                        <td style="vertical-align: middle !important;">{:$item.weight/$item.ctn} @ {$item.weight}</td>
-                        <td style="vertical-align: middle !important;">{:$item.carton ? $item.unit_nw * $item.carton.rate:$item.unit_nw} @ {$item.unit_nw * $item.quantity}</td>
+                        <td style="vertical-align: middle !important;">{$item.grossw/$item.ctn} @ {$item.grossw}</td>
+                        <td style="vertical-align: middle !important;">{$item.netw/$item.ctn} @ {$item.netw}</td>
                         <td style="vertical-align: middle !important;">{$item.cbm/$item.ctn} @ {$item.cbm}</td>
                     </tr>
                     {/volist}
-                    <tr class="text-bold h3" height="50px">
+                    <tr class="text-bold h4" height="50px">
                         <td colspan="2" style="vertical-align: middle !important;">Total (总计)</td>
                         <td style="vertical-align: middle !important;"></td>
                         <td style="vertical-align: middle !important;">{$row.total_ctn}</td>
                         <td style="vertical-align: middle !important;">{$row.total_qty}</td>
-                        <td style="vertical-align: middle !important;">{$row.total_gw}</td>
-                        <td style="vertical-align: middle !important;">{$row.total_nw}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_gross_weight}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_net_weight}</td>
                         <td style="vertical-align: middle !important;">{$row.total_cbm|number_format=2}</td>
                     </tr>
                 </table>
@@ -86,18 +86,3 @@
         </div>
     </div>
 </div>
-<!--
-<div class="col-xs-12 text-uppercase h4" style="margin-top: 30px">
-    <div class="col-xs-5">
-        <p>For and On Behalf Of: </p>
-        <p>{$site.company_name_en}</p>
-        <hr style="margin-top: 80px">
-        <small>Company Chop & Signature</small>
-    </div>
-    <div class="col-xs-5 col-xs-offset-2">
-        <p>For and On Behalf Of: </p>
-        <p>{$client['name']}</p>
-        <hr style="margin-top: 80px">
-        <small>Company Chop & Signature</small>
-    </div>
-</div>-->

@@ -73,7 +73,7 @@ class QuotationItem extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','product','accessory','package','carton','process','weight','cbm','quantity','profit','unit_price','usd_unit_price','amount','usd_amount','tax_amount']);
+                $row->visible(['id','product','accessory','package','carton','process','grossw','ctn','cbm','quantity','profit','unit_price','usd_unit_price','amount','usd_amount','tax_amount']);
             }
             $list = collection($list)->toArray();
             $result = array("total" => $total, "rows" => $list);
@@ -226,10 +226,15 @@ class QuotationItem extends Backend
     {
         $quotation =  model('app\admin\model\sales\Quotation')->get($data['quotation_id']);
         $product = (!empty($row) && !$update && $data['product'] == (isset($row['product']['id']) ? : $data['product'])) ?  $row['product']: model('app\admin\model\products\Product')->find($data['product']);
-        $productCBM = $product['length'] * $product['width'] * $product['height'];
-        $packageCBM = $product['plength'] * $product['pwidth'] * $product['pheight'];
+        list($productCBM, $packageCBM) = [$product['length'] * $product['width'] * $product['height'], $product['plength'] * $product['pwidth'] * $product['pheight']];
         $cbm = $packageCBM > $productCBM ? $packageCBM : $productCBM;
-        list($data['cbm'], $data['weight'], $data['unit_cost']) = [round($cbm/1000000,3) * $data['quantity'], ($product['pweight'] ? : $product['weight'])*$data['quantity'], $product['cost']];
+        list($data['cbm'], $data['grossw'], $data['netw'], $data['ctn'], $data['unit_cost']) = [
+                                round($cbm/1000000,3) * $data['quantity'],
+                                $product['pweight'] * $data['quantity'],
+                                $product['weight'] * $data['quantity'],
+                                $data['quantity'],
+                                $product['cost']
+        ];
         $data['product'] = json_encode($product);
 
         if ($data['process']){
@@ -237,32 +242,14 @@ class QuotationItem extends Backend
                 $data['unit_cost'] += $value['cost'];
             }
         }
-        $pnc = 0;
-        if ($data['package']){
-            $package = (!empty($row) && !$update && $data['package'] = (isset($row['package']['id']) ? : $data['package'])) ? $row['package'] : model('app\admin\model\products\Package')->find($data['package']);
-            $data['cbm'] = round($package['length'] * $package['width'] * $package['height'] / 1000000,3)*$data['quantity'];
-            $data['weight'] += $package['weight'] * $data['quantity'];
-            //$data['unit_cost'] += $package['cost'];
-            $pnc += $package['cost'];
-            $data['package'] = json_encode($package);
-        }
-
-        if ($data['carton']){
-            $carton = (!empty($row) && !$update && $data['carton'] = (isset($row['carton']['id']) ? : $data['carton'])) ? $row['carton'] : model('app\admin\model\products\Carton')->find($data['carton']);
-            $qty = ceil($data['quantity']/$carton['rate']);
-            $data['cbm'] = round($carton['length'] * $carton['width'] * $carton['height'] / 1000000,3) * $qty;
-            $data['weight'] += $carton['weight'] * $qty;
-            $data['unit_cost'] += round($carton['cost']/$carton['rate'], 2);
-            $pnc += round($carton['cost']/$carton['rate'], 2);
-            $data['carton'] = json_encode($carton);
-        }
 
         if ($data['accessory']){
             $accessory = model('app\admin\model\products\Accessory')->all($data['accessory']);
             if (empty($row) || $update) {
                 foreach ($accessory as $value) {
                     $data['unit_cost'] += $value['cost'];
-                    $data['weight'] += $value['weight'] * $data['quantity'];
+                    $data['grossw'] += $value['weight'] * $data['quantity'];
+                    $data['netw'] += $value['weight'] * $data['quantity'];
                 }
                 $data['accessory'] = json_encode($accessory);
             } else {
@@ -271,11 +258,13 @@ class QuotationItem extends Backend
                     foreach ($row['accessory'] as $val){
                         if ($value['id'] == $val['id']){
                             $data['unit_cost'] += $val['cost'];
-                            $data['weight'] += $val['weight'] * $data['quantity'];
+                            $data['grossw'] += $val['weight'] * $data['quantity'];
+                            $data['netw'] += $val['weight'] * $data['quantity'];
                             $data['accessory'][] = $val;
                         } else {
                             $data['unit_cost'] += $value['cost'];
-                            $data['weight'] += $value['weight'] * $data['quantity'];
+                            $data['grossw'] += $value['weight'] * $data['quantity'];
+                            $data['netw'] += $value['weight'] * $data['quantity'];
                             $data['accessory'][] = $value;
                         }
                     }
@@ -284,9 +273,28 @@ class QuotationItem extends Backend
             }
         }
 
+        $pnc = 0;
+        if ($data['package']){
+            $package = (!empty($row) && !$update && $data['package'] = (isset($row['package']['id']) ? : $data['package'])) ? $row['package'] : model('app\admin\model\products\Package')->find($data['package']);
+            $data['cbm'] = round($package['length'] * $package['width'] * $package['height'] / 1000000,3) * $data['quantity'];
+            $data['grossw'] = $data['netw'] +  $package['weight'] * $data['quantity'];
+            $pnc += $package['cost'];
+            $data['package'] = json_encode($package);
+        }
+
+        if ($data['carton']){
+            $carton = (!empty($row) && !$update && $data['carton'] = (isset($row['carton']['id']) ? : $data['carton'])) ? $row['carton'] : model('app\admin\model\products\Carton')->find($data['carton']);
+            $data['ctn'] = ceil($data['quantity']/$carton['rate']);
+            $data['cbm'] = round($carton['length'] * $carton['width'] * $carton['height'] / 1000000,3) * $data['ctn'];
+            $data['netw'] = $data['grossw'];
+            $data['grossw'] += $carton['weight'] * $data['ctn'];
+            $pnc += round($carton['cost']/$carton['rate'], 2);
+            $data['carton'] = json_encode($carton);
+        }
+
         if (!isset($data['unit_price']) || !$data['unit_price']) {
             $id = isset($row['id']) ? $row['id'] : '0';
-            $unit_fee = $quotation->getUnitFee($data['cbm'], $data['weight'], $id);
+            $unit_fee = $quotation->getUnitFee($data['cbm'], $data['grossw'], $id);
             if (count($quotation->items) > 0) {
                 foreach ($quotation->items as $value) {
                     if ($value['id'] != $id) {

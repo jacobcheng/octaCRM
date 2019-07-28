@@ -52,17 +52,20 @@
                         <th class="text-center">Specification <br>(规格)</th>
                         <th class="text-center">Package <br>(包装)</th>
                         <!--<th class="text-center">CBM</th>-->
-                        <th class="text-center">Carton <br>(外箱)</th>
+                        <th class="text-center">CTN. <br>(外箱)</th>
+                        <th class="text-center">G/W <br>(毛重)</th>
+                        <th class="text-center">CBM <br>(体积)</th>
                         <th class="text-center">Qty <br>(数量)</th>
                         <th class="text-center">Unit <br>(单位)</th>
-                        <th class="text-center">Unit Price <br>(单价) ({$row.currency})</th>
-                        <th class="text-center">Amount <br>(总金额) ({$row.currency})</th>
+                        <th class="text-center">Price <br>(单价)</th>
+                        <th class="text-center">Amount <br>(总金额)</th>
                     </tr>
                     {volist name="row.items" id="item"}
                     <tr>
                         <td rowspan="2" style="vertical-align: middle !important;">{$i}</td>
                         <td>{$item.product.code}</td>
                         <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
+                            {$item.product.hscode ? "HS CODE: ".$item.product.hscode:''}<br>
                             {$item.product.specification}<br>
                             {foreach name="item.process" item="vo"}
                             {$vo.process}<br>
@@ -88,18 +91,19 @@
                             {/notempty}
                         </td>
                         <!--<td rowspan="2" style="vertical-align: middle !important;">{$item.cbm|number_format=3}</td>-->
-                        <td rowspan="2" class="text-left" style="vertical-align: middle !important;">
-                            {notempty name="item.carton"}
-                            {$item.carton.rate} {$item.product.unit} / Per Carton<br>
-                            size: {$item.carton.length} * {$item.carton.width} * {$item.carton.height} CM<br>
-                            CBM: {$item.cbm / $item.quantity * $item.carton.rate|number_format=2} @ {$item.cbm|number_format=2}<br>
-                            G/W: {$item.weight / $item.quantity * $item.carton.rate|number_format=2} kg @ {$item.weight|number_format=2} kg<br>
-                            {/notempty}
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">
+                            {$item.ctn}<br>
                         </td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{$item.quantity}</td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{$item.product.unit}</td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{$item.unit_price|number_format=2}{else/}{$item.usd_unit_price|number_format=2}{/eq}</td>
-                        <td rowspan="2" style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$item.tax_amount|number_format=2}{else/}{$item.amount|number_format=2}{/gt}{else/}{$item.usd_amount|number_format=2}{/eq}</td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">
+                            {$item.grossw/$item.ctn|number_format=2} /<br>{$item.grossw|number_format=2}
+                        </td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">
+                            {$item.cbm/$item.ctn|number_format=2} /<br>{$item.cbm|number_format=2}
+                        </td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">{$item.quantity}</td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">{$item.product.unit}</td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}￥ {$item.unit_price|number_format=2}{else/}$ {$item.usd_unit_price|number_format=2}{/eq}</td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}￥ {$item.tax_amount|number_format=2}{else/}￥ {$item.amount|number_format=2}{/gt}{else/}$ {$item.usd_amount|number_format=2}{/eq}</td>
                     </tr>
                     <tr>
                         <td><img src="{$item.product.image}" width="100px"></td>
@@ -114,62 +118,58 @@
                         {/foreach}
                     </tr>
                     {/notempty}
-                    <tr class="text-bold h3" height="50px" >
+                    <tr class="text-bold h4" height="50px" >
                         <td colspan="2" style="vertical-align: middle !important;">Total (总计)</td>
-                        <td colspan="2"></td>
-                        <td class="text-left" style="vertical-align: middle !important;">CBM: {$row.total_cbm|number_format=2}<br>G/W: {$row.total_weight|number_format=2} kg</td>
-                        <td colspan="3"></td>
-                        <!--<td>{$row.total_cbm|number_format=3}</td>
-                        <td>{$row.total_weight|number_format=2}</td>-->
-                        <td style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount+$row.service_amount|number_format=2}{else/}{$row.total_amount+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount+$row.service_amount|number_format=2}{/eq}</td>
+                        <td colspan="8"></td>
+                        <td style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}￥ {$row.total_tax_amount+$row.service_amount|number_format=2}{else/}￥ {$row.total_amount+$row.service_amount|number_format=2}{/gt}{else/}$ {$row.total_usd_amount+$row.service_amount|number_format=2}{/eq}</td>
                     </tr>
                     <tr class="text-bold">
                         <td colspan="2">Say total: (大写)</td>
-                        <td colspan="8" class="text-left">{$saytotal}</td>
+                        <td colspan="9" class="text-left">{$saytotal}</td>
                     </tr>
                     <tr class="text-bold">
                         <td colspan="2">Trade Terms (贸易条款): </td>
-                        <td colspan="8" class="text-left">{$row.incoterms} {$row.country.name}</td>
+                        <td colspan="9" class="text-left">{$row.incoterms} {$row.country.name}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Shipment (运输条款): </td>
-                        <td colspan="8" class="text-left">{neq name="row.incoterms" value="EXW"} from shenzhen by {$row.transport}{/neq}</td>
+                        <td colspan="9" class="text-left">{neq name="row.incoterms" value="EXW"} from shenzhen by {$row.transport}{/neq}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Leadtime (交期条款): </td>
-                        <td colspan="8" class="text-left">{$row.leadtime} days after order confirmed</td>
+                        <td colspan="9" class="text-left">{$row.leadtime} days after order confirmed</td>
                     </tr>
                     <tr>
                         <td colspan="2">Quality Terms (质量条款): </td>
-                        <td colspan="8" class="text-left">Warranty 12 months</td>
+                        <td colspan="9" class="text-left">Warranty 12 months</td>
                     </tr>
                     <tr>
                         <td colspan="2">payment (付款条款): </td>
-                        <td colspan="8" class="text-left">by T/T, Prepay {$row.prepay} % of Amount as Deposit ({$row.currency}  {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount*$row.prepay/100+$row.service_amount|number_format=2}{else/}{$row.total_amount*$row.prepay/100+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount*$row.prepay/100+$row.service_amount|number_format=2}{/eq}，the balance against before deliver</td>
+                        <td colspan="9" class="text-left">by T/T, Prepay {$row.prepay} % of Amount as Deposit ({$row.currency}  {eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount*$row.prepay/100+$row.service_amount|number_format=2}{else/}{$row.total_amount*$row.prepay/100+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount*$row.prepay/100+$row.service_amount|number_format=2}{/eq})，the balance against before deliver</td>
                     </tr>
                     {eq name="type" value="pi"}
                     <tr>
-                        <td colspan="9" class="text-left text-bold">Bank info (银行信息): </td>
+                        <td colspan="11" class="text-left text-bold">Bank info (银行信息): </td>
                     </tr>
                     <tr>
                         <td colspan="2">Bank Name (银行名称): </td>
-                        <td colspan="8" class="text-left">{$row.bank.bank}</td>
+                        <td colspan="9" class="text-left">{$row.bank.bank}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Bank Adress (银行地址): </td>
-                        <td colspan="8" class="text-left">{$row.bank.bank_address}</td>
+                        <td colspan="9" class="text-left">{$row.bank.bank_address}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Account Name (账户名): </td>
-                        <td colspan="8" class="text-left">{$row.bank.account}</td>
+                        <td colspan="9" class="text-left">{$row.bank.account}</td>
                     </tr>
                     <tr>
                         <td colspan="2">Account No. (账号): </td>
-                        <td colspan="8" class="text-left">{$row.bank.account_no}</td>
+                        <td colspan="9" class="text-left">{$row.bank.account_no}</td>
                     </tr>
                     <tr>
                         <td colspan="2">SWIFT: </td>
-                        <td colspan="8" class="text-left">{$row.bank.swift}</td>
+                        <td colspan="9" class="text-left">{$row.bank.swift}</td>
                     </tr>
                     {/eq}
                 </table>

@@ -82,7 +82,7 @@
                         {/foreach}
                     </tr>
                     {/notempty}
-                    <tr class="text-bold h3" height="50px">
+                    <tr class="text-bold h4" height="50px">
                         <td colspan="2" style="vertical-align: middle !important;">Total (总计)</td>
                         <td colspan="4"></td>
                         <td style="vertical-align: middle !important;">{eq name="row.currency" value="CNY"}{gt name="row.tax_rate" value="0"}{$row.total_tax_amount+$row.service_amount|number_format=2}{else/}{$row.total_amount+$row.service_amount|number_format=2}{/gt}{else/}{$row.total_usd_amount+$row.service_amount|number_format=2}{/eq}</td>

@@ -91,13 +91,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                     title: __('Copy'),
                                     classname: 'btn btn-xs btn-success btn-dialog btn-copyone',
                                     icon: 'fa fa-copy',
-                                    extend: 'data-toggle="tooltip"',
+                                    extend: 'data-toggle="tooltip" data-area=\'["90%","90%"]\'',
                                     url: 'sales/quotation/copy/update/false',
                                     confirm: '是否复制该报价？',
                                     callback: function (value) {
                                         Fast.api.addtabs("sales/quotation/detail/ids/"+ value.data.ids, value.data.ref_no + ' ' + __("Detail"))
-                                    },
-                                    extend: 'data-area=\'["90%","90%"]\'',
+                                    }
                                 },
                                 {
                                     name: 'del',
@@ -397,17 +396,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
 
             var table = $("#table");
 
-            if (Config.quotation.status === "ordered") {
-                diabled = false;
-            }
-
-            if (Config.quotation.currency === "CNY"){
-                cny = true; usd = false;
-            } else {
-                cny = false; usd = true;
-            }
-            Config.quotation.tax_rate > 0 ? tax = true: tax = false;
-            Config.quotation.status === "40" ? view = false: view = true;
+            var cny = Config.quotation.currency === "CNY";
+            var usd = !cny;
+            var tax = Config.quotation.tax_rate > 0;
+            var view = Config.quotation.status !== "40";
 
             // 初始化表格
             table.bootstrapTable({
@@ -442,19 +434,26 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 }
                             }},
                         {field: 'package.name', title: __('Package')},
-                        {field: 'process', title: __('Process'), formatter: function (value, row) {
+                        {field: 'process', title: __('Process'), formatter: function (value) {
                                 if (value.length > 0) {
-                                    return $.map(value, function(val,key){
+                                    return $.map(value, function(val){
                                         return val["process"];
                                     })
                                 } else {
                                     return '-';
                                 }
                             }},
-                        {field: 'weight', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
+                        {field: 'ctn', title: __('Carton'), footerFormatter: function (row) {
+                                var sum = 0;
+                                $.map(row, function(val){
+                                    sum += val['ctn'];
+                                });
+                                return sum;
+                            }},
+                        {field: 'grossw', title: __('Weight'), operate:'BETWEEN', footerFormatter: function (row) {
                                 var sum = 0;
                                 $.map(row, function (val) {
-                                    sum += val['weight'];
+                                    sum += val['grossw'];
                                 });
                                 return sum
                             }},
@@ -469,20 +468,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 var sum = 0;
                                 $.map(row, function (val) {
                                     sum += val['quantity'];
-                                });
-                                //return "<span class='text-center'>"+sum+"</span>";
-                                return sum;
-                            }},
-                        {field: 'carton', title: __('Carton'), formatter: function (value, row) {
-                                return value ? Math.ceil(row['quantity']/value['rate']):row['quantity'];
-                            }, footerFormatter: function (row) {
-                                var sum = 0;
-                                $.map(row, function(val){
-                                    if(val['carton']){
-                                        sum += Math.ceil(val['quantity']/val['carton']['rate']);
-                                    } else {
-                                        sum += val['quantity'];
-                                    }
                                 });
                                 return sum;
                             }},
@@ -511,7 +496,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 var sum = 0;
                                 $.map(row, function (val) {
                                     sum += val['usd_amount'];
-                                })
+                                });
                                 return "$ " + sum.toFixed(2);
                             },visible: usd},
                         {field: 'tax_amount', title: __('Tax Included'), formatter: function (value, row) {
@@ -522,7 +507,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 var sum = 0;
                                 $.map(row, function (val) {
                                     sum += val['tax_amount'];
-                                })
+                                });
                                 return "￥ " + sum.toFixed(2);
                             },visible: tax},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
