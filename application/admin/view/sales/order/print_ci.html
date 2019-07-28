@@ -10,8 +10,8 @@
     <tr>
         <td class="col-md-2 text-right text-bold">Buyer (买方):</td>
         <td class="col-md-4 text-left">{$client['name']}</td>
-        <td class="col-md-2 text-right text-bold">C/I No. (发票号): </td>
-        <td class="col-md-2 text-left">{$row['ref_no']}</td>
+        <td class="col-md-2 text-right text-bold">Data (日期): </td>
+        <td class="col-md-2 text-left">{$row['updatetime']|date="Y-m-d",###}</td>
     </tr>
     <tr>
         <td class="col-md-2 text-right text-bold">Destination (目的地): </td>
@@ -22,8 +22,8 @@
     <tr>
         <td class="col-md-2 text-right text-bold">Contact (联系人): </td>
         <td class="col-md-6 text-left">{$client['contact']['name']}</td>
-        <td class="col-md-2 text-right text-bold">Data (日期): </td>
-        <td class="col-md-2 text-left">{$row['updatetime']|date="Y-m-d",###}</td>
+        <td class="col-md-2 text-right text-bold">C/I No. (发票号): </td>
+        <td class="col-md-2 text-left">{$row['ref_no']}</td>
     </tr>
     <tr>
         <td class="col-md-2 text-right text-bold">E-mail (邮件): </td>
@@ -31,7 +31,8 @@
         <td class="col-md-2 text-right text-bold">L/C No.: (L/C 号): </td>
         <td class="col-md-2 text-left">{$row.lc_no}</td>
     </tr>
-</table><table class="col-xs-12 h4 text-uppercase no-padding" style="margin-bottom: 10px">
+</table>
+<table class="col-xs-12 h4 text-uppercase no-padding" style="margin-bottom: 10px">
     <tr>
         <td class="col-md-2 text-right text-bold">From: </td>
         <td class="col-md-6 text-left">SHENZHEN, CHINA</td>

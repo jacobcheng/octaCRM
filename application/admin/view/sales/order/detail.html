@@ -3,8 +3,8 @@
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
             <button id="btn-receivables" type="button" class="btn btn-box-tool {egt name='row.status' value='30'}disabled{/egt}" data-toggle="tooltip" title="{:__('Receivables')}"><i class="fa fa-money"></i></button>
-            <button id="btn-print-pl" type="button" class="btn btn-box-tool {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('P/L')}">P/L</button>
-            <button id="btn-print-ci" type="button" class="btn btn-box-tool {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('C/I')}">C/I</button>
+            <button id="btn-print-pl" type="button" class="btn btn-box-tool {lt name='row.status' value='20'}disabled{/lt} {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('P/L')}">P/L</button>
+            <button id="btn-print-ci" type="button" class="btn btn-box-tool {lt name='row.status' value='20'}disabled{/lt} {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('C/I')}">C/I</button>
             <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/order/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('Print')}"><i class="fa fa-print"></i></button>
             <button id="btn-edit" type="button" class="btn btn-box-tool {egt name='row.status' value='20'}disabled{/egt} {:$auth->check('sales/order/edit')?'':'hide'}" data-toggle="tooltip"  title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>

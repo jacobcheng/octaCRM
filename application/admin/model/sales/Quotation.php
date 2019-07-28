@@ -79,7 +79,7 @@ class Quotation extends Model
 
     public function getStatusList()
     {
-        return ['10' => __('New'), '20' => __('Quoted'), '30' => __('Ordered'), '-1' => __('Expired')];
+        return ['10' => __('New'), '20' => __('Quoted'), '30' => __('Print PI'), '40' => __('Ordered'), '-1' => __('Expired')];
     }
 
 

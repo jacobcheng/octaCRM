@@ -54,11 +54,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                             }},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
+                        {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Print PI'),"40":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
                         //{field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons:
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: function (value, row, index) {
                                 $.map(this.buttons, function (btn) {
-                                    if ((row.status === "30" || row.status === "-1") && (btn.name === "edit" || btn.name === "del")) {
+                                    if ((row.status === "40" || row.status === "-1") && (btn.name === "edit" || btn.name === "del")) {
                                         btn.classname += " disabled";
                                     } else {
                                         btn.classname = btn.classname.replace(/ disabled/, '');
@@ -223,6 +223,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         return false;
                     });
                     parent.Layer.closeAll();
+                    parent.location.reload();
                 };
                 window.onbeforeprint = beforePrint;
                 window.onafterprint = afterPrint;

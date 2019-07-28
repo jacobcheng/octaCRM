@@ -195,7 +195,6 @@ class Quotation extends Backend
             $this->view->assign("row", $row);
             return $this->view->fetch('edit');
         }
-        //$this->assign('type', $type);
         $client = model('app\admin\model\sales\Client')->get($row['client_id']);
         if ( $row['currency']==="CNY" ) {
             $totalamount = $row['tax_rate'] > 0 ? $row['total_tax_amount'] : $row['total_amount'];
@@ -230,9 +229,10 @@ class Quotation extends Backend
         $quotation = $this->model->get($ids);
         if (count($quotation->items) > 0) {
             foreach ($quotation->items as $value) {
-                list($value['unit_price'], $value['usd_unit_price'], $value['amount'], $value['usd_amount'], $value['tax_amount']) = ['','','','',''];
-                $value = QuotationItem::prepareSave($value, false, $value);
-                $value->save();
+                $item = $value->toArray();
+                list($item['unit_price'], $item['usd_unit_price'], $item['amount'], $item['usd_amount'], $item['tax_amount'], $item['accessory']) = ['','','','','',array_column($value['accessory'],'id')];
+                $item = QuotationItem::prepareSave($item, false, $value);
+                $value->save($item);
             }
         }
         $this->success();

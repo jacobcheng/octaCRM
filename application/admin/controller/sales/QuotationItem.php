@@ -259,10 +259,10 @@ class QuotationItem extends Backend
 
         if ($data['accessory']){
             $accessory = model('app\admin\model\products\Accessory')->all($data['accessory']);
-            if (!empty($row) || $update) {
+            if (empty($row) || $update) {
                 foreach ($accessory as $value) {
                     $data['unit_cost'] += $value['cost'];
-                    $data['weight'] += $value['weight'];
+                    $data['weight'] += $value['weight'] * $data['quantity'];
                 }
                 $data['accessory'] = json_encode($accessory);
             } else {
@@ -271,16 +271,16 @@ class QuotationItem extends Backend
                     foreach ($row['accessory'] as $val){
                         if ($value['id'] == $val['id']){
                             $data['unit_cost'] += $val['cost'];
-                            $data['weight'] += $val['weight'];
+                            $data['weight'] += $val['weight'] * $data['quantity'];
                             $data['accessory'][] = $val;
                         } else {
                             $data['unit_cost'] += $value['cost'];
-                            $data['weight'] += $value['weight'];
+                            $data['weight'] += $value['weight'] * $data['quantity'];
                             $data['accessory'][] = $value;
                         }
                     }
                 }
-                $data['accessory'] = json_encode($data[$accessory]);
+                $data['accessory'] = json_encode($data['accessory']);
             }
         }
 

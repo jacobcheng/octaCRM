@@ -127,15 +127,10 @@ class Order extends Model
         return "SC".date("Ymd").sprintf("%03d",$num+1);
     }
 
-    /*protected function setLeadtimeAttr($value)
-    {
-        return $value === '' ? null : ($value && !is_numeric($value) ? strtotime($value) : $value);
-    }*/
 
 
     public function getTotalAmountAttr ($value, $data)
     {
-        //var_dump(Db::name('QuotationItem')->where('quotation_id',$data['id'])->sum('amount'));
         return Db::name('OrderItem')->where('order_id',$data['id'])->sum('amount');
     }
 
@@ -158,6 +153,39 @@ class Order extends Model
             }
         }
         return $amount;
+    }
+
+    public function getTotalCbmAttr ()
+    {
+        return Db::name('order_item')->where('order_id', $this->id)->sum('cbm');
+    }
+
+    public function getTotalGwAttr ()
+    {
+        return Db::name('order_item')->where('order_id', $this->id)->sum('weight');
+    }
+
+    public function getTotalQtyAttr ()
+    {
+        return Db::name('order_item')->where('order_id', $this->id)->sum('quantity');
+    }
+
+    public function getTotalNwAttr ()
+    {
+        $nw = 0;
+        foreach ($this->items as $item) {
+            $nw += $item->unit_nw * $item->quantity;
+        }
+        return $nw;
+    }
+
+    public function getTotalCtnAttr()
+    {
+        $total_ctn = 0;
+        foreach ($this->items as $item) {
+            $total_ctn += $item['ctn'];
+        }
+        return $total_ctn;
     }
 
     public function getServiceAttr ($value)

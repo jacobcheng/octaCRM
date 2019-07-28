@@ -48,5 +48,6 @@ return [
     'New'              => '新创建',
     'Quoted'           => '已报价',
     'Ordered'          => '已下单',
-    'Expired'          => '已过期'
+    'Expired'          => '已过期',
+    'Print PI'          => '已打印PI',
 ];

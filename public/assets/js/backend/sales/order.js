@@ -142,14 +142,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             var ids = window.location.pathname.split("/");
             ids = ids[ids.length - 1];
 
-            /*var beforePrint = function() {
+            var beforePrint = function() {
             };
             var afterPrint = function() {
                 parent.Layer.closeAll();
             };
             window.onbeforeprint = beforePrint;
             window.onafterprint = afterPrint;
-            window.print();*/
+            window.print();
         },
         api: {
             bindevent: function () {
@@ -233,11 +233,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 Fast.api.open("sales/order/print/type/ci/ids/" + Config.order.id,'',{area:["90%","90%"]})
             });
 
+            $("#btn-print-pl").click(function () {
+                Fast.api.open("sales/order/print/type/pl/ids/" + Config.order.id,'',{area:["90%","90%"]})
+            });
+
             Table.api.init({
                 showFooter:true,
                 extend: {
                     index_url: 'sales/order_item/index' + location.search,
-                    add_url: 'sales/order_item/add/currency/' + Config.order.currency + '/quotation_id/' + Config.order.id,
+                    add_url: 'sales/order_item/add/currency/' + Config.order.currency + '/order_id/' + Config.order.id,
                     edit_url: 'sales/order_item/edit/currency/'+ Config.order.currency,
                     del_url: 'sales/order_item/del',
                     multi_url: 'sales/order_item/multi',

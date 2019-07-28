@@ -64,9 +64,21 @@ class OrderItem extends Model
         return $value ? $value:"{}";
     }
 
+    public function getCtnAttr ()
+    {
+        $carton = $this->carton;
+        return $carton ? $this->quantity/$carton['rate']:$this->quantity;
+    }
 
-
-
+    public function getUnitNwAttr ()
+    {
+        list($package, $product, $accessory) = [$this->package, $this->product,$this->accessory];
+        $accessory_weight = 0;
+        foreach ($accessory as $value) {
+            $accessory_weight += $value['weight'];
+        }
+        return $package ? $package['weight'] + $product['weight'] + $accessory_weight: ($product['pweight'] ? :$product['weight']) + $accessory_weight;
+    }
 
 
 

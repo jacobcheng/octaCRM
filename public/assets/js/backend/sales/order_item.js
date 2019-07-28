@@ -112,6 +112,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+                $("#c-product_model").data("params", function () {
+                    return {custom:{category_id:$("#c-catalog").val()}};
+                });
+                $("#c-product_id").data("params", function () {
+                    return {custom:{model_id:$("#c-product_model").val()}};
+                });
             }
         }
     };

@@ -1,0 +1,103 @@
+<div class="h2 text-uppercase text-center">{$site.company_name_en}</div>
+<div class="h4 text-uppercase text-center">{$site.company_name}</div>
+<div class="h5 text-uppercase text-right col-xs-4">sales: {$admin.nickname}</div>
+<div class="h5 text-uppercase text-center col-xs-4">e-mail: {$admin.email}</div>
+<div class="h5 text-uppercase text-left col-xs-4">Mobile/wechat: {$admin.mobile}</div>
+<div class="h5 text-uppercase text-center col-xs-12">Address: {$site.address_en}</div>
+<div class="h3 text-uppercase text-center text-bold">PACKING LIST</div>
+<div class="h4 text-uppercase text-center">装箱单</div>
+<table class="col-xs-12 h4 text-uppercase no-padding" style="margin-top: 20px">
+    <tr>
+        <td class="col-md-2 text-right text-bold"></td>
+        <td class="col-md-6 text-left"></td>
+        <td class="col-md-2 text-right text-bold">Data (日期): </td>
+        <td class="col-md-2 text-left">{$row['updatetime']|date="Y-m-d",###}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold"></td>
+        <td class="col-md-6 text-left"></td>
+        <td class="col-md-2 text-right text-bold">P/O No. (采购单号): </td>
+        <td class="col-md-2 text-left">{$row['po_no']}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold">Buyer (买方):</td>
+        <td class="col-md-4 text-left">{$client['name']}</td>
+        <td class="col-md-2 text-right text-bold">C/I No. (发票号): </td>
+        <td class="col-md-2 text-left">{$row['ref_no']}</td>
+    </tr>
+    <tr>
+        <td class="col-md-2 text-right text-bold">Destination (目的地): </td>
+        <td class="col-md-4 text-left">{$row['destination'] ? :$client['address']}</td>
+        <td class="col-md-2 text-right text-bold">L/C No.: (L/C 号): </td>
+        <td class="col-md-2 text-left">{$row.lc_no}</td>
+    </tr>
+</table>
+<table class="col-xs-12 h4 text-uppercase no-padding" style="margin-bottom: 10px">
+    <tr>
+        <td class="col-md-2 text-right text-bold">From: </td>
+        <td class="col-md-6 text-left">SHENZHEN, CHINA</td>
+        <td class="col-md-2 text-right text-bold">To: </td>
+        <td class="col-md-2 text-left">{$row.country.name}</td>
+    </tr>
+</table>
+<div class="col-xs-12 text-uppercase text-center">
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade active in" id="one">
+            <div class="widget-body no-padding">
+                <table id="table" class="table table-condensed table-bordered table-nowrap"
+                       data-search="false" data-smart-display="false" data-show-toggle="false" data-show-columns="false" data-pagination="false" cellpadding="10px"
+                       width="100%">
+                    <tr class="bg-gray-light">
+                        <th class="text-center">CTN No. <br>(箱号)</th>
+                        <th class="text-center">Item Name <br>(产品型号)</th>
+                        <th class="text-center">Description <br>(货物描述)</th>
+                        <th class="text-center">CTN <br>(箱数)</th>
+                        <th class="text-center">Qty <br>(数量)</th>
+                        <th class="text-center">G. W.(KG) <br>(毛重) (KG)</th>
+                        <th class="text-center">N. W.(KG) <br>(净重) (KG)</th>
+                        <th class="text-center">CBM <br>(体积)</th>
+                    </tr>
+                    {volist name="row.items" id="item"}
+                    <tr>
+                        <td style="vertical-align: middle !important;">{$i}</td>
+                        <td style="vertical-align: middle !important;">{$item.product.code}</td>
+                        <td class="text-left" style="vertical-align: middle !important;">
+                            {$item.product.full_description}<br>
+                            {$item.product.hscode ? "HS CODE: ".$item.product.hscode:''}<br>
+                        </td>
+                        <td style="vertical-align: middle !important;">{$item.ctn}</td>
+                        <td style="vertical-align: middle !important;">{$item.quantity} {$item.product.unit}</td>
+                        <td style="vertical-align: middle !important;">{:$item.weight/$item.ctn} @ {$item.weight}</td>
+                        <td style="vertical-align: middle !important;">{:$item.carton ? $item.unit_nw * $item.carton.rate:$item.unit_nw} @ {$item.unit_nw * $item.quantity}</td>
+                        <td style="vertical-align: middle !important;">{$item.cbm/$item.ctn} @ {$item.cbm}</td>
+                    </tr>
+                    {/volist}
+                    <tr class="text-bold h3" height="50px">
+                        <td colspan="2" style="vertical-align: middle !important;">Total (总计)</td>
+                        <td style="vertical-align: middle !important;"></td>
+                        <td style="vertical-align: middle !important;">{$row.total_ctn}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_qty}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_gw}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_nw}</td>
+                        <td style="vertical-align: middle !important;">{$row.total_cbm|number_format=2}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div class="col-xs-12 text-uppercase h4" style="margin-top: 30px">
+    <div class="col-xs-5">
+        <p>For and On Behalf Of: </p>
+        <p>{$site.company_name_en}</p>
+        <hr style="margin-top: 80px">
+        <small>Company Chop & Signature</small>
+    </div>
+    <div class="col-xs-5 col-xs-offset-2">
+        <p>For and On Behalf Of: </p>
+        <p>{$client['name']}</p>
+        <hr style="margin-top: 80px">
+        <small>Company Chop & Signature</small>
+    </div>
+</div>-->
