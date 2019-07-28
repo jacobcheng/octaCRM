@@ -68,4 +68,5 @@ return [
     'Bank'                                                       => '收款账号',
     'Sample'                                                     => '样品管理',
     'Receivables'                                                => '应收款',
+    'Follow'                                                     => '跟进记录',
 ];
