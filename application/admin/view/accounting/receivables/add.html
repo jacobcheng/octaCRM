@@ -4,6 +4,7 @@
         <label class="control-label col-xs-12 col-sm-2">{:__('Order_id')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-order_id" data-rule="required" data-source="sales/order/index" data-show-field="ref_no" class="form-control selectpage" name="row[order_id]" type="text" value="{$Request.param.order_id}">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
@@ -15,6 +16,7 @@
                     <option value="{$key}" {in name="key" value=""}selected{/in}>{$vo}</option>
                 {/foreach}
             </select>
+            <span class="msg-box"></span>
 
         </div>
     </div>
@@ -22,18 +24,21 @@
         <label class="control-label col-xs-12 col-sm-2">{:__('Receivables')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-receivables" data-rule="required" class="form-control" min="0" step="0.01" name="row[receivables]" type="number">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Bank_id')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-bank_id" data-rule="required" data-source="accounting/bank/index" class="form-control selectpage" name="row[bank_id]" type="text" value="">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-xs-12 col-sm-2">{:__('Detail')}:</label>
         <div class="col-xs-12 col-sm-8">
             <input id="c-detail" class="form-control" name="row[reveives]" type="text">
+            <span class="msg-box"></span>
         </div>
     </div>
     <div class="form-group layer-footer">

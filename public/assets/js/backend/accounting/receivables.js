@@ -132,6 +132,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         },
         api: {
             bindevent: function () {
+                $("form[role=form]").validator({
+                   fields: {
+                        "#c-order_id": "required",
+                        "#c-currency": "required",
+                        "#c-receivables": "required; range(0~999999)",
+                        "#c-bank_id": "required",
+                        "#c-detail": "required; length[~255]",
+                        "#c-paymentdate": "required",
+                        "#c-receivedate": "required",
+                        "#c-receives": "required; range(0~999999)",
+                   }
+                });
                 Form.api.bindevent($("form[role=form]"));
             }
         }
