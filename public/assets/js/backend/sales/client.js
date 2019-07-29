@@ -217,6 +217,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
         },
         detail: function () {
 
+            $("#btn-edit").click(function () {
+                Fast.api.open("sales/client/edit/ids/"+Config.client.id, __('Edit'),{area:["90%","90%"]})
+            });
+
+            $("#btn-follow").click(function () {
+                Fast.api.open("sales/follow/add/client_id/" + Config.client.id, __('Add Follow'))
+            });
+
             // 初始化表格参数配置
             Table.api.init();
 

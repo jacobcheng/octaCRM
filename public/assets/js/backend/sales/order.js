@@ -225,6 +225,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 Fast.api.open("sales/order/print/type/pl/ids/" + Config.order.id,'',{area:["90%","90%"]})
             });
 
+            $("#btn-follow").click(function () {
+                Fast.api.open("sales/follow/add/client_id/"+Config.order.client_id+"/contact_id/"+Config.order.contact_id+"/order_id/"+Config.order.id, __("Add Follow"))
+            });
+
             Table.api.init({
                 showFooter:true,
                 extend: {

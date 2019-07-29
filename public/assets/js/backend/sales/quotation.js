@@ -380,6 +380,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 });
             });
 
+            $("#btn-follow").click(function () {
+                Fast.api.open("sales/follow/add/client_id/"+Config.quotation.client_id+"/contact_id/"+Config.quotation.contact_id+"/quotation_id/"+Config.quotation.id, __("Add Follow"))
+            });
+
             // 初始化表格参数配置
             Table.api.init({
                 showFooter:true,

@@ -2,10 +2,12 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row.ref_no}</h3>
         <div class="box-tools pull-right">
+            <button id="btn-calendar" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('calendar/add')?'':'hide'}" title="{:__('Calendar')}"><i class="fa fa-calendar-plus-o"></i></button>
             <button type="button" class="btn btn-box-tool btn-order {:$auth->check('sales/quotation/placeorder')?'':'hide'}" data-toggle="tooltip"  {neq name="row.status" value="30"}disabled{/neq} title="{:__('Order')}"><i class="fa fa-money"></i></button>
             <button type="button" class="btn btn-box-tool btn-print-pi {:$auth->check('sales/quotation/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('P/I')}">P/I</button>
             <button type="button" class="btn btn-box-tool btn-print {:$auth->check('sales/quotation/print')?'':'hide'}" data-toggle="tooltip"  title="{:__('Print')}"><i class="fa fa-print"></i></button>
             <button type="button" class="btn btn-box-tool btn-copy {:$auth->check('sales/quotation/copy')?'':'hide'}" data-toggle="tooltip"  title="{:__('Copy')}"><i class="fa fa-clone"></i></button>
+            <button id="btn-follow" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('sales/follow/add')?'':'hide'}" title="{:__('Follow')}"><i class="fa fa-phone"></i></button>
             <button type="button" class="btn btn-box-tool btn-edit {:$auth->check('sales/quotation/edit')?'':'hide'}" data-toggle="tooltip"  {eq name="row.status" value="40"}disabled{/eq} title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>

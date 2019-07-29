@@ -2,7 +2,9 @@
     <div class="box-header with-border">
         <h3 class="box-title">{$row['short_name']}</h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool btn-dialog {:$auth->check('products/product_model/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
+            <button id="btn-calendar" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('calendar/add')?'':'hide'}" title="{:__('Calendar')}"><i class="fa fa-calendar-plus-o"></i></button>
+            <button id="btn-follow" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('sales/follow/add')?'':'hide'}" title="{:__('Follow')}"><i class="fa fa-phone"></i></button>
+            <button id="btn-edit" type="button" class="btn btn-box-tool btn-dialog {:$auth->check('sales/client/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>
         </div>
