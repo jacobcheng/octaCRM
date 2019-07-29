@@ -24,20 +24,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'client_id', title: __('Client_id')},
-                        {field: 'contact_id', title: __('Contact_id')},
-                        {field: 'quotation_id', title: __('Quotation_id')},
-                        {field: 'order_id', title: __('Order_id')},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
+                        {field: 'client.short_name', title: __('Client_id')},
+                        {field: 'contact.appellation', title: __('Contact_id')},
                         {field: 'channel', title: __('Channel'), searchList: {"mail":__('Mail'),"telephone":__('Telephone'),"skype":__('Skype'),"wechat":__('Wechat'),"visit":__('Visit'),"SNS":__('Sns')}, formatter: Table.api.formatter.normal},
                         {field: 'nextdate', title: __('Nextdate'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'admin_id', title: __('Admin_id')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', formatter: Table.api.formatter.datetime},
-                        {field: 'client.short_name', title: __('Client.short_name')},
-                        {field: 'contact.appellation', title: __('Contact.appellation')},
-                        {field: 'quotation.ref_no', title: __('Quotation.ref_no')},
-                        {field: 'order.ref_no', title: __('Order.ref_no')},
-                        {field: 'admin.nickname', title: __('Admin.nickname')},
+                        {field: 'quotation.ref_no', title: __('Quotation_id')},
+                        {field: 'order.ref_no', title: __('Order_id')},
+                        {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
@@ -114,6 +108,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+
+                $("#c-client_id").on("change", function () {
+                    if ($("#c-contact_id").val()) {
+                        $("#c-contact_id").selectPageClear();
+                    }
+                    if ($("#c-quotation_id").val()) {
+                        $("#c-quotation_id").selectPageClear();
+                    }
+                    if ($("#c-order_id").val()) {
+                        $("#c-order_id").selectPageClear();
+                    }
+                });
+
+                $("#c-contact_id").data("params", function () {
+                    return {custom:{client_id:$('#c-client_id').val()}}
+                });
+                $("#c-quotation_id").data("params", function () {
+                    return {custom:{client_id:$('#c-client_id').val(),status:["lt","40"]}}
+                });
+                $("#c-order_id").data("params", function () {
+                    return {custom:{client_id:$('#c-client_id').val(),status:["lt","40"]}}
+                });
             }
         }
     };

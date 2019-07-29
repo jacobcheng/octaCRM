@@ -27,7 +27,15 @@ class Follow extends Model
     protected $append = [
         'channel_text'
     ];
-    
+
+    protected $insert = [
+        'admin_id'
+    ];
+
+    public function setAdminIdAttr ()
+    {
+        return session('admin.id');
+    }
 
     
     public function getChannelList()
@@ -42,6 +50,11 @@ class Follow extends Model
         $list = $this->getChannelList();
         return isset($list[$value]) ? $list[$value] : '';
     }
+
+    public function getCreatetimeAttr($value){
+        return date('Y-m-d', $value);
+    }
+
 
 
 
