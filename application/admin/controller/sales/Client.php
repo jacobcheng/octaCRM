@@ -228,6 +228,17 @@ class Client extends Backend
         return $this->view->fetch();
     }
 
+    public function detail ($ids = null)
+    {
+        $row = $this->model->get($ids);
+        if (!$row) {
+            $this->error(__('No Results were found'));
+        }
+        $this->assignconfig('client', $row);
+        $this->view->assign("row", $row);
+        return $this->view->fetch();
+    }
+
     private function updateContact ($client)
     {
         $contact = model('app\admin\model\sales\Contact');

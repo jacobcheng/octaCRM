@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function ($, undefined, Backend, Table, Form, Adminlte) {
 
     var Controller = {
         index: function () {
@@ -45,12 +45,34 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         },
                         {field: 'admin.nickname', title: __('Admin')},
                         {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Followed'),"30":__('Quoted'),"40":__('Ordered'),"-1":__('Invalid')}, formatter: Table.api.formatter.status, custom: {'10':'gray','20':'info','30':'warning','40':'success','-1':'danger'}},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
+                                {
+                                    name: 'edit',
+                                    icon: 'fa fa-pencil',
+                                    title: __('Edit'),
+                                    extend: 'data-toggle="tooltip" data-area=\'["90%","90%"]\'',
+                                    classname: 'btn btn-xs btn-success btn-editone',
+                                },
+                                {
+                                    name: 'detail',
+                                    title: __('Detail'),
+                                    classname: 'btn btn-xs btn-success btn-click',
+                                    extend: 'data-toggle="tooltip"',
+                                    icon: 'fa fa-list',
+                                    click: function (value, row) {
+                                        Fast.api.addtabs("sales/client/detail/ids/"+row.id, row.short_name +' '+ __('Detail'))
+                                    }
+                                },
+                                {
+                                    name: 'del',
+                                    icon: 'fa fa-trash',
+                                    title: __('Del'),
+                                    extend: 'data-toggle="tooltip"',
+                                    classname: 'btn btn-xs btn-danger btn-delone'
+                                }
+                            ]}
                     ]
-                ],
-                onLoadSuccess: function () {
-                    $('.btn-editone').data('area', ['90%', '90%']);
-                }
+                ]
             });
 
             // 为表格绑定事件
@@ -191,6 +213,170 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 delForm.click(function () {
                     $(this).closest('.contactForm').remove();
                 });
+            }
+        },
+        detail: function () {
+
+            // 初始化表格参数配置
+            Table.api.init();
+
+            //绑定事件
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var panel = $($(this).attr("href"));
+                if (panel.size() > 0 && panel.attr("id") !== "follow") {
+                    Controller.table[panel.attr("id")].call(this);
+                    $(this).on('click', function (e) {
+                        $($(this).attr("href")).find(".btn-refresh").trigger("click");
+                    });
+                }
+                //移除绑定的事件
+                $(this).unbind('shown.bs.tab');
+            });
+
+            //必须默认触发shown.bs.tab事件
+            $('ul.nav-tabs li.active a[data-toggle="tab"]').trigger("shown.bs.tab");
+        },
+        table: {
+            quotation: function () {
+                var quotationTable = $("#quotationTable");
+                quotationTable.bootstrapTable({
+                    url: 'sales/quotation/index',
+                    toolbar: "#toolbar1",
+                    pk: 'id',
+                    sortName: 'id',
+                    queryParams: function(params){
+                        var filter = JSON.parse(params.filter);
+                        var op = JSON.parse(params.op);
+                        filter.client_id = Config.client.id;
+                        op.quotation_id = '=';
+                        params.filter = JSON.stringify(filter);
+                        params.op = JSON.stringify(op);
+                        return params;
+                    },
+                    showColumns: false,
+                    showToggle: false,
+                    showExport: false,
+                    columns: [
+                        [
+                            {field: 'ref_no', title: __('Ref_no')},
+                            {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
+                            {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
+                            {field: 'total_amount', title: __('Total Amount'), formatter: function (value, row) {
+                                    return value.toFixed(2);
+                                }},
+                            {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Print PI'),"40":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
+                            {field: 'operate', title: __('Operate'), table: quotationTable, events: Table.api.events.operate, formatter: function (value, row, index) {
+                                    return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');
+                                }, buttons:
+                                    [
+                                        {
+                                            name: 'detail',
+                                            title: function (row) {
+                                                return row.ref_no + " " +  __('Detail');
+                                            },
+                                            classname: 'btn btn-xs btn-success btn-click',
+                                            extend: 'data-toggle="tooltip"',
+                                            icon: 'fa fa-list',
+                                            click: function (value,row) {
+                                                Backend.api.addtabs("sales/quotation/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
+                                            }
+                                        }
+                                    ]}
+                        ],
+                    ]
+                });
+            },
+            order:function () {
+                var orderTable = $("#orderTable");
+                orderTable.bootstrapTable({
+                    url: 'sales/order/index',
+                    toolbar: "#toolbar2",
+                    pk: 'id',
+                    sortName: 'id',
+                    queryParams: function(params){
+                        var filter = JSON.parse(params.filter);
+                        var op = JSON.parse(params.op);
+                        filter.client_id = Config.client.id;
+                        op.order_id = '=';
+                        params.filter = JSON.stringify(filter);
+                        params.op = JSON.stringify(op);
+                        return params;
+                    },
+                    showColumns: false,
+                    showToggle: false,
+                    showExport: false,
+                    columns: [
+                        [
+                            {field: 'ref_no', title: __('Ref_no')},
+                            {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
+                            {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
+                            {field: 'leadtime', title: __('Leadtime')},
+                            {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status, custom: {"10":"gray","20":"info","30":"warning","40":"success","-1":"danger"}},
+                            {field: 'operate', title: __('Operate'), table: orderTable, events: Table.api.events.operate, formatter: function (value, row, index) {
+                                    return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');
+                                }, buttons: [
+                                    {
+                                        name: 'detail',
+                                        title: function (row) {
+                                            return row.ref_no + " " + __('Detail');
+                                        },
+                                        classname: 'btn btn-xs btn-success btn-click',
+                                        extend: 'data-toggle="tooltip"',
+                                        icon: 'fa fa-list',
+                                        click: function (value,row) {
+                                            Backend.api.addtabs("sales/order/detail/ids/"+row.id, row.ref_no +' '+ __('Detail'))
+                                        }
+                                    },
+                                ]}
+                        ]
+                    ]
+                });
+            },
+            contact: function () {
+                Table.api.init({
+                    extend: {
+                        index_url: 'sales/contact/index' + location.search,
+                        add_url: 'sales/contact/add',
+                        edit_url: 'sales/contact/edit',
+                        del_url: 'sales/contact/del',
+                        multi_url: 'sales/contact/multi',
+                        table: 'contact',
+                    }
+                });
+
+                var contactTable = $("#contactTable");
+
+                // 初始化表格
+                contactTable.bootstrapTable({
+                    url: $.fn.bootstrapTable.defaults.extend.index_url,
+                    toolbar: "#toolbar3",
+                    pk: 'id',
+                    sortName: 'id',
+                    queryParams: function(params){
+                        var filter = JSON.parse(params.filter);
+                        var op = JSON.parse(params.op);
+                        filter.client_id = Config.client.id;
+                        op.order_id = '=';
+                        params.filter = JSON.stringify(filter);
+                        params.op = JSON.stringify(op);
+                        return params;
+                    },
+                    columns: [
+                        [
+                            {checkbox: true},
+                            {field: 'image', title: __('Image'), events: Table.api.events.image, formatter: Table.api.formatter.image},
+                            {field: 'appellation', title: __('Appellation')},
+                            {field: 'name', title: __('Name')},
+                            {field: 'title', title: __('Title')},
+                            {field: 'email', title: __('Email')},
+                            {field: 'cc_email', title: __('Cc_email')},
+                            {field: 'operate', title: __('Operate'), table: contactTable, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        ]
+                    ]
+                });
+
+                // 为表格绑定事件
+                Table.api.bindevent(contactTable);
             }
         }
     };

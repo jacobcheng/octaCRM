@@ -42,6 +42,6 @@ class Contact extends Model
 
     public function client()
     {
-        return $this->belongsTo('app\admin\model\Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
+        return $this->belongsTo('app\admin\model\sales\Client', 'client_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 }

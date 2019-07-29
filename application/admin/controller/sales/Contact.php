@@ -95,7 +95,7 @@ class Contact extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['client_id','appellation','name','image','title','email','cc_email','linkedin','mobile','tel','birthdate','remark']);
+                $row->visible(['id','image','client_id','appellation','name','image','title','email','cc_email','linkedin','mobile','tel','birthdate','remark']);
                 $row->visible(['client']);
 				$row->getRelation('client')->visible(['short_name']);
             }

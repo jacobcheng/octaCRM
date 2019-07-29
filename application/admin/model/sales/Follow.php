@@ -40,7 +40,7 @@ class Follow extends Model
     
     public function getChannelList()
     {
-        return ['mail' => __('Mail'), 'telephone' => __('Telephone'), 'skype' => __('Skype'), 'wechat' => __('Wechat'), 'visit' => __('Visit'), 'SNS' => __('Sns')];
+        return ['mail' => __('Mail'), 'elephone' => __('Telephone'), 'skype' => __('Skype'), 'wechat' => __('Wechat'), 'visit' => __('Visit'), 'SNS' => __('Sns')];
     }
 
 

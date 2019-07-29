@@ -78,9 +78,9 @@ class ProductModel extends Backend
         return $this->view->fetch();
     }
 
-    public function detail ($id = null)
+    public function detail ($ids = null)
     {
-        $row = $this->model->with(['category','client'])->find($id);
+        $row = $this->model->with(['category','client'])->find($ids);
         if (!$row) {
             $this->error(__('No Results were found'));
         }

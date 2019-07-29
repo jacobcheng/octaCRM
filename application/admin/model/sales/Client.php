@@ -116,4 +116,9 @@ class Client extends Model
     {
         return $this->hasMany('app\admin\model\sales\Contact', 'client_id', 'id', [], 'LEFT');
     }
+
+    public function follows()
+    {
+        return $this->hasMany('app\admin\model\sales\Follow', 'client_id', 'id', [], 'LEFT');
+    }
 }

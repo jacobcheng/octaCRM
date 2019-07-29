@@ -26,7 +26,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {checkbox: true},
                         /*{field: 'id', title: __('Id')},*/
                         {field: 'ref_no', title: __('Ref_no')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', formatter: Table.api.formatter.datetime},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'client.short_name', title: __('Client_id')},
                         {field: 'country.country_name', title: __('Country_code')},
                         {field: 'contact.appellation', title: __('Contact_id')},

@@ -1,0 +1,120 @@
+<div class="box box-default">
+    <div class="box-header with-border">
+        <h3 class="box-title">{$row['short_name']}</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool btn-dialog {:$auth->check('products/product_model/edit')?'':'hide'}" title="{:__('Edit')}"><i class="fa fa-pencil"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-md-6 col-xs-12">
+            <dl class="dl-horizontal h4">
+                <dt>{:__("Name")}</dt>
+                <dd>{$row.name}</dd>
+                <dt>{:__("Type")}</dt>
+                <dd>{$row.type}</dd>
+                <dt>{:__("Source")}</dt>
+                <dd>{$row.source}</dd>
+                <dt>{:__("Star")}</dt>
+                <dd>{$starList[$row.star]}</dd>
+                <dt>{:__("Country")}</dt>
+                <dd>{$row.country.country_name}</dd>
+                <dt>{:__('City')}</dt>
+                <dd>{$row.city.city_name}</dd>
+                <dt>{:__('Status')}</dt>
+                <dd>{$statusList[$row.status]}</dd>
+                {neq name="Think.session.admin.id" value="$row.admin_id"}
+                <dt>{:__('Admin')}</dt>
+                <dd>{$row.admin.nickname}</dd>
+                {/neq}
+            </dl>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <dl class="dl-horizontal h4">
+                <dt>{:__("VAT")}</dt>
+                <dd>{$row.vat}</dd>
+                <dt>{:__("Website")}</dt>
+                <dd><a href="{$row.website ? 'http://'.$row.website:''}">{$row.website ? 'http://'.$row.website:''}</a></dd>
+                <dt>{:__("Tel")}</dt>
+                <dd>{$row.tel}</dd>
+                <dt>{:__("Fax")}</dt>
+                <dd>{$row.fax}</dd>
+                <dt>{:__("Contact")}</dt>
+                <dd><a href='mailto:"{$row.contact.email}{$row.contact.cc_email ? "?cc=".$row.contact.cc_email:""}"'>{$row.contact.appellation}</a></dd>
+                <dt>{:__('Address')}</dt>
+                <dd>{$row.address}</dd>
+                <dt>{:__('Remark')}</dt>
+                <dd>{$row.remark}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default panel-intro">
+    {:build_heading()}
+
+    <div class="panel-heading">
+        <!-- <div class="panel-lead"><em>多表格（Multitable）</em>用于展示在一个页面展示多个表格数据,并且每次切换时刷新</div> -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#follow" data-toggle="tab">跟进记录</a></li>
+            <li><a href="#quotation" data-toggle="tab">报价单</a></li>
+            <li><a href="#order" data-toggle="tab">订单</a></li>
+            <li><a href="#contact" data-toggle="tab">联系人</a></li>
+        </ul>
+    </div>
+
+    <div class="panel-body">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="follow">
+                <div class="widget-body no-padding">
+                    <ul class="timeline">
+                        {volist name="row.follows" id="vo" length='3'}
+                        <li class="time-label">
+                              <span class="bg-green">
+                                {$vo.createtime}
+                              </span>
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope bg-blue"></i>
+
+                            <div class="timeline-item">
+                                <span class="time"><i class="fa fa-clock-o"></i> {:date('h:m', $vo->getData('createtime'))}</span>
+
+                                <h3 class="timeline-header">Contact to <span class="text-info">{$vo.contact.appellation}</span> by {$vo.channel|ucwords}</h3>
+
+                                <div class="timeline-body">
+                                   {$vo.detail}
+                                </div>
+                            </div>
+                        </li>
+                        {/volist}
+                        <li>
+                            <i class="fa fa-clock-o bg-gray"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="quotation">
+                <div id="toolbar1" class="toolbar">
+                    {:build_toolbar('refresh')}
+                </div>
+                <table id="quotationTable" class="table table-striped table-bordered table-hover" width="100%">
+                </table>
+            </div>
+            <div class="tab-pane fade" id="order">
+                <div id="toolbar2" class="toolbar">
+                    {:build_toolbar('refresh')}
+                </div>
+                <table id="orderTable" class="table table-striped table-bordered table-hover" width="100%">
+                </table>
+            </div>
+            <div class="tab-pane fade" id="contact">
+                <div id="toolbar3" class="toolbar">
+                    {:build_toolbar('refresh')}
+                </div>
+                <table id="contactTable" class="table table-striped table-bordered table-hover" width="100%">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
