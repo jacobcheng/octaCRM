@@ -33,7 +33,7 @@ class Calendar extends Backend
      */
     public function index()
     {
-        $adminList = Admin::where('id', 'in', $this->childrenAdminIds)->field('id,nickname as name,department_id')->select();
+        $adminList = Admin::where('id', 'in', $this->childrenAdminIds)->field('id,nickname as name')->select();
         $this->assignconfig('admins', $adminList);
         //设置过滤方法
         $this->request->filter(['strip_tags']);

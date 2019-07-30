@@ -83,7 +83,7 @@ class Quotation extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $total = $this->model
-                    ->with(['client','admin','country'])
+                    ->with(['client','contact','admin','country'])
                     ->where($where)
                     ->order($sort, $order)
                     ->count();

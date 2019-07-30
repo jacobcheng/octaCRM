@@ -50,4 +50,5 @@ return [
     'Ordered'          => '已下单',
     'Expired'          => '已过期',
     'Print PI'          => '已打印PI',
+    'Calendar'                                                   => '日程',
 ];

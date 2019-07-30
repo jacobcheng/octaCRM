@@ -48,4 +48,5 @@ return [
     'Contact'             => '联系人',
     'Country'             => '国家',
     'Quotation'           => '报价单',
+    'Calendar'                                                   => '日程',
 ];

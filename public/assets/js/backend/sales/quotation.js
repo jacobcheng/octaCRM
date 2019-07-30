@@ -35,9 +35,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 var cc_email = row['contact']['cc_email'] ? "?cc="+row['contact']['cc_email'] : '';
                                 return "<a href='mailto:"+row['contact']['email']+cc_email+"'>"+value+"</a>";
                             }},
-                        {field: 'po_no', title: __('Po_no'), formatter: function (value) {
-                                return value ? value  : '-';
-                            }},
                         //{field: 'currency', title: __('Currency'), searchList: {"USD":__('USD'),"CNY":__('CNY')}, formatter: Table.api.formatter.normal},
                         {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
                         //{field: 'validay', title: __('Validay')},
@@ -52,8 +49,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                                 //return "<span data-toggle='tooltip' title='USD "+ (value/row.rate).toFixed(2)+"'>"+value.toFixed(2)+"</span>";
                                 return value.toFixed(2);
                             }},
-                        {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
+                        {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'status', title: __('Status'), searchList: {"10":__('New'),"20":__('Quoted'),"30":__('Print PI'),"40":__('Ordered'),"-1":__('Expired')}, formatter: Table.api.formatter.status, custom: {'10':'info','20':'info','30':'success','-1':'danger'}},
                         //{field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons:
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: function (value, row, index) {
@@ -382,6 +379,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
 
             $("#btn-follow").click(function () {
                 Fast.api.open("sales/follow/add/client_id/"+Config.quotation.client_id+"/contact_id/"+Config.quotation.contact_id+"/quotation_id/"+Config.quotation.id, __("Add Follow"))
+            });
+
+            $("#btn-calendar").click(function () {
+                Fast.api.addtabs("calendar/index" ,__('Calendar'))
             });
 
             // 初始化表格参数配置

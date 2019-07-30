@@ -26,15 +26,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {checkbox: true},
                         /*{field: 'id', title: __('Id')},*/
                         {field: 'ref_no', title: __('Ref_no')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
-                        {field: 'client.short_name', title: __('Client_id')},
+                        {field: 'client.short_name', title: __('Client_id'), formatter: function (value, row) {
+                                return "<a class='btn-addtabs' title='"+ value + " "+__('Detail') + "' href='sales/client/detail/ids/"+row.client_id+"'>"+value+"</a>";
+                            }},
                         {field: 'country.country_name', title: __('Country_code')},
-                        {field: 'contact.appellation', title: __('Contact_id')},
+                        {field: 'contact.appellation', title: __('Contact_id'), formatter: function (value, row) {
+                                var cc_email = row['contact']['cc_email'] ? "?cc="+row['contact']['cc_email'] : '';
+                                return "<a href='mailto:"+row['contact']['email']+cc_email+"'>"+value+"</a>";
+                            }},
                         {field: 'currency', title: __('Currency'), searchList: {"USD":__('USD'),"CNY":__('CNY')}, formatter: Table.api.formatter.normal},
                         {field: 'incoterms', title: __('Incoterms'), searchList: {"EXW":__('EXW'),"FCA":__('FCA'),"FAS":__('FAS'),"FOB":__('FOB'),"CFR":__('CFR'),"CIF":__('CIF'),"CPT":__('CPT'),"CIP":__('CIP'),"DAT":__('DAT'),"DAP":__('DAP'),"DDP":__('DDP')}, formatter: Table.api.formatter.normal},
                         {field: 'leadtime', title: __('Leadtime')},
-                        {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status, custom: {"10":"gray","20":"info","30":"warning","40":"success","-1":"danger"}},
+                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'admin.nickname', title: __('Admin_id')},
+                        {field: 'status', title: __('Status'), searchList: {"10":__('Pending'),"20":__('Processing'),"30":__('Collected'),"40":__('Completed'),"-1":__('Cancel')}, formatter: Table.api.formatter.status, custom: {"10":"gray","20":"info","30":"warning","40":"success","-1":"danger"}},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate, buttons: [
                                 {
                                     name: 'detail',
@@ -227,6 +232,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
 
             $("#btn-follow").click(function () {
                 Fast.api.open("sales/follow/add/client_id/"+Config.order.client_id+"/contact_id/"+Config.order.contact_id+"/order_id/"+Config.order.id, __("Add Follow"))
+            });
+
+
+            $("#btn-calendar").click(function () {
+                Fast.api.addtabs("calendar/index" ,__('Calendar'))
             });
 
             Table.api.init({

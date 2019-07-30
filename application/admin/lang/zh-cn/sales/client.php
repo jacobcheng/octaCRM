@@ -32,4 +32,5 @@ return [
     'Linkedin'              => '领英',
     'Mobile'                => '手机',
     'Birthdate'             => '生日',
+    'Calendar'                                                   => '日程',
 ];

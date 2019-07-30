@@ -225,6 +225,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                 Fast.api.open("sales/follow/add/client_id/" + Config.client.id, __('Add Follow'))
             });
 
+            $("#btn-calendar").click(function () {
+                Fast.api.addtabs("calendar/index", __('Calendar'))
+            });
+
             // 初始化表格参数配置
             Table.api.init();
 

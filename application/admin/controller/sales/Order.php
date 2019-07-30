@@ -95,11 +95,11 @@ class Order extends Backend
                     ->select();
 
             foreach ($list as $row) {
-                $row->visible(['id','ref_no','currency','incoterms','leadtime','transport','balance','admin_id','createtime','status']);
+                $row->visible(['id','ref_no','client_id','currency','incoterms','leadtime','transport','balance','admin_id','createtime','status']);
                 $row->visible(['client']);
 				$row->getRelation('client')->visible(['short_name']);
 				$row->visible(['contact']);
-				$row->getRelation('contact')->visible(['appellation']);
+				$row->getRelation('contact')->visible(['appellation','email','cc_email']);
 				$row->visible(['country']);
 				$row->getRelation('country')->visible(['country_name']);
 				$row->visible(['admin']);
