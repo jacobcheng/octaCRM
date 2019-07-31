@@ -284,7 +284,7 @@ class Calendar extends Backend
         $this->error(__('Parameter %s can not be empty', 'ids'));
     }
 
-    protected function getRepeatEvents ($repeatevent, $start, $end)
+    public static function getRepeatEvents ($repeatevent, $start, $end)
     {
         foreach ($repeatevent as $key => $value) {
             $result = [];

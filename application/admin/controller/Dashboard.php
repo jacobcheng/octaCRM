@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\controller\Backend;
 use think\Config;
+use app\admin\controller\Calendar;
 
 /**
  * 控制台
@@ -19,7 +20,14 @@ class Dashboard extends Backend
      */
     public function index()
     {
-        $seventtime = \fast\Date::unixtime('day', -7);
+        $schedule = $this->getschedule();
+        $sample = $this->getsample();
+        $client = model('app\admin\model\sales\Client');
+        $total_client = $client->where(['admin_id' => $this->auth->id])->whereTime('createtime', 'year')->count();
+        $total_quoted = $client->where(['admin_id' => $this->auth->id, 'status' => [['egt','20'],['lt','40'],'and']])->whereTime('createtime', 'year')->count();
+        $total_ordered = $client->where(['admin_id' => $this->auth->id, 'status' => '40'])->whereTime('createtime', 'year')->count();
+
+        /*$seventtime = \fast\Date::unixtime('day', -7);
         $paylist = $createlist = [];
         for ($i = 0; $i < 7; $i++)
         {
@@ -48,9 +56,68 @@ class Dashboard extends Backend
             'createlist'       => $createlist,
             'addonversion'       => $addonVersion,
             'uploadmode'       => $uploadmode
+        ]);*/
+
+
+        $this->assign([
+            'schedule' => $schedule,
+            'sample' => $sample,
+            'total_client' => $total_client,
+            'total_quoted' => $total_quoted,
+            'total_ordered' => $total_ordered
         ]);
 
         return $this->view->fetch();
+    }
+
+    public function getschedule ()
+    {
+        $today = model('Calendar')
+                ->where('admin_id', $this->auth->id)
+                ->whereTime('starttime', 'd')
+                ->order('id desc')
+                ->select();
+
+        $repeat = model('Calendar')
+                ->where(['admin_id' => ['eq', $this->auth->id], 'distance' => ['gt',0]])
+                ->select();
+
+        if (!empty($repeat)) {
+            $start = strtotime(date('Y-m-d'));
+            $end = $start + 24 * 60 * 60;
+            $today_repeat = Calendar::getRepeatEvents($repeat, $start, $end);
+
+            if (!empty($today_repeat)) {
+                $today = array_merge($today, $today_repeat);
+            }
+        }
+        return $today;
+    }
+
+    public function getsample ()
+    {
+        return model('app\admin\model\products\Sample')
+                ->where(['admin_id' => ['eq', $this->auth->id], 'status' => ['lt','3']])
+                ->select();
+    }
+
+    public function getclientstatis()
+    {
+        if(request()->isAjax()){
+            list($year, $data, $i) = [date('Y'), [], 01];
+            do{
+                $start = $year."-01-01";
+                $data['month'][] = sprintf("%02d",$i)." 月";
+                $i++;
+                $end = $i<13 ? $year."-".$i."-01":date('Y-m-d');
+                $client= model('app\admin\model\sales\Client');
+                $data['new'][] = $client->where(['admin_id' => $this->auth->id])->whereTime('createtime', 'between', [$start,$end])->count();
+                $data['quoted'][] = $client->where(['admin_id' => $this->auth->id, 'status' => [['egt','20'],['lt','40'],'and']])->whereTime('createtime', 'between', [$start,$end])->count();
+                $data['ordered'][] = $client->where(['admin_id' => $this->auth->id, 'status' => '40'])->whereTime('createtime', 'between', [$start,$end])->count();
+
+            }while ($i <= date('m'));
+            $this->success('','',$data);
+        }
     }
 
 }
