@@ -36,7 +36,31 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         //{field: 'feedback', title: __('Feedback')},
                         {field: 'admin.nickname', title: __('Admin_id')},
                         {field: 'status', title: __('Status'), searchList: {"1":__('Pending'),"2":__('Arranged'),"3":__('Completed'),"4":__('Canceled')}, formatter: Table.api.formatter.status},
-                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
+                        {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: function (value, row, index) {
+                                $.map(this.buttons, function (btn) {
+                                    if (row.status >= "3") {
+                                        btn.classname += " disabled";
+                                    } else {
+                                        btn.classname = btn.classname.replace(/ disabled/, "");
+                                    }
+                                });
+                                return Table.api.buttonlink(this, this.buttons, value, row, index, 'operate');
+                            }, buttons: [
+                                {
+                                    name: 'edit',
+                                    icon: 'fa fa-pencil',
+                                    title: __('Edit'),
+                                    extend: 'data-toggle="tooltip"',
+                                    classname: 'btn btn-xs btn-success btn-editone',
+                                },
+                                {
+                                    name: 'del',
+                                    icon: 'fa fa-trash',
+                                    title: __('Del'),
+                                    extend: 'data-toggle="tooltip"',
+                                    classname: 'btn btn-xs btn-danger btn-delone'
+                                }
+                            ]}
                     ]
                 ]
             });

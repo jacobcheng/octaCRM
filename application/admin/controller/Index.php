@@ -31,10 +31,11 @@ class Index extends Backend
     {
         //左侧菜单
         list($menulist, $navlist, $fixedmenu, $referermenu) = $this->auth->getSidebar([
-            'dashboard' => 'hot',
+            /*'dashboard' => 'hot',
             'addon'     => ['new', 'red', 'badge'],
             'auth/rule' => __('Menu'),
-            'general'   => ['new', 'purple'],
+            'general'   => ['new', 'purple'],*/
+            //'products' => [model('app\admin\model\products\Sample')->where(['admin_id' => $this->auth->id, 'status' => ['lt','3']])->count(),'blue']
         ], $this->view->site['fixedpage']);
         $action = $this->request->request('action');
         if ($this->request->isPost()) {
