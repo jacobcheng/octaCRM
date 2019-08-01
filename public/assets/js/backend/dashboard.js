@@ -3,7 +3,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'table', 'echarts', 'echart
     var Controller = {
         index: function () {
             // 基于准备好的dom，初始化echarts实例
-            var myChart = Echarts.init(document.getElementById('echart'), 'walden');
+            /*var myChart = Echarts.init(document.getElementById('echart'), 'walden');
 
             // 指定图表的配置项和数据
             var option = {
@@ -71,7 +71,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'table', 'echarts', 'echart
 
             //动态添加数据，可以通过Ajax获取数据然后填充
             setInterval(function () {
-                Orderdata.column.push((new Date()).toLocaleTimeString().replace(/^\D*/, ''));
+                Orderdata.column.push((new Date()).toLocaleTimeString().replace(/^\D*!/, ''));
                 var amount = Math.floor(Math.random() * 200) + 20;
                 Orderdata.createdata.push(amount);
                 Orderdata.paydata.push(Math.floor(Math.random() * amount) + 1);
@@ -106,7 +106,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'table', 'echarts', 'echart
 
             $(document).on("click", ".btn-checkversion", function () {
                 top.window.$("[data-toggle=checkupdate]").trigger("click");
-            });
+            });*/
 
         }
     };

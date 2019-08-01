@@ -27,7 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'client.short_name', title: __('Client_id')},
                         {field: 'contact.appellation', title: __('Contact_id')},
-                        {field: 'channel', title: __('Channel'), searchList: {"mail":__('Mail'),"telephone":__('Telephone'),"skype":__('Skype'),"wechat":__('Wechat'),"visit":__('Visit'),"SNS":__('Sns')}, formatter: Table.api.formatter.normal},
+                        {field: 'channel', title: __('Channel'), searchList: {"email":__('Email'),"telephone":__('Telephone'),"skype":__('Skype'),"wechat":__('Wechat'),"visit":__('Visit'),"SNS":__('Sns')}, formatter: Table.api.formatter.normal},
                         {field: 'nextdate', title: __('Nextdate'), operate:'RANGE', addclass:'datetimerange'},
                         {field: 'quotation.ref_no', title: __('Quotation_id')},
                         {field: 'order.ref_no', title: __('Order_id')},

@@ -18,6 +18,12 @@ class Follow extends Backend
      */
     protected $model = null;
 
+    protected $dataLimit = 'personal';
+
+    protected $dataLimitField = 'admin_id';
+
+    protected $dataLimitFieldAutoFill = true;
+
     public function _initialize()
     {
         parent::_initialize();
