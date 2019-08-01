@@ -30,8 +30,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                         {checkbox: true},
                         {field: 'id', title: __('Id')},
                         {field: 'short_name', title: __('Short_name')},
-                        {field: 'source', title: __('Source'), searchList: {"独立网站":__('独立网站'),"阿里巴巴国际":__('阿里巴巴国际'),"中国制造":__('中国制造')}, formatter: Table.api.formatter.normal},
-                        {field: 'type', title: __('Type'), searchList: {"零售商":__('零售商'),"批发商":__('批发商'),"品牌商":__('品牌商'),"进口商":__('进口商')}, formatter: Table.api.formatter.normal},
+                        {field: 'source', title: __('Source'), searchList: {"独立网站":__('独立网站'),"阿里巴巴国际":__('阿里巴巴国际'),"中国制造":__('中国制造'),'环球资源展一期':__('环球资源展一期'),'环球资源展二期': __('环球资源展二期'),'贸发局电子展':__('贸发局电子展'),'广交会':__('广交会'),'领英':__('领英'),'Facebook':__('Facebook')}, formatter: Table.api.formatter.normal},
+                        {field: 'type', title: __('Type'), searchList: {"零售商":__('零售商'),"批发商":__('批发商'),"品牌商":__('品牌商'),"进口商":__('进口商'),'连锁商超':__('连锁商超'), '企业': __('企业')}, formatter: Table.api.formatter.normal},
                         {field: 'star', title: __('Star'), searchList: {"1":__('★'),"2":__('★★'),"3":__('★★★'),"4":__('★★★★'),"5":__('★★★★★')}, formatter: Table.api.formatter.normal, custom: {'1':'gray','2':'info','3':'success','4':'warning','5':'danger'}},
                         {field: 'country.country_name', title: __('Country'),formatter: function (value, row) {
                                 var now = new Date(new Date().getTime()+(row['country']['timezone']-8)*60*60*1000);
